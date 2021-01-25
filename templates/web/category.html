@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% load users_template_tags %}
+{% block content %}
+	<section id="content">
+        <div class="container">
+            <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>
+            
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{instance.name}}</div>
+
+                <ul class="ah-actions actions a-alt">
+                    {% if is_superuser or 'can_create_category' in user_instance.permissionlist %}
+                    <li>
+                        <a title="Add Category" href="{% url 'web:create_category' %}">
+                            <i class="zmdi zmdi-plus"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if is_superuser or 'can_modify_category' in user_instance.permissionlist %}
+                    <li>
+                        <a title="Edit Category" href="{% url 'web:edit_category' pk=instance.pk %}">
+                            <i class="zmdi zmdi-edit"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if is_superuser or 'can_delete_category' in user_instance.permissionlist %}
+                    <li>
+                        <a title="Delete Category" data-id="{{instance.pk}}" data-text="{{confirm_delete_message}}" data-title="Are you sure?" href="{% url 'web:delete_category' pk=instance.pk %}" class="action-button redirect">
+                            <i class="zmdi zmdi-delete"></i>
+                        </a>
+                    </li> 
+                    {% endif %}                               
+                </ul>
+            </div>
+
+            <div id="c-grid" class="clearfix" data-columns="2">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Basic Info <small></small></h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="list-group lg-alt c-overflow">
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Id</div>
+                                    <small class="lgi-text">{{instance.auto_id}}</small>
+                                </div>
+                                <div class="media-body">
+                                    <div class="lgi-heading">Name</div>
+                                    <small class="lgi-text">{{instance.name}}</small>
+                                </div>
+                                 <div class="media-body">
+                                    <div class="lgi-heading">Description</div>
+                                    <small class="lgi-text">{{instance.description}}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>               
+               
+             </div>                    
+        </div>
+    </section>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+{% endblock %}

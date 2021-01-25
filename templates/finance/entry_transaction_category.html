@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+{% block content %}
+	<section id="content">
+        <div class="container">
+        	<div class="c-header">
+	            <h2>{{title}}</h2>
+	        </div>
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+
+                <div class="ah-search">
+	            	<form method="get" action="{% url 'finance:transaction_categories' %}">
+	                    <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+	
+	                    <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+	                    <input type="submit" class="hidden" />
+	                </form>
+	            </div>
+
+                <ul class="ah-actions actions a-alt">
+                    <li>
+                        <a title="Search" data-ma-action="ah-search-open" class="ah-search-trigger" href="">
+                            <i class="zmdi zmdi-search"></i>
+                        </a>
+                    </li>
+                    {% if instance %}
+	                    {% if user in super_users or 'can_create_tarnsaction_category' in user_instance.permissionlist %}
+		                    <li>
+		                        <a title="Create transaction category" href="{% url 'finance:create_transaction_category' %}">
+		                            <i class="zmdi zmdi-plus"></i>
+		                        </a>
+		                    </li>
+	                    {% endif %} 
+	                    {% if user in super_users or 'can_view_tarnsaction_category' in user_instance.permissionlist %}
+		                    <li>
+		                        <a title="View transaction category" href="{% url 'finance:transaction_category' pk=instance.pk %}">
+		                            <i class="zmdi zmdi-eye"></i>
+		                        </a>
+		                    </li>
+	                    {% endif %} 
+	                    {% if user in super_users or 'can_delete_tarnsaction_category' in user_instance.permissionlist %}
+		                    <li>
+		                        <a title="Delete transaction category" data-id="{{instance.pk}}" data-text="{{confirm_delete_message}}" data-title="Are you sure?" href="{% url 'finance:delete_transaction_category' pk=instance.pk %}" class="action-button redirect">
+		                            <i class="zmdi zmdi-delete"></i>
+		                        </a>
+		                    </li>
+	                    {% endif %} 
+                    {% endif %}                               
+                </ul>
+            </div>
+
+            
+                <form class="ajax reset {% if redirect %}redirect{% endif %}" method="post" action="{{url}}">
+                	{% csrf_token %}
+                    
+                        <div id="c-grid" class="clearfix" data-columns="2">
+                        	<div class="card">
+                            	<div class="card-body card-padding">
+	                            	<div class="form-group fg-line">
+		                                <label for="{{ form.category_type.id_for_label }}">
+		                                	{{ form.category_type.label }}
+		                                	{% if form.category_type.field.required %}
+								        		<small class="star">*</small>
+								        	{% endif %}
+								        	
+								        	{% if form.category_type.help_text %}
+								        		<span data-original-title="Field Info" title="" data-content="{{ form.category_type.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+		                                    {% endif %}
+		                                </label>
+		                                {{ form.category_type }}
+		                                
+		                                {% if form.category_type.errors %}
+		                                	<label class="error">{{ form.category_type.errors.as_text }}</label>
+		                                {% endif %}
+		                            </div>
+	                                <div class="form-group fg-line">
+		                                <label for="{{ form.name.id_for_label }}">
+		                                	{{ form.name.label }}
+		                                	{% if form.name.field.required %}
+								        		<small class="star">*</small>
+								        	{% endif %}
+								        	
+								        	{% if form.name.help_text %}
+								        		<span data-original-title="Field Info" title="" data-content="{{ form.name.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+		                                    {% endif %}
+		                                </label>
+		                                {{ form.name }}
+		                                
+		                                {% if form.name.errors %}
+		                                	<label class="error">{{ form.name.errors.as_text }}</label>
+		                                {% endif %}
+		                            </div>
+	                            </div>
+	                        </div>
+                         </div>
+                         
+                         <div>
+                            <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                        </div> 
+                 </form>  
+            
+        </div>
+    </section>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+{% endblock %}

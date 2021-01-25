@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% load users_template_tags %}
+{% load tz %}
+{% block content %}
+	<section id="content">
+        <div class="container">
+            <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>
+
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{instance.product.name}}</div>
+            </div>
+
+            <div id="c-grid" class="clearfix" data-columns="2">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Basic Info <small></small></h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="list-group lg-alt c-overflow">
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Product</div>
+                                    <small class="lgi-text">{{instance.product}}</small>
+                                </div>
+                            </div>
+
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Distributor</div>
+                                    <small class="lgi-text">{{instance.distributor}}</small>
+                                </div>
+                            </div>
+
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Stock</div>
+                                    <small class="lgi-text">{{instance.stock}}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+{% endblock %}

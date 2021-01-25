@@ -1,0 +1,33 @@
+<ul>
+	{% if request.user.is_superuser or 'can_create_staff_payment' in user_instance.permissionlist %}
+		<li><a href="{% url 'finance:create_staff_payment' %}"><small class="icon icon-dollar"></small><b>Staff Payment</b></a></li>
+	{% endif %}
+
+	{% if request.user.is_superuser or 'can_create_income' in user_instance.permissionlist %}
+		<li><a href="{% url 'finance:create_income' %}"><small class="icon icon-down"></small><b>Income</b></a></li>
+	{% endif %}
+
+	{% if request.user.is_superuser or 'can_create_expense' in user_instance.permissionlist %}
+		<li><a href="{% url 'finance:create_expense' %}"><small class="icon icon-up"></small><b>Expense</b></a></li>
+	{% endif %}
+
+	{% if request.user.is_superuser or 'can_create_cash_account' in user_instance.permissionlist %}
+		<li><a href="{% url 'finance:create_cash_account' %}"><small class="icon icon-box"></small><b>Cash Account</b></a></li>
+	{% endif %}
+
+	{% if request.user.is_superuser or 'can_create_bank_account' in user_instance.permissionlist %}
+		<li><a href="{% url 'finance:create_bank_account' %}"><small class="icon icon-bank"></small><b>Bank Account</b></a></li>
+	{% endif %}
+
+	{% if request.user.is_superuser or 'can_create_transaction_category' in user_instance.permissionlist %}
+		<li><a href="{% url 'finance:create_transaction_category' %}"><small class="icon icon-tags"></small><b>Transaction Category</b></a></li>
+	{% endif %}
+
+	{% if request.user.is_superuser or 'can_create_shop_credit_user' in user_instance.permissionlist %}
+		<li><a href="{% url 'finance:create_shop_credit_user' %}"><small class="icon icon-user"></small><b>Company Credit User</b></a></li>
+	{% endif %}
+	
+	{% if request.user.is_superuser or 'can_create_shop_credit' in user_instance.permissionlist %}
+		<li><a href="{% url 'finance:create_shop_credit' %}"><small class="icon icon-dollar"></small><b>Company Credit</b></a></li>
+	{% endif %}
+</ul>

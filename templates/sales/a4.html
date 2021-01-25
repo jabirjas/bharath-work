@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tax Invoice | Arkboss</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}" />
+    
+</head>
+<body>
+    {% load i18n %}
+    {% load static %}
+    {% load users_template_tags %}
+    {% load main_template_tags %}
+    {% for key,value in dict_list %}
+    <div class="print_container">
+        <table class="header top">
+            <tr>
+                {% if instance.customer.gstin %}
+                <td colspan="10">GST INVOICE (B2B)</td>
+                {% else %}
+                <td colspan="10">GST INVOICE </td>
+                {% endif %}
+                <td class="small">{{instance.invoice_id}}</td>
+                <td class="small">{{instance.time.date|date:'d/m/Y'}}</td>
+                <td class="small">₹:{{instance.total}}</td>
+            </tr>
+        </table>
+        <table class="address">
+            <tr>
+                <td class="logo">
+                {% if current_shop.logo %}
+                    <img class='shop-logo' src="{{current_shop.logo.url}}" alt="{{current_shop.name}}">
+                {% else %}
+                    <img src="{% static 'img/logo-print.png' %}" alt="Arkboss"></td>
+                {% endif %}
+                <td>
+                    <h2>{{current_shop.name|upper}}</h2>
+                    <h3>GSTIN : {{current_shop.gstin}}</h3>
+                </td>
+                <td>
+                    <p>{{current_shop.address}}</p>
+                    <p>{{current_shop.email}}</p>
+                    <p>{{current_shop.phone}}</p>
+                </td>
+            </tr>
+        </table>
+        <table class="user_details">
+            <tr class="user_details">
+                <td>
+                    <h2>Billing Details</h2>
+                    <p>
+                        {% if instance.customer.name %}
+                        <strong>{{instance.customer.name|check_default}}</strong>
+                        {% endif %}
+                        {% if instance.customer.address %}
+                        <br /> {{instance.customer.address|check_default|default:"-"}}
+                        {% endif %}
+                        {% if instance.customer.phone %}
+                        <br /> {{instance.customer.phone|check_default|default:"-"}}
+                        {% endif %}
+                        {% if instance.customer.gstin %}
+                        <br />GSTIN : {{instance.customer.gstin|check_default|default:"-"}}
+                        {% endif %}
+                    </p>   
+                </td>
+                <td>
+                    <h2>Shipping Details</h2>
+                    <p><strong>{{instance.customer.name|check_default}}</strong><br /> {{instance.customer.address|check_default|default:"-"}}
+                    <br /> {{instance.vehicle_number|check_default|default:"-"}}</p>
+                </td>
+            </tr>
+        </table>
+        <table class="spotlight">
+            <tr>
+                <td>
+                    <h5>Invoice Date</h5>
+                    <h6>{{instance.time.date|date:'d/m/Y'}}</h6>
+                </td>
+                <td>
+                    <h5>Payment terms</h5>
+                    <h6>On Receipt</h6>
+                </td>
+                <td>
+                    <h5>Due Date</h5>
+                    <h6>{{instance.payment_remainder_date|default:"__/__/____"}}</h6>
+                </td>
+            </tr>
+        </table>
+
+        <table class="content">
+            <tr>
+                <th style='width: 5%;'>Sl<br>No</th>
+                <th style='width: 30%;'>Item Description</th>
+                <th style='width: 7%;'>HSN</th>
+                <th style='width: 5%;' >Qty</th>
+                <th style='width: 5%;'>Unit</th>
+                <th style='width: 7%;'>MRP</th>
+                <th style='width: 7%;'>Price</th>
+                <th>Tax%</th>
+                <th>Taxable<br />Value</th>
+                <th>CGST</th>
+                <th>SGST</th>
+                <th>IGST</th>
+                <th>Total</th>
+            </tr>
+            {% for item in key %}
+            <tr>
+                <td>{{forloop.parentloop.counter0|row_index:forloop.counter}}</td>
+                <td style='padding:4px 5px;text-align: left'>{{item.product.product_group.name}}</td>
+                <td>{{item.product.hsn|default:'-'}}</td>
+                <td>{{item.qty}}</td>
+                <td style='padding:4px 5px'>{{item.unit.code}}</td>
+                <td style='padding:4px 5px'>{{item.product.mrp}}</td>
+                <td style='padding:4px 5px'>{{item.discount_amount|div:item.qty|rev_sub:item.tax_added_price|to_fixed_two}}</td>
+                <td style='padding:4px 5px'>{{item.product.tax}}</td>
+                <td style='padding:4px 5px'>{{item.taxable_amount}}</td>
+                {% if instance.gst_type == "sgst" %}       
+                    <td style='padding:4px 5px'>{{item.tax_amount|default:0|tax_devide}}</td>
+                    <td style='padding:4px 5px'>{{item.tax_amount|default:0|tax_devide}}</td>
+                    <td style='padding:4px 5px'>0.00</td>
+                {% elif instance.gst_type == "igst" %}
+                    <td style='padding:4px 5px'>0.00</td>
+                    <td style='padding:4px 5px'>0.00</td>
+                    <td style='padding:4px 5px'>{{item.tax_amount}}</td>
+                {% endif %}
+                <td style='padding:4px 5px'>{{item.subtotal}}</td>
+            </tr>
+            {% endfor %}
+            {% for i in value %}
+            <tr id="reamiaing_row">
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>      
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+            {% endfor %}
+            <tr class='total_amount word'>
+                <td colspan=6 rowspan=2>Total Invoice Amount In Words</td>
+                <td style='text-align: left ;padding:4px 5px' colspan=4>Taxable Amount</td>
+                {% if forloop.last %}
+                    <td style='text-align: right ;padding:4px 5px' colspan=3>{{instance.total_taxable_amount}}</td>
+                {% else %}
+                    <td style='text-align: right ;padding:4px 5px' colspan=3></td>
+                {% endif %}
+            </tr>
+            <tr class='total_amount'>
+                <td style='text-align: left ;padding:4px 5px' colspan=4>CGST</td>
+                {% if forloop.last %}
+                    <td style='text-align: right ;padding:4px 5px' colspan=3>{{instance.total_tax_amount|default:0|tax_devide}}</td>
+                {% else %}
+                    <td style='text-align: right ;padding:4px 5px' colspan=3></td>
+                {% endif %}
+            </tr>
+            <tr class='total_amount'>
+                <td colspan=6 rowspan=5 style="text-transform: capitalize;">{{total_in_words}}</td>
+                <td style='text-align: left ;padding:4px 5px' colspan=4>SGST</td>
+                {% if forloop.last %}
+                    <td style='text-align: right ;padding:4px 5px' colspan=3>{{instance.total_tax_amount|default:0|tax_devide}}</td>
+                {% else %}
+                    <td style='text-align: right ;padding:4px 5px' colspan=3></td>
+                {% endif %}
+                
+            </tr>
+            <tr class='total_amount'>
+                <td style='text-align: left ;padding:4px 5px' colspan=4>GST</td>
+                {% if forloop.last %}
+                    <td style='text-align: right ;padding:4px 5px' colspan=3>{{instance.total_tax_amount|default:0}}</td>
+                {% else %}
+                    <td style='text-align: right ;padding:4px 5px' colspan=3></td>
+                {% endif %}
+                
+            </tr>
+           <!--  <tr class='total_amount'>
+                <td style='text-align: left ;padding:4px 5px' colspan=4>Return item total</td>
+                {% if forloop.last %}
+                    <td style='text-align: right ;padding:4px 5px' colspan=3>{{instance.return_item_total}}</td>
+                {% else %}
+                    <td style='text-align: right ;padding:4px 5px' colspan=3></td>
+                {% endif %}
+                
+            </tr> -->
+            <tr class='total_amount'>
+                <td style='text-align: left ;padding:4px 5px' colspan=4>Subtotal</td>
+                {% if forloop.last %}
+                    <td style='text-align: right ;padding:4px 5px' colspan=3>{{instance.subtotal}}</td>
+                {% else %}
+                    <td style='text-align: right ;padding:4px 5px' colspan=3></td>
+                {% endif %}
+                
+            </tr>            
+           <!--  <tr class='total_amount'>
+                {% if not instance.old_credit == 0 %}
+                <td style='text-align: left ;padding:4px 5px' colspan=4>Credit</td>
+                {% if forloop.last %}
+                    <td style='text-align: right ;padding:4px 5px' colspan=3>{{instance.old_credit}}</td>
+                {% else %}
+                    <td style='text-align: right ;padding:4px 5px' colspan=3></td>
+                {% endif %}
+                
+                {% endif %}
+            </tr>
+            <tr class='total_amount'>
+                {% if not instance.old_debit == 0 %}
+                <td style='text-align: left ;padding:4px 5px' colspan=4>Debit</td>
+                {% if forloop.last %}
+                    <td style='text-align: right;padding:4px 5px' colspan=3>{{instance.old_debit}}</td>
+                {% else %}
+                    <td style='text-align: right ;padding:4px 5px' colspan=3></td>
+                {% endif %}
+                
+                {% endif %}
+            </tr> -->
+            <tr class='total_amount'>
+                {% if not instance.special_discount == 0 %}
+                <td style='text-align: left ;padding:4px 5px' colspan=4>Special Discount</td>
+                {% if forloop.last %}
+                    <td style='text-align: right ;padding:4px 5px' colspan=3>{{instance.special_discount}}</td>
+                {% else %}
+                    <td style='text-align: right ;padding:4px 5px' colspan=3></td>
+                {% endif %}
+                
+                {% endif %}
+            </tr>
+            
+            <tr class='total_amount'>
+                <td style='text-align: left ;padding:4px 5px' colspan=4><h4>Total</h4></td>
+                {% if forloop.last %}
+                    <td style='text-align: right ;padding:4px 5px' colspan=3><h4>{{instance.total}}</h4></td>
+                {% else %}
+                    <td style='text-align: right ;padding:4px 5px' colspan=3></td>
+                {% endif %}
+                
+            </tr>
+
+            <tr class='total_amount'>
+                <td style='text-align: left ;padding:4px 5px' colspan=6>Bank Account Number : </td>
+                <td style='text-align: left ;padding:4px 5px' colspan=7></td>
+                <!-- <td style='text-align: left ;padding:4px 5px' colspan=4><h4>Payment Received</h4></td>
+                {% if is_general_sale %}
+                    {% if forloop.last %}
+                        <td style='text-align: right ;padding:4px 5px' colspan=3><h4>{{instance.total}}</h4></td>
+                    {% else %}
+                        <td style='text-align: right ;padding:4px 5px' colspan=3></td>
+                    {% endif %}
+                {% else %}
+                    {% if forloop.last %}
+                        <td style='text-align: right ;padding:4px 5px' colspan=3><h4>{{instance.payment_received}}</h4></td>
+                    {% else %}
+                        <td style='text-align: right ;padding:4px 5px' colspan=3></td>
+                    {% endif %}
+                
+                {% endif %} -->
+            </tr>
+            <tr class='total_amount'>
+                <td style='text-align: left ;padding:4px 5px' colspan=6>Bank Branch IFSC :</td>
+                <td colspan=7 rowspan=2 style="border-bottom: 1px solid #000;vertical-align: bottom;">Autorized Signatory</td>
+            </tr>
+            <tr class='total_amount'>
+                <td colspan=6><h4>Declaration</h4>
+                    <p style='padding:4px 5px;font-size: 8pt;'>Certified that all the particulars shown in the above tax invoice are corect in all respects and the goods on which the tax charges and collected are in accordance with the provisions of the GST Act-2017 and the rules made there under. It is also certified that my/our Registration under GST Act-2017 is not subject to any suspension/cancellation and it is valid as on the date of the bill.</p>
+                </td>
+            </tr>
+        </table>
+        <p style="font-size: 11px; margin-bottom: 0;">*You must bring bill in case of return product(s)</p>
+        <p class="last">This is a computer generated invoice.</p>
+    </div>
+    {% endfor %}
+
+    
+
+    {% for key1,value1 in f_dict_list %}
+    <div class="print_container">
+        <table class="header top">
+            <tr>
+                <td colspan="10">Return Items</td>
+                <!-- <td class="small">{{instance.invoice_id}}</td> -->
+                <td class="small">{{instance.time.date|date:'d/m/Y'}}</td>
+                <!-- <td class="small">₹:{{instance.total}}</td> -->
+            </tr>
+        </table>
+        <table class="address">
+            <tr>
+                <td class="logo">
+                {% if current_shop.logo %}
+                    <img class='shop-logo' src="{{current_shop.logo.url}}" alt="{{current_shop.name}}">
+                {% else %}
+                    <img src="{% static 'img/logo-print.png' %}" alt="Arkboss"></td>
+                {% endif %}
+                <td>
+                    <h2>{{current_shop.name|upper}}</h2>
+                    <h3>GSTIN : {{current_shop.gstin}}</h3>
+                </td>
+                <td>
+                    <p>{{current_shop.address}}</p>
+                    <p>{{current_shop.email}}</p>
+                    <p>{{current_shop.phone}}</p>
+                </td>
+            </tr>
+        </table>
+        <table class="user_details">
+            <tr class="user_details">
+                <td>
+                    <h2>Billing Details</h2>
+                    <p>
+                        {% if instance.customer.name %}
+                        <strong>{{instance.customer.name|check_default}}</strong>
+                        {% endif %}
+                        {% if instance.customer.name %}
+                        <br /> {{instance.customer.address|check_default|default:"-"}}
+                        {% endif %}
+                        {% if instance.customer.name %}
+                        <br /> {{instance.customer.phone|check_default|default:"-"}}
+                        {% endif %}
+                        {% if instance.customer.name %}
+                        <br /> {{instance.customer.gst_tin|check_default|default:"-"}}
+                        {% endif %}
+                    </p>   
+                </td>
+                <td>
+                    <h2>Shipping Details</h2>
+                    <p><strong>{{instance.customer.name|check_default}}</strong><br /> {{instance.customer.address|check_default|default:"-"}}
+                    <br /> {{instance.vehicle_number|check_default|default:"-"}}</p>
+                </td>
+            </tr>
+        </table>
+        <table class="spotlight">
+            <tr>
+                <td>
+                    <h5>Return Date</h5>
+                    <h6>{{instance.time.date|date:'d/m/Y'}}</h6>
+                </td>
+                <td>
+                    <h5>Payment terms</h5>
+                    <h6>On Receipt</h6>
+                </td>
+                <td>
+                    <h5>Due Date</h5>
+                    <h6>{{instance.payment_remainder_date|default:"__/__/____"}}</h6>
+                </td>
+            </tr>
+        </table>
+
+        <table class="content">
+            <tr>
+                <th style='width: 5%;'>Sl<br>No</th>
+                <th style='width: 60%;'>Item Description</th>
+                <th style='width: 20%;'>HSN</th>
+                <th style='width: 15%;'>Qty</th>
+            </tr>
+            {% for item in key1 %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td style='padding:4px 5px;text-align: left'>{{item.product.name}}</td>
+                <td>{{item.product.hsn|default:'-'}}</td>
+                <td>{{item.qty}}</td>
+            </tr>
+            {% endfor %}
+            {% for i in value1 %}
+                <tr id="reamiaing_row">
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+            {% endfor %}
+            
+        </table>
+        <p style="font-size: 11px; margin-bottom: 0;">*You must bring bill in case of return product(s)</p>
+        <p class="last">This is a computer generated invoice.</p>
+    </div>
+    {% endfor %}
+
+
+
+
+
+
+
+
+
+    <a class='back' href="{% url "sales:create" %}">Back to Sale</a>
+    <button class="btn btn-float bgm-red m-btn print-button" onclick = "clicktoPrint()"<i class="zmdi zmdi-print">PRINT</i></button>
+  
+    <input type="hidden" value="{{auto_redirect|yesno:'yes,no'}}" id="auto_redirect"/>
+    
+    <script type="text/javascript">
+        function clicktoPrint() {
+            window.print();
+        }
+        window.onload = function(){
+            var button = document.querySelector('.print-button');
+            button.click();
+        }
+        
+    </script>
+    <style>
+        body {
+            margin: 0;
+            font-family: TimesNewRoman,Ubuntu,"Courier New",Courier, Arial, Helvetica, sans-serif;
+            background: #fff;
+            margin-top: 15px;
+        }
+        .print_container {
+            width: 210mm;
+            margin: 0 auto;
+            background: #fff;
+            min-height: 100%;
+        }
+        div.print_container {
+            margin-top: 160px;
+        }
+        div.print_container:first-child{
+            margin-top: 0;
+        }
+        table {  
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 0;
+        }
+        table {
+            width: 100%;
+        }
+        h5, h6, h4 {
+            margin: 0;
+        }
+        .header.top {
+            background: #4E342E;
+            font-size: 13pt;
+            text-transform: uppercase;
+            color: #fff;
+            font-weight: bold;
+        }
+        .header.top td:nth-child(1){
+            text-align: left;
+        }
+        .header.top td {
+            text-align: center;
+            padding: 10px;
+        }
+        .header.top td.small {
+            width: 120px;
+        }
+        .header.top td:nth-child(3) {
+            border-left: 2px solid rgba(255,255,255,.5);
+            border-right: 2px solid rgba(255,255,255,.5);
+            width: 
+        }
+        .header.top td:last-child{
+            text-align: right;
+        }
+        .user_details {
+            table-layout: fixed;
+            width: 100%;
+        }
+        .user_details tr td {
+            border-bottom: 1px solid #0A0A3C;
+        }
+        .user_details tr td.logo {
+            width: 100px;
+            padding: 10px 0;
+        }
+        .user_details h2 {
+            font-size: 13pt;
+            margin: 0;
+        }
+        .user_details h3 {
+            font-size: 12pt;
+            color: #9E9E9E;
+            font-weight: normal;
+            margin-top: 0;
+        }
+        .user_details p{
+            font-size: 11pt;
+            margin-bottom: 0px;
+        }
+        .user_details p strong {
+            font-family: Arial;
+            font-weight: 400;
+        }
+        .address tr td {
+            border-bottom: 1px solid #0A0A3C;
+        }
+        .address tr td.logo {
+            width: 100px;
+            padding: 10px 0;
+            margin-right: 20px;
+        }
+        .address h2 {
+            font-size: 13pt;
+            margin: 0;
+            margin-bottom: 10px;
+            margin-top: 20px;
+        }
+        .address h3 {
+            font-size: 12pt;
+            color: #000;
+            font-weight: normal;
+            margin-top: 0;
+        }
+        .address .user_details td {
+            border-bottom: none;
+        }
+        .address .user_details td:first-child p {
+            max-width: 250px;
+        }
+        .address p {
+            font-size: 11pt;
+            margin: 5px 0;
+        }
+        .address td:nth-child(2) {
+            width: 300px;
+        }
+        .spotlight td {
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+        .spotlight td:first-child {
+            text-align: right;
+            padding-right: 20px;
+        }
+        .spotlight td:nth-child(2) {
+            width: 150px;
+            border-left: 2px solid #9E9E9E;
+            border-right: 2px solid #9E9E9E;
+            text-align: center;
+        }
+        .spotlight td:last-child {
+            text-align: left;
+            padding-left: 20px;
+        }
+        .spotlight {
+            table-layout: fixed;
+            border: 1px solid #000;
+            border-bottom: 0;
+            border-top: 0;
+        }
+        .spotlight td:first-child {
+            width: 38.25%;
+        }
+        .spotlight td:last-child {
+            width: 38.75%;
+        }
+        .spotlight h5 {
+            margin-bottom: 5px;
+        }
+        .spotlight h6 {
+            font-weight: normal;
+            font-size: 9pt;
+        }
+        
+        .content tr td, .content th{
+            border: 1px solid #f2eaea;
+            border-left: 1px solid #555;
+            border-right: 1px solid #555;
+            font-size: 9pt;
+            font-weight: normal;
+            text-align: center;
+            padding: 5px 0;
+            font-family: Arial;
+        }
+        .content tr#reamiaing_row td {
+            color:#fff;
+            border-bottom: 1px solid #f2eaea !important;
+        }
+        tr.total_amount.word td{
+            border-top: 2px solid #f2eaea !important;
+        }
+        .content tr:last-child td{
+            border-bottom: 1px solid #555;
+        }
+        .content th{
+            border: 1px solid #555;
+            background: #eae5e5;
+        }
+        .content .last, .content .last{
+            padding:0;
+            width: 250px;
+            margin: 0;
+        }
+        .content .text-top{
+            vertical-align: top;
+        }
+        .content .last td, .content .last td{
+            border-top:none;
+            border-bottom: none;
+        }
+        .content .last table, .content .last table{
+            table-layout: fixed;
+        }
+        .bottom {
+            margin-top: 20px;
+        }
+        .bottom tr:first-child table{
+            margin-bottom: 10px;
+        }
+        .bottom td:nth-child(2) {
+            width: 325px;
+        }
+        .bottom h4 {
+            font-weight: normal;
+            font-size: 11pt;
+            margin-bottom: 6px;            
+        }
+        .bottom h4.total{
+           font-weight: bold; 
+           font-size: 13pt;         
+        }
+        .bottom h5.total{
+           font-weight: bold; 
+           text-transform: capitalize;        
+        }
+        .bottom h5 {
+            font-weight: normal;
+            font-size: 10pt;
+            margin-bottom: 10px;
+        }
+        .bottom table.value {
+            table-layout: fixed;
+        }
+        .bottom table.value th {
+            font-size: 10pt;
+        }
+        .bottom table.value td, .bottom table.value th {
+            border: 1px solid #9E9E9E;
+            text-align: center;
+            padding : 5px 0;
+            font-weight: normal;
+        }
+        .bottom table.value td:nth-child(2) {
+            width: auto;
+        }
+        .footer {
+            table-layout: fixed;
+            border-top: 1px solid #9E9E9E;
+            border-bottom: 1px solid #9E9E9E;
+            margin-top: 20px;
+        }
+        .footer td {
+            width: 35%;
+        }
+        .footer td:nth-child(2) {
+            text-align: center;
+        }
+        .footer td:last-child {
+            width: 30%;
+        }
+        .footer h3{
+            margin-top: 20px;
+            font-weight: 500;
+            font-size: 12pt;
+        }
+        .footer .declaration h3 {
+            font-size: 11pt;
+            margin-top: 15px;
+        }
+        .footer .declaration p {
+            font-size: 8pt;
+            text-align: justify;
+        }
+        .footer p{
+            font-size: 7pt;
+        }
+        p.last {
+            text-align: center;
+            font-size: 8pt;
+            margin: 0;
+        }
+        .shop-logo {
+            width: 100px !important;
+        }
+        .btn-float {
+            bottom: 30px;
+            right: 30px;
+            box-shadow: 2px 2px 2px 0px rgba(5, 40, 70, 0.34);
+            outline: none;
+            border: none;
+            color: #fff;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            line-height: 45px !important;
+            cursor: pointer;
+            right: 25px;
+            bottom: -23px;
+            z-index: 1;
+        }
+
+        .btn-float:not(.m-btn) {
+          position: absolute !important;
+        }
+
+        .m-btn {
+            bottom: 20px;
+            position: fixed !important;
+            right: 85px;
+            z-index: 1;
+        }
+        .bgm-red {
+          background-color: #f44336 !important;
+        }
+        .back{
+            top: 0;
+            position: fixed !important;
+            right: 85px;
+            z-index: 1;
+            padding:10px 20px;
+            background-color: #03A9F4;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #fff;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .bill-table{
+            border-collapse: collapse;
+            font-size: 9pt;
+        }
+        .bill-table td,.bill-table th{
+            border: 1px solid #555; 
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+        table.second td{
+            height: 20px;
+            border: 0;
+            border-right: 1px solid #555;
+            padding: 0;
+            vertical-align: middle !important;
+        }
+        table.second td:first-child{
+            width: 67.95%;
+            text-align: left;
+        }
+        .bill-table tr.first{
+            vertical-align: middle;
+        }
+        .bill-table tr.first tr td{
+            vertical-align: middle;
+            border-top: 0;
+        }
+        table.second tr {
+            border-bottom: 1px solid #555;
+        }
+        .bill-table tr td{
+            vertical-align: top;
+            text-align: center;
+        }
+        .details td{
+            border: none;
+            vertical-align: middle !important;
+            padding: 0 5px;
+        }
+        .details tr{
+            border-bottom: 1px solid #555;
+            height: 20px;
+        }
+        table tr.second td{
+            vertical-align: top;
+            padding: 5px;
+            padding-top: 0;
+            border-top: none;
+        }
+        table tr.second td p,table.amount td p{
+            font-size: 7pt;
+        }
+        table.second td:first-child{
+            padding-left: 5px;
+        }
+        table.second td:nth-child(2){
+            text-align: right;
+            padding-right: 5px;
+            border-right: 0;
+        }
+        table.amount tr{
+            height: 20px;
+            border-bottom: 1px solid #555 !important;
+        }
+        table.amount td{
+            width: 67.95%;
+            border: none;
+            vertical-align: middle;
+            padding-right: 5px;
+            padding-left: 5px;
+        }
+        @media print {
+          .btn,.btn-float, .bgm-red,.back-button,.back,.m-btn.print-button * {
+            visibility: hidden;
+          }
+        }
+
+
+    </style>
+</body>
+</html>

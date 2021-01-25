@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+{% block content %}
+	<section id="content">
+        <div class="container">
+            <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>
+            
+			<div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+
+                <div class="ah-search">
+	            	<form method="get" action="">
+	                    <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+	
+	                    <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+	                    <input type="submit" class="hidden" />
+	                </form>
+	            </div>
+
+                
+            </div>
+            
+            <form class="ajax reset {% if redirect %}redirect{% endif %}" method="post" action="{{url}}">
+                {% csrf_token %}
+                <div id="c-grid" class="clearfix" data-columns="2">
+    				<div class="card">
+    					<div class="card-header">
+    				        <h2>Basic Info<small></small></h2>
+    				    </div>
+    					<div class="card-body card-padding">
+
+    					    <div class="form-group fg-line">
+                                <label for="{{ form.name.id_for_label }}">
+                                	{{ form.name.label }}
+                                	{% if form.name.field.required %}
+    					        		<small class="star">*</small>
+    					        	{% endif %}
+    					        	
+    					        	{% if form.name.help_text %}
+    					        		<span data-original-title="Field Info" title="" data-content="{{ form.name.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                    {% endif %}
+                                </label>
+                                {{ form.name }}
+                                
+                                {% if form.name.errors %}
+                                	<label class="error">{{ form.name.errors.as_text }}</label>
+                                {% endif %}
+                            </div>
+    					</div> 
+    				</div> 
+                    <br class="clear">
+                </div>
+                <div>
+                     <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                </div>   
+            </form>  
+        </div>
+    </section>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+{% endblock %}

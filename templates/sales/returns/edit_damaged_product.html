@@ -1,0 +1,370 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %} {{title}} {% endblock %}
+
+{% block content %}
+<section id="content">
+	<section class="head">
+		<h2>{{title}}</h2>
+	</section>
+	<section class="innerBox">
+		<form action="{% url 'sales:edit_damaged_product' pk=instance.pk %}" class="ajax" method="post">
+			{% csrf_token %}
+			<div class="card ">
+                    <div class="card-header">
+                        <h2>Payment Details <small></small></h2>
+                    </div>
+                    <div class="card-body card-padding">                     
+
+                         <div class="form-group fg-line">
+                            <label for="{{ form.product.id_for_label }}">
+                                {{ form.product.label }}
+                                {% if form.product.field.required %}
+                                    <small class="star">*</small>
+                                {% endif %}
+                                
+                                {% if form.product.help_text %}
+                                    <span data-original-title="Field Info" title="" data-content="{{ form.product.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                {% endif %}
+                            </label>
+                            <span class="sale_item_product">{{ form.product }}</span>                            
+                            {% if form.product.errors %}
+                                <label class="error">{{ form.product.errors.as_text }}</label>
+                            {% endif %}
+                        </div> 
+                        <div class="form-group fg-line">
+                            <label for="{{ form.unit.id_for_label }}">
+                                {{ form.unit.label }}
+                                {% if form.unit.field.required %}
+                                    <small class="star">*</small>
+                                {% endif %}
+                                
+                                {% if form.unit.help_text %}
+                                    <span data-original-title="Field Info" title="" data-content="{{ form.unit.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                {% endif %}
+                            </label>
+                            <span class="sale_item_unit">{{ form.unit }}</span>
+                            
+                            {% if form.unit.errors %}
+                                <label class="error">{{ form.unit.errors.as_text }}</label>
+                            {% endif %}
+                        </div> 
+                        <div class="form-group fg-line">
+                            <label for="{{ form.qty.id_for_label }}">
+                                {{ form.qty.label }}
+                                {% if form.qty.field.required %}
+                                    <small class="star">*</small>
+                                {% endif %}
+                                
+                                {% if form.qty.help_text %}
+                                    <span data-original-title="Field Info" title="" data-content="{{ form.qty.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                {% endif %}
+                            </label>
+                            <span class="sale_item_qty">{{ form.qty }}</span>
+                            
+                            {% if form.qty.errors %}
+                                <label class="error">{{ form.qty.errors.as_text }}</label>
+                            {% endif %}
+                        </div> 
+                        <div class="form-group fg-line">
+                            <label for="{{ form.price.id_for_label }}">
+                                {{ form.price.label }}
+                                {% if form.price.field.required %}
+                                    <small class="star">*</small>
+                                {% endif %}
+                                
+                                {% if form.price.help_text %}
+                                    <span data-original-title="Field Info" title="" data-content="{{ form.price.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                {% endif %}
+                            </label>
+                            <span class="sale_item_price">{{ form.price }}</span>
+                            
+                            {% if form.price.errors %}
+                                <label class="error">{{ form.price.errors.as_text }}</label>
+                            {% endif %}
+                        </div>   
+                        <div class="form-group fg-line">
+                            <label for="{{ form.unit.id_for_label }}">
+                                {{ form.unit.label }}
+                                {% if form.unit.field.required %}
+                                    <small class="star">*</small>
+                                {% endif %}
+                                
+                                {% if form.unit.help_text %}
+                                    <span data-original-title="Field Info" title="" data-content="{{ form.unit.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                {% endif %}
+                            </label>
+                            <span class="sale_item_unit">{{ form.unit }}</span>
+                            
+                            {% if form.unit.errors %}
+                                <label class="error">{{ form.unit.errors.as_text }}</label>
+                            {% endif %}
+                        </div>                            
+                    </div> 
+                </div> 
+			<section class="widget one_by_two right">
+				<div class="head">
+					<h4>
+						<span><small class="icon-pencil icon"></small></span>
+						<b>Other Details</b>
+					</h4>							
+				</div>
+				<div class="content formElements">
+					
+					<div class="field">
+						<label for="{{ form.warehouse.id_for_label }}">
+							{{ form.warehouse.label }}
+							{% if form.warehouse.field.required %}
+					    		<small class="star">*</small>
+					    	{% endif %}
+							{% if form.warehouse.help_text %}
+								<span class="help"><span class="icon-help"></span></span>
+							{% endif %}
+						</label>
+						{{ form.warehouse }}	
+						{% if form.warehouse.help_text %}
+					    	<span class="help_text">{{ form.warehouse.help_text }}</span>
+					    {% endif %}
+					</div>
+					<div class="field">
+						<label for="{{ form.is_damaged.id_for_label }}">
+				        	{{ form.is_damaged.label }}
+				        	{% if form.is_damaged.field.required %}
+				        		<small class="star">*</small>
+				        	{% endif %}
+				        	{% if form.is_damaged.help_text %}
+				        		<span class="help icon-help-circled right"></span>
+				        	{% endif %}
+				        </label>
+					    {{ form.is_damaged }}	
+					    {% if form.is_damaged.help_text %}
+					    	<span class="help_text">{{ form.is_damaged.help_text }}</span>
+					    {% endif %}
+						{{ form.is_damaged.errors }}
+					</div>
+					<div class="field">
+						<label for="{{ form.is_returnable.id_for_label }}">
+				        	{{ form.is_returnable.label }}
+				        	{% if form.is_returnable.field.required %}
+				        		<small class="star">*</small>
+				        	{% endif %}
+				        	{% if form.is_returnable.help_text %}
+				        		<span class="help icon-help-circled right"></span>
+				        	{% endif %}
+				        </label>
+					    {{ form.is_returnable }}	
+					    {% if form.is_returnable.help_text %}
+					    	<span class="help_text">{{ form.is_returnable.help_text }}</span>
+					    {% endif %}
+						{{ form.is_returnable.errors }}
+					</div>
+				</div>
+			</section>	
+
+			<br class="clear" />
+			<section class="submit_container">
+				<input type="submit" class="submit button" value="Okay, Let's Go" />
+			</section>
+		</form>
+	</section><!--(.innerBox)-->				
+</section>
+{% endblock %}
+
+{% block right_menu %}
+	<span id="rightMenuArrow"><small class="icon icon-left-open"></small></span>
+	<section id="rightMenuArea" class="full hidden">			
+		<section id="rightMenu" class="mainMenu">
+			<section id="rightMenuContainer">
+				<span class="arrow"><small class="icon icon-left-open"></small></span>
+				
+				<br class="clear" />
+				<div class="menuBox">
+					<h4>View</h4>
+					{% include 'product_return/includes/view_menu.html' %}	
+				</div>
+				<div class="menuBox">
+					<h4>Create</h4>
+					{% include 'product_return/includes/create_menu.html' %}	
+				</div>
+			</section>
+		</section>
+		<br class="clear" />
+	</section>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+	
+	<script src="{% static 'vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.formset.js' %}"></script>
+    <script>
+        $(document).ready(function(){
+            $('.damaged_product_formset table tr.form_set_row').formset({
+                prefix: '{{ damaged_product_formset.prefix }}',
+                formCssClass: 'dynamic-formset1',
+            });
+        });
+	        
+			function calculate(){
+				var sale_item_total = 0;      		
+				
+				$('.sale_item_formset table tr.form_set_row').each(function(){
+					$this = $(this);
+					var qty = parseFloat($this.find('.sale_item_qty input').val());
+					if(!qty){
+						qty = 0;
+					}
+					var price = parseFloat($this.find('.sale_item_price input').val());
+					if(!price){
+						price = 0;
+					}
+					var tax = parseFloat($this.find('.sale_item_tax input').val());
+					if(!tax){
+						tax = 0;
+					}
+					var discount = parseFloat($this.find('.sale_item_discount input').val());
+					if(!discount){
+						discount = 0;
+					}
+					var subtotal = qty * price + tax - discount;
+					$this.find('.sale_item_subtotal input').val(subtotal);
+					sale_item_total += subtotal;
+				});
+				
+				var special_discount = parseFloat($('#id_special_discount').val());
+				var total = sale_item_total - special_discount;
+				
+				$('#sub_total_amount').val(sale_item_total); 
+				$('#total_amount').val(total);
+			}
+	        
+	        calculate();
+	        
+	        $(document).on("input change keyup",'.sale_item_qty input,.sale_item_price input,#id_special_discount',function(){
+	        	calculate();
+	        });
+	        
+	        $selector = $('span.sale_item_product select');
+	        getProductInfo($selector,false);
+	        
+	        $(document).on('change','span.sale_item_product select',function(){
+	        	$selector = $(this);
+	        	getProductInfo($selector,false);
+	        }); 
+			
+			$(document).on('keypress','span.sale_item_barcode input',function(event){
+				if (event.which == '10' || event.which == '13') {
+			        event.preventDefault();
+			        $selector = $(this);
+	        		getProductInfo($selector,true);
+			    }
+			    
+			});
+						
+			$(document).on('change','.sale_item_unit select',function(){
+	        	unit = $(this).val();
+	        	product = $(this).find('option:selected').attr('data-product');
+	        	var $parent = $(this).parents('tr.form_set_row');
+	        	getUnitPrice(unit,product,$parent);
+	        }); 
+	       
+			
+	        function getProductInfo($selector,barcode){
+	        	var $this = $selector;		
+	        	var url = "{% url 'products:get_product' %}";
+	        	var id = $this.val();
+	        	var code = "no";
+	        	if(barcode){
+	        		code = "yes";
+	        	}
+	        	var $parent = $this.parents('tr.form_set_row');
+	        	if(id != '' && id != null){
+	        		show_loader();
+		        	$.ajax({
+		        		type : "GET",
+						url : url,
+						dataType : 'json',
+						data : {
+							id : id,
+							barcode : code,
+						},
+						success : function(data) {
+							var qty = 1;
+							var status = data['status'];
+							var pk = data['pk'];
+							var name = data['name'];
+							var code = data['code'];
+							var unit = data['unit'];
+							var price = data['price'];
+							var cost = data['cost'];
+							var tax = data['tax'];
+							var discount = data['discount'];
+							var units = data['units'];
+							
+							if (status == "true"){
+								$parent.find('.sale_item_qty input').val(qty);
+								$parent.find('.sale_item_price input').val(price);
+								$parent.find('.sale_item_cost input').val(cost);
+								
+								var current_value = $parent.find('.sale_item_unit select option').val();
+								var options = '';
+								for (var i = 0; i < units.length; i++) {
+									options += '<option data-product="' + pk + '" value="' + units[i].pk + '">' + units[i].name + ' (' + units[i].code + ')</option>';
+								}
+								
+								$parent.find('.sale_item_unit select').html(options).selectOrDie("update");
+								$parent.find('.sale_item_unit select option').each(function(){
+									var value = $(this).val();
+									if(current_value == value) {
+										$(this).attr('selected','selected');
+										$parent.find('.sale_item_unit select').val(value).change().selectOrDie("update");
+									}
+								});
+								
+								unit = $parent.find('.sale_item_unit select').val();
+								getUnitPrice(unit,pk,$parent);
+								
+								calculate();
+								
+								$('.add_item_container.sale_item_formset .icon_add_item').click();	
+								$('.add_item_container.sale_item_formset table tr:nth-last-child(2) span.sale_item_barcode input').focus();
+								
+								if(barcode){
+									$parent.find('.sale_item_product span.deck').html('<span data-value="' + pk + '" class="hilight"><span class="remove" style="display: inline-block;">ˣ</span>' + name + '</span>');
+									$parent.find('.sale_item_product input.autocomplete').hide();
+									$parent.find('.sale_item_product select').html('<option value="' + pk + '" selected="selected"></option>');
+								}else{
+									$parent.find('.sale_item_barcode input').val(code);
+								}
+							}else{
+								if(barcode){
+									$selector.val('').focus();
+								}
+							}		
+							remove_popup_box();						
+						},
+						error : function(data){
+							remove_popup_box();	
+						}
+		        	});	        		
+	        	}else{
+	        		$parent.find('input').val('');
+	        		$parent.find('span.sale_item_unit select').html('<option selected="selected" value="">---------</option>').selectOrDie("update");
+	        	}
+	        }
+		});
+		$(document).keydown(function(e) {
+			if (e.ctrlKey || e.metaKey) {
+				if (e.keyCode == 40) {
+					$('.add_item_container.sale_item_formset .icon_add_item').click();	
+					return false;
+				}
+				if (e.keyCode == 38) {
+					$('.add_item_container.sale_item_formset table tr:nth-last-child(2) td:last-child .icon.icon-trash').click();
+					return false;
+				}
+			}
+		});
+	</script>
+{% endblock %}

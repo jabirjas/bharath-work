@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% load users_template_tags %}
+{% block content %}
+	<section id="content">
+        <div class="container">
+                <div class="action-header palette-theme {{current_theme}} bg clearfix">
+	            <div class="ah-label hidden-xs palette-White text">{{instance.name}}</div>
+	
+	            <div class="ah-search">
+	            	<form method="get" action="{% url 'web:abouts' %}">
+	                    <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+	
+	                    <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+	                    <input type="submit" class="hidden" />
+	                </form>
+	            </div>
+	
+	            <ul class="ah-actions actions a-alt">
+	               <li>
+	                    <a title="Edit about" href="{% url 'web:edit_about' pk=instance.pk %}"><i class="zmdi zmdi-edit"></i></a>
+	                </li>
+	                <li>
+	                    <a data-id="{{instance.pk}}" data-text="{{confirm_delete_message}}" data-title="Are you sure?" href="{% url 'web:delete_about' pk=instance.pk %}" class="action-button redirect"><i class="zmdi zmdi-delete"></i></a>
+	                </li>      
+	            </ul>
+	       	 </div>
+            </div>
+
+            <div id="c-grid" class="clearfix" data-columns="2">
+                <div class="card bs-item z-depth-5-top">
+                    <div class="card-header">
+                        <h2>Basic Info <small></small></h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="list-group lg-alt c-overflow">
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Address</div>
+                                    <small class="lgi-text">{{instance.address}}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Description</div>
+                                    <small>{{instance.description}}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Email</div>
+                                    <small class="lgi-text">{{instance.email}}</small>
+                                </div>
+                            </div>
+
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Phone</div>
+                                    <small class="lgi-text">{{instance.phone}}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Facebook link</div>
+                                    <small class="lgi-text">{{instance.facebook_link}}</small>
+                                </div>
+                            </div>
+
+                             <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Twitter link</div>
+                                    <small class="lgi-text">{{instance.twitter_link}}</small>
+                                </div>
+                            </div>
+
+                             <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Google plus link</div>
+                                    <small class="lgi-text">{{instance.gplus_link}}</small>
+                                </div>
+                            </div>
+                            {% if instance.image %}
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Image</div>
+                                    <img src="{{instance.image.url}}" alt="image" class="img-responsive" />
+                                </div>
+                            </div>
+                            {% endif %}
+
+
+                        </div>
+                    </div>
+                </div>
+                
+                
+             </div>                
+    </section>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+{% endblock %}

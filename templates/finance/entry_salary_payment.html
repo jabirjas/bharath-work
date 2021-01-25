@@ -1,0 +1,390 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+{% block content %}
+	<section id="content">
+        <div class="container">
+			<div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+
+                <div class="ah-search">
+                    <form method="get" action="{% url 'finance:transactions' %}">
+                        <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+    
+                        <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+                        <input type="submit" class="hidden" />
+                    </form>
+                </div>
+
+                <ul class="ah-actions actions a-alt">
+                	{% if is_superuser or 'can_view_transaction' in user_instance.permissionlist or 'can_view_transaction' in staff_instance.designation.permissionlist %}
+                    <li>
+                        <a title="Search" data-ma-action="ah-search-open" class="ah-search-trigger" href="{% url 'finance:transactions' %}">
+                            <i class="zmdi zmdi-search"></i>
+                        </a>
+                    </li> 
+                    {% endif %}                              
+                </ul>
+            </div>
+
+            <div class="card">
+                <form class="reset ajax {% if redirect %}redirect{% endif %}" method="post" action="{{url}}">
+                	{% csrf_token %}
+                    <div class="card-body card-padding">
+                        <div class="row">
+                            <div class="col-sm-6">
+                            	<div class="head">
+									<h4>
+										<span><small class="icon-plus icon"></small></span>
+										<b>Basic Details</b>
+									</h4>							
+								</div>
+								<div class="form-group dtp-container fg-line">
+	                                <label for="{{ form.staff.id_for_label }}">
+	                                	{{ form.staff.label }}
+	                                	{% if form.staff.field.required %}
+							        		<small class="star">*</small>
+							        	{% endif %}
+							        	
+							        	{% if form.staff.help_text %}
+							        		<span data-original-title="Field Info" title="" data-content="{{ form.staff.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+	                                    {% endif %}
+	                                </label>
+	                                {{ form.staff }}
+	                                
+	                                {% if form.staff.errors %}
+	                                	<label class="error">{{ form.staff.errors.as_text }}</label>
+	                                {% endif %}
+	                            </div>
+
+	                            <div class="form-group dtp-container fg-line">
+	                                <label for="{{ form.date.id_for_label }}">
+	                                	{{ form.date.label }}
+	                                	{% if form.date.field.required %}
+							        		<small class="star">*</small>
+							        	{% endif %}
+							        	
+							        	{% if form.date.help_text %}
+							        		<span data-original-title="Field Info" title="" data-content="{{ form.date.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+	                                    {% endif %}
+	                                </label>
+	                                {{ form.date }}
+	                                
+	                                {% if form.date.errors %}
+	                                	<label class="error">{{ form.date.errors.as_text }}</label>
+	                                {% endif %}
+	                            </div>
+	                            
+	                            <div class="form-group fg-line m-b-0">
+	                                <label for="{{ form.amount.id_for_label }}">
+	                                	{{ form.amount.label }}
+	                                	{% if form.amount.field.required %}
+							        		<small class="star">*</small>
+							        	{% endif %}
+							        	
+							        	{% if form.amount.help_text %}
+							        		<span data-original-title="Field Info" title="" data-content="{{ form.amount.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+	                                    {% endif %}
+	                                </label>
+	                                {{ form.amount }}
+	                                
+	                                {% if form.amount.errors %}
+	                                	<label class="error">{{ form.amount.errors.as_text }}</label>
+	                                {% endif %}
+	                            </div>
+
+                            </div>
+                            
+                            <div class="col-sm-6">
+                            	<div class="row">
+	                            	<div class="head">
+										<h4>
+											<span><small class="icon-plus icon"></small></span>
+											<b>Transaction Details</b>
+										</h4>							
+									</div>
+	                                 <div class="form-group fg-line">
+		                                <label for="{{ form.transaction_mode.id_for_label }}">
+		                                	{{ form.transaction_mode.label }}
+		                                	{% if form.transaction_mode.field.required %}
+								        		<small class="star">*</small>
+								        	{% endif %}
+								        	
+								        	{% if form.transaction_mode.help_text %}
+								        		<span data-original-title="Field Info" title="" data-content="{{ form.transaction_mode.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+		                                    {% endif %}
+		                                </label>
+		                                {{ form.transaction_mode }}
+		                                
+		                                {% if form.transaction_mode.errors %}
+		                                	<label class="error">{{ form.transaction_mode.errors.as_text }}</label>
+		                                {% endif %}
+		                            </div>
+	
+	                                 <div class="form-group fg-line">
+		                                <label for="{{ form.payment_mode.id_for_label }}">
+		                                	{{ form.payment_mode.label }}
+		                                	{% if form.payment_mode.field.required %}
+								        		<small class="star">*</small>
+								        	{% endif %}
+								        	
+								        	{% if form.payment_mode.help_text %}
+								        		<span data-original-title="Field Info" title="" data-content="{{ form.payment_mode.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+		                                    {% endif %}
+		                                </label>
+		                                {{ form.payment_mode }}
+		                                
+		                                {% if form.payment_mode.errors %}
+		                                	<label class="error">{{ form.payment_mode.errors.as_text }}</label>
+		                                {% endif %}
+		                            </div>
+	                                
+	                                <div class="form-group fg-line m-b-20">
+		                                <label for="{{ form.cheque_details.id_for_label }}">
+		                                	{{ form.cheque_details.label }}
+		                                	{% if form.cheque_details.field.required %}
+								        		<small class="star">*</small>
+								        	{% endif %}
+								        	
+								        	{% if form.cheque_details.help_text %}
+								        		<span data-original-title="Field Info" title="" data-content="{{ form.cheque_details.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+		                                    {% endif %}
+		                                </label>
+		                                {{ form.cheque_details }}
+		                                
+		                                {% if form.cheque_details.errors %}
+		                                	<label class="error">{{ form.cheque_details.errors.as_text }}</label>
+		                                {% endif %}
+		                            </div>
+		                            
+		                            <div class="form-group m-b-10 fg-line m-b-0">
+	                                    <label for="{{ form.cheque_date.id_for_label }}">
+	                                        {{ form.cheque_date.label }}
+	                                        {% if form.cheque_date.field.required %}
+	                                            <small class="star">*</small>
+	                                        {% endif %}
+
+	                                        {% if form.cheque_date.help_text %}
+	                                            <span data-original-title="Field Info" title="" data-content="{{ form.cheque_date.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+	                                        {% endif %}
+	                                    </label>
+	                                    {{ form.cheque_date }}
+
+	                                    {% if form.cheque_date.errors %}
+	                                        <label class="error">{{ form.cheque_date.errors.as_text }}</label>
+	                                    {% endif %}
+	                                </div>		                            
+	
+		                            <div class="form-group fg-line m-b-20">
+		                                <label for="{{ form.card_details.id_for_label }}">
+		                                	{{ form.card_details.label }}
+		                                	{% if form.card_details.field.required %}
+								        		<small class="star">*</small>
+								        	{% endif %}
+								        	
+								        	{% if form.card_details.help_text %}
+								        		<span data-original-title="Field Info" title="" data-content="{{ form.card_details.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+		                                    {% endif %}
+		                                </label>
+		                                {{ form.card_details }}
+		                                
+		                                {% if form.card_details.errors %}
+		                                	<label class="error">{{ form.card_details.errors.as_text }}</label>
+		                                {% endif %}
+		                            </div>
+	
+		                            <div class="form-group fg-line m-b-20">
+		                                <label for="{{ form.payment_to.id_for_label }}">
+		                                	{{ form.payment_to.label }}
+		                                	{% if form.payment_to.field.required %}
+								        		<small class="star">*</small>
+								        	{% endif %}
+								        	
+								        	{% if form.payment_to.help_text %}
+								        		<span data-original-title="Field Info" title="" data-content="{{ form.payment_to.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+		                                    {% endif %}
+		                                </label>
+		                                {{ form.payment_to }}
+		                                
+		                                {% if form.payment_to.errors %}
+		                                	<label class="error">{{ form.payment_to.errors.as_text }}</label>
+		                                {% endif %}
+		                            </div>
+	
+		                            <div class="form-group fg-line m-b-20">
+		                                <label for="{{ form.bank_account.id_for_label }}">
+		                                	{{ form.bank_account.label }}
+		                                	{% if form.bank_account.field.required %}
+								        		<small class="star">*</small>
+								        	{% endif %}
+								        	
+								        	{% if form.bank_account.help_text %}
+								        		<span data-original-title="Field Info" title="" data-content="{{ form.bank_account.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+		                                    {% endif %}
+		                                </label>
+		                                {{ form.bank_account }}
+		                                
+		                                {% if form.bank_account.errors %}
+		                                	<label class="error">{{ form.bank_account.errors.as_text }}</label>
+		                                {% endif %}
+		                            </div>
+	
+		                            <div class="form-group fg-line m-b-20">
+		                                <label for="{{ form.cash_account.id_for_label }}">
+		                                	{{ form.cash_account.label }}
+		                                	{% if form.cash_account.field.required %}
+								        		<small class="star">*</small>
+								        	{% endif %}
+								        	
+								        	{% if form.cash_account.help_text %}
+								        		<span data-original-title="Field Info" title="" data-content="{{ form.cash_account.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+		                                    {% endif %}
+		                                </label>
+		                                {{ form.cash_account }}
+		                                
+		                                {% if form.cash_account.errors %}
+		                                	<label class="error">{{ form.cash_account.errors.as_text }}</label>
+		                                {% endif %}
+		                            </div>
+								</div>
+                                <br>	
+                            </div>
+                         </div>
+                         
+                         <div class="m-t-20">
+                            <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                        </div>
+                     </div>  
+                </form>
+            </div>
+            
+        </div>
+    </section>
+{{ form.media }}
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+	<script src="{% static 'vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script>
+	<script type="text/javascript">
+		function showHideCreditUser(){
+			var category = $('#id_transaction_category option:selected').text();
+			var $user_parent = $('#id_shop_credit_user').parents('div.form-group');
+			if(category == "debit"){
+				$user_parent.show();
+			}else{
+				$user_parent.hide();
+			}
+		}
+		
+		function showHideCashBank(){
+			var mode = $('#id_transaction_mode').val();
+			var $bank_parents = $('.bank_item').parents('div.form-group');
+			if (mode == "cash"){
+				$bank_parents.hide();
+				$('#id_payment_to').val('cash_account').change();
+				$('#id_cash_account').parents('div.form-group').show();
+			}else{
+				$bank_parents.show();		
+				showHidePaymentModeItems();		
+			}
+		}
+		
+		function showHidePaymentModeItems(){
+			var transaction_mode = $('#id_transaction_mode').val();			
+			if(transaction_mode == "bank"){
+				var mode = $('#id_payment_mode').val();
+				var $cheque_parents = $('.cheque_item').parents('div.form-group');
+				var $card_parents = $('.card_item').parents('div.form-group');
+				if (mode == "cheque_payment"){
+					$cheque_parents.show();
+					$card_parents.hide();
+					$('#id_payment_to').val('bank_account').change();
+					$('#id_cash_account').parents('div.form-group').hide();
+					
+				}else if(mode == "card_payment"){
+					$cheque_parents.hide();
+					$card_parents.show();
+					$('#id_payment_to').val('bank_account').change();
+					$('#id_payment_to').parents('div.form-group').hide();
+					
+				}else if(mode == "internet_banking"){
+					$card_parents.hide();
+					$cheque_parents.hide();
+					$('#id_payment_to').val('bank_account').change();
+					$('#id_payment_to').parents('div.form-group').hide();
+				}
+				
+				showHidePaymentToItems();
+			}			
+		}
+		
+		function showHidePaymentToItems(){
+			var transaction_mode = $('#id_transaction_mode').val();
+			if(transaction_mode == "bank"){
+				var to = $('#id_payment_to').val();
+				if(to == "bank_account"){
+					$('#id_bank_account').parents('div.form-group').show();
+					$('#id_cash_account').parents('div.form-group').hide();
+				}else{
+					$('#id_cash_account').parents('div.form-group').show();
+					$('#id_bank_account').parents('div.form-group').hide();
+				}
+			}
+		}
+		
+		function showSalary($selector){  
+                var staff_id = $selector.val();
+                if(staff_id == "" || staff_id == null){
+                    $('#id_amount').attr("value",0);
+                }else{
+                    var url = "{% url 'staffs:get_salary' %}";
+                    $.ajax({
+                        type : "GET",
+                        url : url,
+                        data: { 
+                            id : staff_id
+                        } ,
+                        dataType : 'json',
+                        success : function(data){
+                            var status = data['status'];
+                            var balance = data['balance'];                    
+                            if(status == "true"){
+                                $('#id_amount').val(balance);
+                            }
+                        },
+                    });
+                }
+            }
+		$(document).ready(function(){
+			showHideCreditUser();
+			showHideCashBank();
+			showHidePaymentModeItems();
+			showHidePaymentToItems();
+
+			$(document).on('change','#id_transaction_category',function(){
+				showHideCreditUser();
+			});
+			
+			$(document).on('change','#id_transaction_mode',function(){
+				showHideCashBank();
+			});
+			
+			$(document).on('change','#id_payment_mode',function(){
+				showHidePaymentModeItems();
+			});
+			
+			$(document).on('change','#id_payment_to',function(){
+				showHidePaymentToItems();
+			});
+
+			$(document).on('change','#id_staff',function(){
+				var $this = $(this)
+                showSalary($this);
+			});
+			
+		});
+	</script>	
+	{{ form.media }}
+{% endblock %}

@@ -1,0 +1,293 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load tz %}
+
+
+{% block content %}
+	<section id="content">
+        <div class="container">
+            <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>
+			
+			<div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+
+                <div class="ah-search">
+	            	<form method="get" action="{% url 'manufacturing:work_orders' %}">
+	                    <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+	
+	                    <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+	                    <input type="submit" class="hidden" />
+	                </form>
+	            </div>
+            </div>
+            
+            <form class="ajax reset {% if redirect %}redirect{% endif %}" method="post" action="{{url}}" method="get">
+            	{% csrf_token %}
+            	
+            	<div id="c-grid" class="clearfix" data-columns="2">
+					<div class="card">
+						<div class="card-header">
+					        <h2>Basic Info <small></small></h2>
+					    </div>
+						<div class="card-body card-padding">
+                             {{ form.shop }}
+                            <div class="form-group fg-line">
+                                <label for="{{ form.time.id_for_label }}">
+                                    {{ form.time.label }}
+                                    {% if form.time.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.time.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.time.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                    {% endif %}
+                                </label>
+                                
+                                {% timezone user_time_zone %}
+                                    <input id="{{ form.time.id_for_label }}" type="text" class="required form-control date-time-picker"  name="{{form.time.html_name}}" placeholder="Enter time" value="{% now "m-d-Y H:i:s" %}">
+                                {% endtimezone %}
+                                
+                                
+                                {% if form.time.errors %}
+                                    <label class="error">{{ form.time.errors.as_text }}</label>
+                                {% endif %}
+                            </div>
+                             <div class="form-group fg-line">
+                                <label>Product</label>
+                                <input type="text" disabled="disabled" class="form-control" value="{{instance.product.product.name}}">
+                            </div>                            
+                             <div class="form-group fg-line">
+                                <label>Expected Qty</label>
+                                <input id="id_qty" type="text" disabled="disabled" class="form-control" value="{{instance.qty}}">
+                            </div>
+                            <div class="form-group fg-line">
+                                <label for="{{ form.actual_qty.id_for_label }}">
+                                    {{ form.actual_qty.label }}
+                                    {% if form.actual_qty.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.actual_qty.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.actual_qty.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                    {% endif %}
+                                    </span>
+                                </label>
+                                {{ form.actual_qty }}
+                                
+                                {% if form.actual_qty.errors %}
+                                    <label class="error">{{ form.actual_qty.errors.as_text }}</label>
+                                {% endif %}
+                            </div>                            
+
+                            <div class="form-group fg-line">
+                                <label for="{{ form.add_to_stock.id_for_label }}">
+                                    {{ form.add_to_stock.label }}
+                                    {% if form.add_to_stock.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.add_to_stock.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.add_to_stock.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                    {% endif %}
+                                    </span>
+                                </label>
+                                
+                                <div class="checkbox lgi-checkbox m-t-5">
+                                    <label>
+                                        {{ form.add_to_stock }}
+                                        <i class="input-helper"></i>
+                                    </label>
+                                </div>
+            
+                                {% if form.add_to_stock.errors %}
+                                    <label class="error">{{ form.add_to_stock.errors.as_text }}</label>
+                                {% endif %}
+                            </div>     
+                        </div> 
+					</div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Basic Info <small></small></h2>
+                        </div>
+                        <div class="card-body card-padding">                            
+
+                            <div class="form-group fg-line">
+                                <label for="{{ form.making_charge.id_for_label }}">
+                                    {{ form.making_charge.label }}
+                                    {% if form.making_charge.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.making_charge.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.making_charge.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                    {% endif %}
+                                    </span>
+                                </label>
+                                {{ form.making_charge }}
+                                
+                                {% if form.making_charge.errors %}
+                                    <label class="error">{{ form.making_charge.errors.as_text }}</label>
+                                {% endif %}
+                            </div>
+                            <div class="form-group fg-line">
+                                <input id="id_material_charge" type="text" class="hidden form-control" value="{{instance.material_charge}}">
+                            </div> 
+                            <div class="form-group fg-line">
+                                <input id="id_packing_charge" type="text" class="hidden form-control" value="{{instance.packing_charge}}">
+                            </div> 
+                            <div class="form-group fg-line">
+                                <input id="id_label_charge" type="text" class="hidden form-control" value="{{instance.label_charge}}">
+                            </div>           
+
+                            <div class="form-group fg-line">
+                                <label>Material Charge</label>
+                                <input id="material_charge" type="text" disabled="disabled" class="form-control" value="{{instance.material_charge}}">
+                            </div> 
+                            <div class="form-group fg-line">
+                                <label>Packing Charge</label>
+                                <input id="packing_charge" type="text" disabled="disabled" class="form-control" value="{{instance.packing_charge}}">
+                            </div> 
+                            <div class="form-group fg-line">
+                                <label>Label Charge</label>
+                                <input id="label_charge" type="text" disabled="disabled" class="form-control" value="{{instance.label_charge}}">
+                            </div>                            
+                        </div> 
+                    </div> 
+                </div> 
+                    <div class="card">
+                    <div class="card-header">
+                        <h2 class=item_head >Ingredients <small></small></h2>
+                    </div>
+                    
+                    <div class="table-responsive card-body card-padding add_item_container workorder_ingredient_formset">
+                        <table id="data-table-basic" class="table table-striped table-vmiddle">
+                            <thead>
+                                <tr>
+                                    <th data-column-id="store_item">Store Item</th>
+                                    <th data-column-id="unit">Unit</th>
+                                    <th data-column-id="qty">Qty</th>
+                                    <th data-column-id="amount">Amount</th>
+                                    <th data-column-id="subtotal">Sub Total</th> 
+                                    <th class="one"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ingredient_form in workorder_ingredient_formset.forms %}               
+                                <tr class="form_set_row">
+                                    <td>
+                                        {{ ingredient_form.id }}
+                                        <span class="product_manufacture p-relative">                                 
+                                            {{ ingredient_form.store_item }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="product_manufacture_unit check_empty p-relative">
+                                            {{ ingredient_form.unit }}
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <span class="product_manufacture_qty check_empty p-relative">
+                                            {{ ingredient_form.qty }}
+                                        </span>
+                                    </td>
+                                    
+                                    <td>
+                                        <span class="product_manufacture_price p-relative">
+                                            {{ ingredient_form.amount }}
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <span class="product_manufacture_subtotal p-relative">
+                                            <input type="text" disabled="disabled" class="form-control">
+                                        </span>
+                                    </td>
+                                    <td class="one">{% if ingredient_form.instance.pk %}{{ ingredient_form.DELETE }}{% endif %}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {{ workorder_ingredient_formset.management_form }}
+                    </div> 
+                </div>                   
+                    
+				<div>
+				    <button type="submit" class="btn btn-info waves-effect">Submit</button>
+				</div>
+             	
+         	</form>  
+         </div> 
+    </section>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+
+    <script>
+    $(document).ready(function(){
+        $.fn.modal.Constructor.prototype.enforceFocus=function(){};
+
+        $('.workorder_ingredient_formset table tr.form_set_row').formset({
+            prefix: '{{ workorder_ingredient_formset.prefix }}',
+            formCssClass: 'dynamic-formset1',
+            'added' : function (row) {
+                row.find('.product_manufacture_unit select').selectpicker();
+                row.find('.product_manufacture select').val(null).trigger('change');
+                row.find('.select2-selection').click();
+            }
+        }); 
+         
+        $('input[type=text]').focus(function () { 
+            $(this).select();
+        });
+
+        calculate()
+
+        function calculate(){
+            var product_manufacture_total = 0; 
+
+            
+            $('.workorder_ingredient_formset table tr.form_set_row').each(function(){
+                $this = $(this);
+                var qty = parseFloat($this.find('.product_manufacture_qty input').val());
+                if(!qty){
+                    qty = 0;
+                }
+                var price = parseFloat($this.find('.product_manufacture_price input').val());
+                if(!price){
+                    price = 0;
+                }
+                
+                var subtotal = qty * price;
+                $this.find('.product_manufacture_subtotal input').val(subtotal.toFixed(2));
+
+                product_manufacture_total += subtotal;
+
+            });
+
+            $('#material_charge').val(product_manufacture_total.toFixed(2)); 
+        }
+        $(document).on('change keyup','#id_actual_qty',function(){
+            $this = $(this);
+            qty = $(this).val(); 
+            orginal_qty = $('#id_qty').val()            
+            packing_charge = $('#id_packing_charge').val()  
+            label_charge = $('#id_label_charge').val() 
+            new_paking_charge =  (packing_charge/orginal_qty)*qty 
+            new_label_charge =  (label_charge/orginal_qty)*qty    
+            $('#packing_charge').val(new_paking_charge.toFixed(2)); 
+            $('#label_charge').val(new_label_charge.toFixed(2)); 
+        }); 
+
+        $(document).on('change keyup','.product_manufacture_qty input',function(){
+            calculate()
+        });    
+    });
+
+    </script>
+    {{workorder_ingredient_formset.media}}
+    
+{% endblock %}

@@ -1,0 +1,44 @@
+
+<table id="data-table-basic" class="table table-striped table-vmiddle">
+    <thead>
+        <tr>
+            <th data-column-id="product">Store Item</th>
+            <th data-column-id="qty">Qty</th>
+            <th data-column-id="unit">Unit</th>
+            <th data-column-id="price">Price</th>
+            <th data-column-id="sub_total">Sub Total</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for ingredient in ingredients %}
+    <tr class="return_data">
+        <td class="store_ingredient">
+            <span class="ingredient p-relative">
+                 <input type="text" disabled="disabled" value="{{ingredient.store_item.name}}" class="form-control">
+            </span>
+        </td>
+        <td>
+            <span class="ingredient_qty p-relative">
+                <input type="text" disabled class="form-control" data-value="{{ingredient.qty}}" value="{{ingredient.qty}}" />
+            </span>
+        </td>
+        <td>
+            <span class="ingredient_unit p-relative">
+                <input type="text" disabled class="form-control" value="{{ingredient.unit}}" />
+            </span>
+        </td>
+        <td>
+            <span class="ingredient_price p-relative">
+                <input type="text" disabled class="form-control" value="{{ingredient.amount}}" />
+            </span>
+        </td>
+        <td>
+            <span class="ingredient_subtotal p-relative">
+                <input type="text" disabled class="form-control" value="{{ingredient.subtotal}}" />
+            </span>
+        </td>
+    </tr>
+    {% endfor %}
+    
+    </tbody>
+</table>

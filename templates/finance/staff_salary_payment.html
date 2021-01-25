@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% load users_template_tags %}
+{% block content %}
+	<section id="content">
+        <div class="container">
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{instance.name}}</div>
+    
+                <div class="ah-search">
+                    <form method="get" action="{% url 'finance:transactions' %}">
+                        <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+    
+                        <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+                        <input type="submit" class="hidden" />
+                    </form>
+                </div>
+             </div>
+
+            <div id="c-grid" class="clearfix" data-columns="2">
+                <div class="card bs-item z-depth-5-top">
+                    <div class="card-header">
+                        <h2>Basic Info <small></small></h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="list-group lg-alt c-overflow">
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Staff Salary</div>
+                                    <small class="lgi-text">{{instance.staff_salary|default:"-"}}</small>
+                                </div>
+                            </div>
+                            <div class="list-group-item media">
+                            	<div class="media-body">
+                                    <div class="lgi-heading">Transaction</div>
+                                    <small class="lgi-text">{{instance.transaction.a_id|default:"-"}}</small>
+                                </div>
+							</div>
+
+                             <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Amount</div>
+                                    <small class="lgi-text">{{instance.amount|default:"-"}}</small>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card bs-item z-depth-5-top">
+                    <div class="card-header">
+                        <h2>Created &amp; Updated <small></small></h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="list-group lg-alt c-overflow">
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Date Added</div>
+                                    <small class="lgi-text">{{instance.date_added}}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Date Updated</div>
+                                    <small class="lgi-text">{{instance.date_updated}}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Created User</div>
+                                    <small class="lgi-text"><a href="{% url 'users:view' pk=instance.creator.username %}">{{instance.creator.username|get_user_name}}</a></small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Last Updated User</div>
+                                    <small class="lgi-text"><a href="{% url 'users:view' pk=instance.updator.username %}">{{instance.updator.username|get_user_name}}</a></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+             </div>                
+        </div>
+    </section>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+{% endblock %}

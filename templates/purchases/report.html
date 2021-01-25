@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% load users_template_tags %}
+{% load tz %}
+{% block content %}
+{% load static %}
+	<section id="content">
+        <div class="container">
+            
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+
+
+                <ul class="ah-actions actions a-alt">
+                     <li>
+                        <a title="Filter" class="filter_button" href="">
+                            <i class="zmdi zmdi-filter-list"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a title="Create Sale" href="{% url 'sales:create' %}">
+                            <i class="zmdi zmdi-plus"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a title="Print Sale" target="_blank" href="{% url 'sales:sales_report_print' %}?q={{query|default:""}}&date={{filter_date}}&period={{filter_period}}&from_date={{filter_from_date}}&to_date={{filter_to_date}}">
+                            <i class="zmdi zmdi-print"></i>
+                        </a>
+                    </li>
+                                                  
+                </ul>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div style="background-image: url({% static 'img/preview.jpg' %}); height: 120px;" class="card-header ch-img"></div>
+                        <div class="card-header p-b-15">
+                            <h2>Total Sale Amount</h2>
+                        </div>
+
+                        <div class="card-body card-padding">
+                            <h3 class="c-gray m-0">{{total_sale_amount | default:"0"}}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div style="background-image: url({% static 'img/preview.jpg' %}); height: 120px;" class="card-header ch-img"></div>
+                    <div class="card">
+                        <div class="card-header p-b-15">
+                            <h2>Total Payment Received</h2>
+                        </div>
+
+                        <div class="card-body card-padding">
+                            <h3 class="c-gray m-0">{{total_payment_received | default:"0"}}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div style="background-image: url({% static 'img/preview.jpg' %}); height: 120px;" class="card-header ch-img"></div>
+                    <div class="card">
+                        <div class="card-header p-b-15">
+                            <h2>Balance</h2>
+                        </div>
+
+                        <div class="card-body card-padding">
+                            <h3 class="c-gray m-0">{{total_balance | default:"0"}}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div style="background-image: url({% static 'img/preview.jpg' %}); height: 120px;" class="card-header ch-img"></div>
+                    <div class="card">
+                        <div class="card-header p-b-15">
+                            <h2>New Customers</h2>
+                        </div>
+
+                        <div class="card-body card-padding">
+                            <h3 class="c-gray m-0">{{total_customers_created | default:"0"}}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div style="background-image: url({% static 'img/preview.jpg' %}); height: 120px;" class="card-header ch-img"></div>
+                    <div class="card">
+                        <div class="card-header p-b-15">
+                            <h2>Sales Count</h2>
+                        </div>
+
+                        <div class="card-body card-padding">
+                            <h3 class="c-gray m-0">{{total_sales_created | default:"0"}}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div style="background-image: url({% static 'img/preview.jpg' %}); height: 120px;" class="card-header ch-img"></div>
+                    <div class="card">
+                        <div class="card-header p-b-15">
+                            <h2>Total Profit</h2>
+                        </div>
+
+                        <div class="card-body card-padding">
+                            <h3 class="c-gray m-0">{{total_profit_amount | default:"0"}}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div style="background-image: url({% static 'img/preview.jpg' %}); height: 120px;" class="card-header ch-img"></div>
+                    <div class="card">
+                        <div class="card-header p-b-15">
+                            <h2>Total VAT Amount</h2>
+                        </div>
+
+                        <div class="card-body card-padding">
+                            <h3 class="c-gray m-0">{{total_vat_amount | default:"0"}}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div style="background-image: url({% static 'img/preview.jpg' %}); height: 120px;" class="card-header ch-img"></div>
+                    <div class="card">
+                        <div class="card-header p-b-15">
+                            <h2>Total Discount</h2>
+                        </div>
+
+                        <div class="card-body card-padding">
+                            <h3 class="c-gray m-0">{{total_discount_amount | default:"0"}}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div style="background-image: url({% static 'img/preview.jpg' %}); height: 120px;" class="card-header ch-img"></div>
+                    <div class="card">
+                        <div class="card-header p-b-15">
+                            <h2>Total Special Discount</h2>
+                        </div>
+
+                        <div class="card-body card-padding">
+                            <h3 class="c-gray m-0">{{total_special_discount | default:"0"}}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                              
+        </div>
+    </section>
+{% endblock %}
+
+{% block filter_box %}
+<div class="filter-box">
+     <form method="get" action="{% url 'sales:sales_report' %}">
+        <div class="card">
+            <div class="card-header">
+                <h2>Filter <small></small></h2>
+                <span class="back-button-poupup palette-Cyan bg white btn btn-default btn-icon-text waves-effect"><i class="zmdi zmdi-arrow-back"></i> Back</span>
+            </div>
+            
+            <div class="card-body card-padding">
+                <div class="form-group fg-line">
+                    <label>Query</label>
+                    <input name="q" type="text" class="form-control" placeholder="Enter your query..." />
+                </div>
+                
+                <div class="form-group fg-line">
+                    <label>Period</label>
+                    <select name="period" id="id_period" class="selectpicker">
+                        <option value="">All</option>
+                        <option value="today">Today</option>
+                        <option value="month">Month</option>
+                        <option value="year">Year</option>
+                    </select>
+                </div>
+
+                <div class="form-group fg-line">
+                    <label>Date</label>
+                    <input name="date" type="text" class="form-control date-picker" placeholder="Date" />
+                </div>
+                
+                <div class="form-group fg-line">
+                    <label>Date Period</label>
+                    <div class="row">
+                        <div class="col-md-6 m-b-20">
+                            <input name="from_date" type="text" class="form-control date-picker" placeholder="From Date" />
+                        </div>
+                        <div class="col-md-6">
+                            <input name="to_date" type="text" class="form-control date-picker" placeholder=" To Date" />
+                        </div>
+                    </div>    
+                </div>
+
+                <div>
+                    <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                </div>
+            </div>
+         </div>
+     </form>
+</div>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+    <script src="{% static 'vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script>
+{% endblock %}

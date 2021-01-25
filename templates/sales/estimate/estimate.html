@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% load users_template_tags %}
+{% load tz %}
+{% block content %}
+	<section id="content">
+        <div class="container">
+            <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>
+            
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{instance.customer}} - {{instance.total}}</div>
+
+
+                <ul class="ah-actions actions a-alt">
+                    {% if "is_superuser" or 'can_create_estimate' in user_instance.permissionlist %}
+                    <li>
+                        <a title="Create estimate" target="_blank" href="{% url 'sales:create_estimate' %}">
+                            <i class="zmdi zmdi-plus"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if "is_superuser" or 'can_modify_estimate' in user_instance.permissionlist %}
+                    <li>
+                        <a title="Edit Estimate" target="_blank" href="{% url 'sales:edit_estimate' pk=instance.pk %}">
+                            <i class="zmdi zmdi-edit"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                    <li>
+                        <a title="Email Estimate" href="{% url 'sales:email_estimate' pk=instance.pk %}">
+                            <i class="zmdi zmdi-email"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a title="Print Estimate" target="_blank" href="{% url 'sales:print_estimate' pk=instance.pk %}">
+                            <i class="zmdi zmdi-print"></i>
+                        </a>
+                    </li>                    
+                    {% if "is_superuser" or 'can_delete_estimate' in user_instance.permissionlist %}
+                    <li>
+                        <a title="Delete Estimate" data-id="{{instance.pk}}" data-text="{{confirm_delete_message}}" data-title="Are you sure?" href="{% url 'sales:delete_estimate' pk=instance.pk %}" class="action-button redirect">
+                            <i class="zmdi zmdi-delete"></i>
+                        </a>
+                    </li> 
+                    {% endif %}                               
+                </ul>
+            </div>
+            
+            {% if estimate_items %}
+            <div class="card">
+            	<div class="card-header">
+                    <h2>Items <small></small></h2>
+                </div>
+                <div class="card-body">
+	                <div class="table-responsive">
+	                    <table id="data-table-basic" class="table table-striped table-vmiddle">
+	                        <thead>
+	                            <tr>
+	                                <th>Product</th>
+	                                <th>Qty</th>
+                                    <th>Unit</th>
+	                                <th>Cost</th>
+	                                <th>Price</th>
+	                                <th>Tax (%)</th>
+	                                <th>Discount</th>
+                                    <th>Tax Amount</th>
+                                    <th>Discount Amount</th>
+	                                <th>Subtotal</th>
+	                            </tr>
+	                        </thead>
+	                        <tbody>
+	                        	{% for i in estimate_items %}
+	                            <tr>
+	                                <td>{{i.product}}</td>
+	                                <td>{{i.qty}}</td>
+                                    <td>{{i.unit}}</td>
+	                                <td>{{i.cost}}</td>
+	                                <td>{{i.price}}</td>
+	                                <td>{{i.tax}}</td>
+	                                <td>{{i.discount}}</td>
+                                    <td>{{i.tax_amount}}</td>
+                                    <td>{{i.discount_amount}}</td>
+	                                <td>{{i.subtotal}}</td>
+	                            </tr>
+	                            {% endfor %}
+	                        </tbody>
+	                    </table>
+	                </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div id="c-grid" class="clearfix" data-columns="2">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Basic Info <small></small></h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="list-group lg-alt c-overflow">
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">ID</div>
+                                    <small class="lgi-text">{{instance.a_id}}</small>
+                                </div>
+                            </div>
+
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">GST Type</div>
+                                    <small class="lgi-text">{{instance.get_gst_type_display}}</small>
+                                </div>
+                            </div>
+
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Sale Type</div>
+                                    <small class="lgi-text">{{instance.get_sale_type_display}}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Customer</div>
+                                    <small class="lgi-text"><a href="{% url 'customers:customer' pk=instance.customer.pk %}">{{instance.customer}}</a></small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Time</div>
+                                    <small class="lgi-text">{{instance.time}}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Payment Details <small></small></h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="list-group lg-alt c-overflow">
+                             <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Subtotal</div>
+                                    <small class="lgi-text">{{instance.subtotal}}</small>
+                                </div>
+                            </div>
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Special Discount</div>
+                                    <small class="lgi-text">{{instance.special_discount}}</small>
+                                </div>
+                            </div>
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Total</div>
+                                    <small class="lgi-text">{{instance.total}}</small>
+                                </div>
+                            </div>
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Total Tax Amount</div>
+                                    <small class="lgi-text">{{instance.total_tax_amount}}</small>
+                                </div>
+                            </div>
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Total Discount Amount</div>
+                                    <small class="lgi-text">{{instance.total_discount_amount}}</small>
+                                </div>
+                            </div>                                                      
+                        </div>
+                    </div>
+                </div>                
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Created &amp; Updated <small></small></h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="list-group lg-alt c-overflow">
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Date Added</div>
+                                    <small class="lgi-text">{{instance.date_added|timezone:user_time_zone}}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Date Updated</div>
+                                    <small class="lgi-text">{{instance.date_updated|timezone:user_time_zone}}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Created User</div>
+                                    <small class="lgi-text"><a href="{% url 'users:view' pk=instance.creator.username %}">{{instance.creator.username|get_user_name}}</a></small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Last Updated User</div>
+                                    <small class="lgi-text"><a href="{% url 'users:view' pk=instance.updator.username %}">{{instance.updator.username|get_user_name}}</a></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+             </div>                    
+        </div>
+    </section>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+{% endblock %}

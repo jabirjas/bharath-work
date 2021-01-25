@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<!--[if IE 9 ]><html class="ie9"><![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{{title}} | {{app_title}}</title>
+		{% load static %}
+        <!-- Vendor CSS -->
+
+        <link rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}" />
+
+        <!-- <link href="{% static 'css/style.css' %}" rel="stylesheet"> -->
+
+
+        {% if is_need_chosen_select %}
+        <link href="{% static 'vendors/bower_components/chosen/chosen.min.css' %}" rel="stylesheet">
+        {% endif %}
+        {% if is_need_datetime_picker %}
+        <link href="{% static 'vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet">
+        {% endif %}
+        {% if is_need_popup_box %}
+        <link href="{% static 'vendors/bower_components/bootstrap-sweetalert/lib/sweet-alert.css' %}" rel="stylesheet">
+        {% endif %}
+        {% if is_need_select_picker %}
+        <link href="{% static 'vendors/bower_components/bootstrap-select/dist/css/bootstrap-select.css' %}" rel="stylesheet">
+        {% endif %}
+        {% if is_need_calender %}
+        <link href="{% static 'vendors/bower_components/fullcalendar/dist/fullcalendar.min.css' %}" rel="stylesheet">
+        {% endif %}
+        {% if is_need_animations %}
+        <link href="{% static 'vendors/bower_components/animate.css/animate.min.css' %}" rel="stylesheet">
+        {% endif %}
+        {% if is_need_custom_scroll_bar %}
+        <link href="{% static 'vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css' %}" rel="stylesheet">
+        {% endif %}
+        <link href="{% static 'vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css' %}" rel="stylesheet">
+        <link href="{% static 'vendors/bower_components/google-material-color/dist/palette.css' %}" rel="stylesheet">
+
+        <!-- CSS -->
+        <link href="{% static 'css/app.min.1.css' %}" rel="stylesheet">
+        <link href="{% static 'css/app.min.2.css' %}" rel="stylesheet">
+
+    </head>
+    <body data-ma-header="{{current_theme}}">
+        <header id="header" class="media">
+            <div class="pull-left h-logo">
+                <a href="{% url 'app' %}" class="hidden-xs">
+                    Bharath Expo
+                    <small>The shop assistant</small> 
+                    <!-- <small style="padding-top:20px;font-size: 15px;">{{logged_username}}</small>                    -->
+                </a>
+
+                <div class="menu-collapse" data-ma-action="sidebar-open" data-ma-target="main-menu">
+                    <div class="mc-wrap">
+                        <div class="mcw-line top palette-White bg"></div>
+                        <div class="mcw-line center palette-White bg"></div>
+                        <div class="mcw-line bottom palette-White bg"></div>
+                    </div>
+                </div>
+            </div>
+
+            {% include 'includes/top_menu.html' %}
+
+            {% include 'includes/search.html' %}
+
+        </header>
+
+        <section id="main">
+
+            {% include 'includes/user_alerts.html' %}
+
+            {% include 'includes/menu.html' %}
+
+			{% block content %}
+            <section id="content">
+                <div class="action-header palette-theme {{current_theme}} bg clearfix">
+                    <div class="ah-label palette-White text">{{title}}</div>
+
+                    <ul class="ah-actions actions a-alt">
+
+                        <li>
+                            <a title="Filter" class="filter_button" href="">
+                                <i class="zmdi zmdi-filter-list"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a title="Export Report" href="javascript:void(0);" class="export_to_excel">
+                                <i class="zmdi zmdi-collection-text"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="container">
+                    {% if current_role == "distributor" %}
+                        {% include 'includes/dashboard/distributor_dashboard.html' %}
+                    {% else %}
+                        {% include 'includes/dashboard/report.html' %}
+
+                        {% include 'includes/dashboard/manufacturing_report.html' %}
+                    {% endif %}
+
+                    {% include 'includes/dashboard/recent_sales.html' %}
+                    
+                    <div class="row">
+	                    {% include 'includes/dashboard/recent_customers.html' %}
+                        {% if current_role == "distributor" %}
+                            {% include 'includes/dashboard/distributor_stocks.html' %}
+                        {% else %}
+                            {% include 'includes/dashboard/recent_products.html' %}
+                        {% endif %}
+
+                    </div>
+                </div>
+
+            </section>
+
+            {% endblock %}
+
+            <footer id="footer" class="{{current_theme}}">
+    			<div class="row">
+
+    				<div class="col-sm-3 logo m-b-10">
+    					<a target="_blank" href="http://www.arkboss.com" class="btn logo btn-default waves-effect button-p"><img src="{% static 'img/logo.png' %}" alt="Arkboss Logo" /> Arkboss</a>
+
+                    </div>
+
+    				{% if current_shop %}
+                    <div class="col-sm-3 m-b-10">
+                    	<div class="shop-switcher  card m-b-0">
+                            <select class="selectpicker change_select reload" data-url="{% url 'switch_shop' %}" name="shop_switch">
+			            		{% for access in shop_access %}
+			            			{% ifequal access current_shop %}
+				                		<option selected="selected" value="{{access.pk}}">{{access.name}}</option>
+				                	{% else %}
+				                		<option value="{{access.pk}}">{{access.name}}</option>
+				                	{% endifequal %}
+				                {% endfor %}
+				            </select>
+			            </div>
+                    </div>
+
+                    <div class="col-sm-3 m-b-10">
+                        <div class="theme-switcher card m-b-0">
+                            <select class="selectpicker change_select reload" data-url="{% url 'switch_theme' %}" name="switch_theme">
+                                <option {% if current_theme == "teal" %} selected="selected" {% endif %} value="teal">Teal</option>
+                                <option {% if current_theme == "blue" %} selected="selected" {% endif %} value="blue">Blue</option>
+                                <option {% if current_theme == "bluegrey" %} selected="selected" {% endif %} value="bluegrey">Blue Grey</option>
+                                <option {% if current_theme == "cyan-600" %} selected="selected" {% endif %} value="cyan-600">Cyan</option>
+                                <option {% if current_theme == "green" %} selected="selected" {% endif %} value="green">Green</option>
+                                <option {% if current_theme == "lightgreen" %} selected="selected" {% endif %} value="lightgreen">Light Green</option>
+                                <option {% if current_theme == "purple-400" %} selected="selected" {% endif %} value="purple-400">Purple</option>
+                                <option {% if current_theme == "pink-400" %} selected="selected" {% endif %} value="pink-400">Pink</option>
+                                <option {% if current_theme == "brown" %} selected="selected" {% endif %} value="brown">Brown</option>
+                                <option {% if current_theme == "grey-600" %} selected="selected" {% endif %} value="grey-600">Grey</option>
+                                <option {% if current_theme == "orange" %} selected="selected" {% endif %} value="orange">Orange</option>
+                            </select>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="col-sm-3 logo m-b-10">
+                        <a href="{% url 'download_app' %}" data-text="Are you sure want to download APK ????" data-title="Are you sure?" class="action-button no-response-popup btn download-file btn-default waves-effect button-p"><img src="{% static 'img/android-logo.png' %}" alt="Download Android" /> Download App</a>
+                    </div>
+                </div>
+            </footer>
+        </section>
+
+        {% if is_dashboard %}
+        <div class="filter-box">
+             <form method="get" action="{% url 'report' %}" class="ajax no-popup no-loader run-function-after" data-function="remove-popup-and-bg-update-graph">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Filter <small></small></h2>
+                        <span class="back-button-poupup palette-Cyan bg white btn btn-default btn-icon-text waves-effect"><i class="zmdi zmdi-arrow-back"></i> Back</span>
+                    </div>
+
+                    <div class="card-body card-padding">
+                        <div class="form-group fg-line">
+                            <label>Year</label>
+                            <input name="year" type="text" class="form-control" placeholder="yyyy" />
+                        </div>
+                        <div class="form-group fg-line">
+                            <label>Month</label>
+                            <select name="month" id="id_month" class="selectpicker">
+                                <option value="">All</option>
+                                <option value="1">January</option>
+                                <option value="2">February</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                        <div class="form-group fg-line">
+                            <label>Period</label>
+                            <select name="period" id="id_period" class="selectpicker">
+                                <option value="">All</option>
+                                <option value="today">Today</option>
+                                <option value="month">Month</option>
+                                <option value="year">Year</option>
+                            </select>
+                        </div>
+                        <div class="form-group fg-line">
+                            <label>Date</label>
+                            <input name="date" type="text" class="form-control date-picker" placeholder="Date" />
+                        </div>
+                        <div class="form-group fg-line">
+                            <label>Date Period</label>
+                            <div class="row">
+                                <div class="col-md-6 m-b-20">
+                                    <input name="from_date" type="text" class="form-control date-picker" placeholder="From Date" />
+                                </div>
+                                <div class="col-md-6">
+                                    <input name="to_date" type="text" class="form-control date-picker" placeholder=" To Date" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="m-t-20">
+                            <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                        </div>
+                    </div>
+                 </div>
+             </form>
+        </div>
+        {% endif %}
+        <!-- Page Loader -->
+        <div class="page-loader palette-{{current_theme_loader}} bg">
+            <div class="preloader pl-xl pls-white">
+                <svg class="pl-circular" viewBox="25 25 50 50">
+                    <circle class="plc-path" cx="50" cy="50" r="20"/>
+                </svg>
+            </div>
+        </div>
+
+        {% include 'includes/shortcuts.html' %}
+
+        {% include 'includes/extra/ie.html' %}
+
+        {% include 'includes/extra/js.html' %}
+        
+
+        {% block static %}
+            <script src="{% static 'js/chartJs/Chart.min.js' %}"></script>
+            <script type="text/javascript">
+                $(document).ready(function(){
+                    Report("today");
+
+                    function Report(period){
+                        var url = "{% url 'report' %}?period="+period;
+                        $.ajax({
+                            type : "GET",
+                            url : url,
+                            dataType : 'json',
+                            success : function(data) {
+                                var title = data['title'];
+
+                                var expense_amounts = data['expense_amounts'];
+                                var income_amounts = data['income_amounts'];
+                                var date_list = data['date_list'];
+                                var total_expense = data['total_expense'];
+                                var total_income = data['total_income'];
+                                var total_income = data['total_income'];
+
+                                var total_sales_created = data['total_sales_created'];
+                                var total_sales_amount = data['total_sales_amount'];
+                                var total_other_income = data['total_other_income'];
+                                var total_expense_amount = data['total_expense_amount'];
+                                var total_sale_return_amount = data['total_sale_return_amount'];
+                                var total_return_count = data['total_return_count'];
+                                var this_period_total_expense_amount = data['this_period_total_expense_amount'];
+                                var current_balance = data['current_balance'];
+                                var total_profit_amount = data['total_profit_amount'];
+                                var total_income_amount = data['total_income_amount'];
+                                var total_sales_collected_amount = data['total_sales_collected_amount'];
+                                var total_monthly_balance = data['total_monthly_balance'];
+                                var total_sale_return_cost = data['total_sale_return_cost'];
+
+                                var total_distributor_sale_amount = data['total_distributor_sale_amount'];
+                                var total_distributor_sale_return_amount = data['total_distributor_sale_return_amount'];
+                                var total_distributors = data['total_distributors'];
+                                var total_distributor_cost = data['total_distributor_cost'];
+                                var total_distributor_price = data['total_distributor_price'];
+                                var total_distributor_stock = data['total_distributor_stock'];
+                                var total_distributor_expense = data['total_distributor_expense'];
+                                var total_distributor_income = data['total_distributor_income'];
+                                var total_transfer_amount = data['total_transfer_amount'];
+                                var total_distributor_balance_amount = data['total_distributor_balance_amount'];
+                                var total_bank_amount = data['total_bank_amount'];
+                                var total_cash_amount = data['total_cash_amount'];
+                                var total_distributor_bank_amount = data['total_distributor_bank_amount'];
+                                var total_distributor_cash_amount = data['total_distributor_cash_amount'];
+
+                                var total_monthly_profit_amount = data['total_monthly_profit_amount'];
+                                
+                                var sale_total_balance = data['sale_total_balance'];
+
+                                var product_split_packing_charge = data['product_split_packing_charge'];
+
+                                var final_making_charge_profit_loss = data['final_making_charge_profit_loss'];
+
+                                var total_pending_works = data['total_pending_works'];
+                                var total_completed_works = data['total_completed_works'];
+
+                                var total_making_charge_amount = data['total_making_charge_amount'];
+                                var total_packing_charge_amount = data['total_packing_charge_amount'];
+                                var total_label_charge_amount = data['total_label_charge_amount'];
+                                var total_material_charge_amount = data['total_material_charge_amount'];
+                                var total_work_orders_created = data['total_work_orders_created'];
+                                var work_order_amount = data['work_order_amount'];
+
+                                var total_purchase_amount = data['total_purchase_amount'];
+                                var total_purchase_paid_amount = data['total_purchase_paid_amount'];
+                                var total_purchase_balance_amount = data['total_purchase_balance_amount'];
+                                var total_purchases_count = data['total_purchases_count'];
+
+                                var total_vendors_count = data['total_vendors_count'];
+                                var total_sales_amount_total = data['total_sales_amount_total'];
+
+                                var this_period_checkout_loss_amount = data['this_period_checkout_loss_amount'];
+                                var this_period_checkout_final_profit_loss = data['this_period_checkout_final_profit_loss'];
+                                var this_period_checkout_profit_amount = data['this_period_checkout_profit_amount'];
+
+                                var expense_percentage = data['expense_percentage'];
+                                var income_percentage = data['income_percentage'];
+                                var this_period_total_transfer_amount = data['this_period_total_transfer_amount'];
+                                var full_expense_amount = data['full_expense_amount'];
+
+                                var customer_credit_amount = data['customer_credit_amount'];
+                                var customer_debit_amount = data['customer_debit_amount'];
+                                var customer_credit_percentage = data['customer_credit_percentage'];
+                                var customer_debit_percentage = data['customer_debit_percentage'];
+                                var total_profit_monthly = data['total_profit_monthly']
+                                var sale_total_profit = data['sale_total_profit']
+
+                                var total_vendor_expense = data['total_vendor_expense']
+                                var total_other_expense = data['total_other_expense']
+
+                                $("#id_total_income").html(total_income);
+                                $("#id_total_expense").html(total_expense);
+                                
+                                $("#id_total_monthly_profit_amount").html(total_monthly_profit_amount);
+                                
+                                $("#id_total_sales_created").html(total_sales_created);
+                                $("#id_total_sales_amount").html(total_sales_amount_total);
+                                $("#id_sale_total_balance").html(sale_total_balance);
+                                $("#id_total_sales_amount_top").html(total_sales_amount_total);
+                                $("#id_total_other_income").html(total_other_income);
+                                $("#id_total_expense_amount").html(full_expense_amount);
+                                $("#id_this_period_total_expense_amount").html(this_period_total_expense_amount);
+                                $("#id_total_sale_return_amount").html(total_sale_return_amount);
+                                $("#id_return_count").html(total_return_count);
+                                $("#id_total_sales_collected_amount").html(total_sales_collected_amount);
+                                $("#id_sale_total_profit").html(sale_total_profit);
+                                $("#id_current_balance").html(current_balance);
+                                $("#id_total_profit_amount").html(total_profit_amount);
+                                $("#id_total_income_amount").html(total_income_amount);
+                                $("#id_total_monthly_balance").html(total_monthly_balance);
+
+                                $("#id_total_distributor_sale_amount").html(total_distributor_sale_amount);
+                                $("#id_total_distributor_sale_return_amount").html(total_distributor_sale_return_amount);
+                                $("#id_total_distributors").html(total_distributors);
+                                $("#id_total_distributor_cost").html(total_distributor_cost);
+                                $("#id_total_distributor_price").html(total_distributor_price);
+                                $("#id_total_distributor_stock").html(total_distributor_stock);
+                                $("#id_total_distributor_expense").html(total_distributor_expense);
+                                $("#id_total_distributor_income").html(total_distributor_income);
+                                $("#id_total_transfer_amount").html(total_transfer_amount);
+                                $("#id_total_distributor_balance_amount").html(total_distributor_balance_amount);
+
+                                $("#id_total_pending_works").html(total_pending_works);
+                                $("#id_total_completed_works").html(total_completed_works);
+
+                                $("#id_total_sale_return_cost").html(total_sale_return_cost);
+
+                                $("#id_customer_credit_amount").html(customer_credit_amount);
+                                $("#id_customer_debit_amount").html(customer_debit_amount);
+                                $("#id_customer_debit_progress_bar").css('width',customer_debit_percentage+"%");
+                                $("#id_customer_credit_progress_bar").css('width',customer_credit_percentage+"%");
+
+                                $("#id_product_split_packing_charge").html(product_split_packing_charge);
+
+                                $("#id_this_period_checkout_loss_amount").html(this_period_checkout_loss_amount);
+                                $("#id_this_period_checkout_profit_amount").html(this_period_checkout_profit_amount);
+                                $("#id_this_period_checkout_final_profit_loss").html(this_period_checkout_final_profit_loss);
+
+                                $("#id_total_making_charge_amount").html(total_making_charge_amount);
+                                $("#id_total_packing_charge_amount").html(total_packing_charge_amount);
+                                $("#id_total_label_charge_amount").html(total_label_charge_amount);
+                                $("#id_total_material_charge_amount").html(total_material_charge_amount);
+                                $("#id_total_work_orders_created").html(total_work_orders_created);
+                                $("#id_work_order_amount").html(work_order_amount);
+
+                                $("#id_final_making_charge_profit_loss").html(final_making_charge_profit_loss);
+
+                                $("#id_total_purchase_amount").html(total_purchase_amount);
+                                $("#id_total_purchase_paid_amount").html(total_purchase_paid_amount);
+                                $("#id_total_purchase_balance_amount").html(total_purchase_balance_amount);
+                                $("#id_total_purchases_count").html(total_purchases_count);
+
+                                $("#id_total_vendors_count").html(total_vendors_count);
+                                $("#id_total_profit_monthly").html(total_profit_monthly);                                
+
+                                $("#id_expense_progress_bar").css('width',expense_percentage+"%");
+                                $("#id_income_progress_bar").css('width',income_percentage+"%");
+
+                                $("#id_this_period_total_transfer_amount").html(this_period_total_transfer_amount);
+                                $("#id_this_period_total_expense_amount_total").html(this_period_total_expense_amount);
+
+                                $("#id_total_vendor_expense").html(total_vendor_expense);
+                                $("#id_toatl_monthly_other_expense").html(total_other_expense);
+
+                                var lineData = {
+                                labels: date_list,
+                                datasets: [
+                                    {
+                                        label: "Income",
+                                        backgroundColor: "rgba(26,179,148,0.5)",
+                                        borderColor: "rgba(26,179,148,0.7)",
+                                        pointBackgroundColor: "rgba(26,179,148,1)",
+                                        pointBorderColor: "#fff",
+                                        data: income_amounts
+                                    },
+                                    {
+                                        label: "Expense",
+                                        backgroundColor: "rgba(236,250,6,0.5)",
+                                        borderColor: "rgba(220,220,220,1)",
+                                        pointBackgroundColor: "rgba(220,220,220,1)",
+                                        pointBorderColor: "#fff",
+                                        data: expense_amounts
+                                    }
+                                ]
+                            };
+
+                            var lineOptions = {
+                                responsive: true
+                            };
+
+                            var ctx = document.getElementById("lineChart").getContext("2d");
+                            new Chart(ctx, {type: 'line', data: lineData, options:lineOptions});
+
+                            },
+                            error : function(data){
+                                console.log("Report not loaded");
+                            }
+                        });
+                    }
+                });
+
+
+            </script>
+             
+
+        {% endblock %}
+        <script>
+                !function(i){function t(t){var e=0;return t.children("li").each(function(){e+=i(this).outerWidth(!0)}),e}function e(t){return Math.max.apply(Math,t.children().map(function(){return i(this).width()}).get())}function s(i){var t=i.data("settings")||{direction:"left",speed:50},e=i.children().first(),s=Math.abs(-i.css(t.direction).replace("px","").replace("auto","0")-e.outerWidth(!0)),n=1e3*s/t.speed,r={};return r[t.direction]=i.css(t.direction).replace("px","").replace("auto","0")-s,{css:r,time:n}}function n(i){var t=i.data("settings")||{direction:"left"};i.css("transition-duration","0s").css(t.direction,"0");var e=i.children().first();e.hasClass("webticker-init")?e.remove():i.children().last().after(e)}function r(i,t){var e=i.data("settings")||{direction:"left"};"undefined"==typeof t&&(t=!1),t&&n(i);var a=s(i);i.animate(a.css,a.time,"linear",function(){i.css(e.direction,"0"),r(i,!0)})}function a(i,t){"undefined"==typeof t&&(t=!1),t&&n(i);var e=s(i),r=e.time/1e3;r+="s",i.css(e.css).css("transition-duration",r)}function c(t,e,s){var n=[];i.get(t,function(t){var r=i(t);r.find("item").each(function(){var t=i(this),e={title:t.find("title").text(),link:t.find("link").text()},s='<li><a href="'+e.link+'"">'+e.title+"</a></li>";n+=s}),s.webTicker("update",n,e)})}function l(s,n){if(s.children("li").length<1)return window.console,!1;var r=s.data("settings");r.duplicateLoops=r.duplicateLoops||0,s.width("auto");var a=0;s.children("li").each(function(){a+=i(this).outerWidth(!0)});var c,l=s.find("li:first").height();if(r.duplicate){c=e(s);for(var o=0;a-c<s.parent().width()||1===s.children().length||o<r.duplicateLoops;){var d=s.children().clone();s.append(d),a=0,a=t(s),c=e(s),o++}r.duplicateLoops=o}else{var h=s.parent().width()-a;h+=s.find("li:first").width(),s.find(".ticker-spacer").length>0?s.find(".ticker-spacer").width(h):s.append('<li class="ticker-spacer" style="float: '+r.direction+";width:"+h+"px;height:"+l+'px;"></li>')}r.startEmpty&&n&&s.prepend('<li class="webticker-init" style="float: '+r.direction+";width:"+s.parent().width()+"px;height:"+l+'px;"></li>'),a=0,a=t(s),s.width(a+200);var f=0;for(f=t(s);f>=s.width();)s.width(s.width()+200),f=0,f=t(s);return!0}var o=function(){var i=document.createElement("p").style,t=["ms","O","Moz","Webkit"];if(""===i.transition)return!0;for(;t.length;)if(t.pop()+"Transition"in i)return!0;return!1}(),d={init:function(t){return t=jQuery.extend({speed:50,direction:"left",moving:!0,startEmpty:!0,duplicate:!1,rssurl:!1,hoverpause:!0,rssfrequency:0,updatetype:"reset",transition:"linear",height:"30px",maskleft:"",maskright:"",maskwidth:0},t),this.each(function(){jQuery(this).data("settings",t);var e=jQuery(this),s=e.wrap('<div class="mask"></div>');s.after('<span class="tickeroverlay-left">&nbsp;</span><span class="tickeroverlay-right">&nbsp;</span>');var n,d=e.parent().wrap('<div class="tickercontainer"></div>');if(i(window).resize(function(){clearTimeout(n),n=setTimeout(function(){console.log("window was resized"),l(e,!1)},500)}),e.children("li").css("white-space","nowrap"),e.children("li").css("float",t.direction),e.children("li").css("padding","0 7px"),e.children("li").css("line-height",t.height),s.css("position","relative"),s.css("overflow","hidden"),e.closest(".tickercontainer").css("height",t.height),e.closest(".tickercontainer").css("overflow","hidden"),e.css("float",t.direction),e.css("position","relative"),e.css("font","bold 10px Verdana"),e.css("list-style-type","none"),e.css("margin","0"),e.css("padding","0"),""!==t.maskleft&&""!==t.maskright){var h='url("'+t.maskleft+'")';d.find(".tickeroverlay-left").css("background-image",h),d.find(".tickeroverlay-left").css("display","block"),d.find(".tickeroverlay-left").css("pointer-events","none"),d.find(".tickeroverlay-left").css("position","absolute"),d.find(".tickeroverlay-left").css("z-index","30"),d.find(".tickeroverlay-left").css("height",t.height),d.find(".tickeroverlay-left").css("width",t.maskwidth),d.find(".tickeroverlay-left").css("top","0"),d.find(".tickeroverlay-left").css("left","-2px"),h='url("'+t.maskright+'")',d.find(".tickeroverlay-right").css("background-image",h),d.find(".tickeroverlay-right").css("display","block"),d.find(".tickeroverlay-right").css("pointer-events","none"),d.find(".tickeroverlay-right").css("position","absolute"),d.find(".tickeroverlay-right").css("z-index","30"),d.find(".tickeroverlay-right").css("height",t.height),d.find(".tickeroverlay-right").css("width",t.maskwidth),d.find(".tickeroverlay-right").css("top","0"),d.find(".tickeroverlay-right").css("right","-2px")}else d.find(".tickeroverlay-left").css("display","none"),d.find(".tickeroverlay-right").css("display","none");e.children("li").last().addClass("last");var f=l(e,!0);t.rssurl&&(c(t.rssurl,t.type,e),t.rssfrequency>0&&window.setInterval(function(){c(t.rssurl,t.type,e)},1e3*t.rssfrequency*60)),o?(e.css("transition-timing-function",t.transition),e.css("transition-duration","0s").css(t.direction,"0"),f&&a(e,!1),e.on("transitionend webkitTransitionEnd oTransitionEnd otransitionend",function(t){return!!e.is(t.target)&&void a(i(this),!0)})):f&&r(i(this)),t.hoverpause&&e.hover(function(){if(o){var e=i(this).css(t.direction);i(this).css("transition-duration","0s").css(t.direction,e)}else jQuery(this).stop()},function(){jQuery(this).data("settings").moving&&(o?a(i(this),!1):r(e))})})},stop:function(){var t=i(this).data("settings");if(t.moving)return t.moving=!1,this.each(function(){if(o){var e=i(this).css(t.direction);i(this).css("transition-duration","0s").css(t.direction,e)}else i(this).stop()})},cont:function(){var t=i(this).data("settings");if(!t.moving)return t.moving=!0,this.each(function(){o?a(i(this),!1):r(i(this))})},transition:function(t){var e=i(this);o&&e.css("transition-timing-function",t)},update:function(e,s,n,r){s=s||"reset","undefined"==typeof n&&(n=!0),"undefined"==typeof r&&(r=!1),"string"==typeof e&&(e=i(e));var a=i(this);a.webTicker("stop");var c=i(this).data("settings");if("reset"===s)a.html(e),l(a,!0);else if("swap"===s){var o,d,h,f;if(window.console,a.children("li").length<1)a.html(e),a.css(c.direction,"0"),l(a,!0);else if(c.duplicate===!0){a.children("li").addClass("old");for(var p=e.length-1;p>=0;p--)o=i(e[p]).data("update"),d=a.find('[data-update="'+o+'"]'),d.length<1?n&&(0===a.find(".ticker-spacer:first-child").length&&a.find(".ticker-spacer").length>0?a.children("li.ticker-spacer").before(e[p]):(h=i(e[p]),p===e.length-1&&h.addClass("last"),a.find("last").after(h),a.find("last").removeClass("last"))):a.find('[data-update="'+o+'"]').replaceWith(e[p]);a.children("li.webticker-init, li.ticker-spacer").removeClass("old"),r&&a.children("li").remove(".old"),f=0,f=t(a),a.width(f+200),a.find("li.webticker-init").length<1&&(c.startEmpty=!1),a.html(e),a.children("li").css("white-space","nowrap"),a.children("li").css("float",c.direction),a.children("li").css("padding","0 7px"),a.children("li").css("line-height",c.height),l(a,!0)}else{a.children("li").addClass("old");for(var u=0;u<e.length;u++)o=i(e[u]).data("update"),d=a.find('[data-update="'+o+'"]'),d.length<1?n&&(0===a.find(".ticker-spacer:first-child").length&&a.find(".ticker-spacer").length>0?a.children("li.ticker-spacer").before(e[u]):(h=i(e[u]),u===e.length-1&&h.addClass("last"),a.find(".old.last").after(h),a.find(".old.last").removeClass("last"))):a.find('[data-update="'+o+'"]').replaceWith(e[u]);a.children("li.webticker-init, li.ticker-spacer").removeClass("old"),a.children("li").css("white-space","nowrap"),a.children("li").css("float",c.direction),a.children("li").css("padding","0 7px"),a.children("li").css("line-height",c.height),r&&a.children("li").remove(".old"),f=0,f=t(a),a.width(f+200)}}a.webTicker("cont")}};i.fn.webTicker=function(t){return d[t]?d[t].apply(this,Array.prototype.slice.call(arguments,1)):"object"!=typeof t&&t?void i.error("Method "+t+" does not exist on jQuery.webTicker"):d.init.apply(this,arguments)}}(jQuery);
+
+            $(document).ready(function(){
+                $('#webTicker').webTicker();
+            });
+        </script>
+		{% block filter_box %} {% endblock %}
+
+		{% include 'includes/extra/shortcuts.html' %}
+
+		{% include "users/user_timezone_set.html" %}
+
+		{% include "includes/extra/check_notifications.html" %}
+
+		<input type="hidden" value="{{user.username}}" id="username"/>
+        <input type="hidden" value="{{block_auto_redirect|yesno:'yes,no'}}" id="auto_redirect"/>
+
+    </body>
+  </html>

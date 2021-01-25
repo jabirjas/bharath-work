@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+{% block content %}
+    <section id="content">
+        <div class="container">
+            <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>
+            
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text"></div>
+
+                <div class="ah-search">
+                    <form method="get" action="{% url 'tasks:anniversaries' %}">
+                        <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+    
+                        <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+                        <input type="submit" class="hidden" />
+                    </form>
+                </div>
+
+                <ul class="ah-actions actions a-alt">
+                    <li>
+                        <a title="Search" data-ma-action="ah-search-open" class="ah-search-trigger" href="">
+                            <i class="zmdi zmdi-search"></i>
+                        </a>
+                    </li>
+                    {% if instance %}
+
+                        <li>
+                            <a title="Create leave" href="">
+                                <i class="zmdi zmdi-plus"></i>
+                            </a>
+                        </li>
+                        
+                        
+                        <li>
+                            <a title="View leave" href="">
+                                <i class="zmdi zmdi-eye"></i>
+                            </a>
+                        </li>
+
+                        {% if is_superuser or 'can_delete_anniversary' in user_instance.permissionlist %}
+                        <li>
+                            <a title="Delete Anniversary" data-id="{{instance.pk}}" data-text="{{confirm_delete_message}}" data-title="Are you sure?" href="{% url 'tasks:delete_anniversary' pk=instance.pk %}" class="action-button redirect">
+                                <i class="zmdi zmdi-delete"></i>
+                            </a>
+                        </li> 
+                        {% endif %} 
+                    {% endif %} 
+                    
+
+                </ul>
+            </div>
+            
+            <form class="ajax reset {% if redirect %}redirect{% endif %}" method="post" action="{{url}}">
+                {% csrf_token %}
+                <div id="c-grid" class="clearfix" data-columns="2">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Basics <small></small></h2>
+                    </div>
+                    <div class="card-body card-padding">
+
+
+                        <div class="form-group fg-line">
+                            <label for="{{ form.title.id_for_label }}">
+                                {{ form.title.label }}
+                                {% if form.title.field.required %}
+                                    <small class="star">*</small>
+                                {% endif %}
+                                
+                                {% if form.title.help_text %}
+                                    <span data-original-title="Field Info" title="" data-content="{{ form.title.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                {% endif %}
+                            </label>
+                            {{ form.title }}
+                            
+                            {% if form.title.errors %}
+                                <label class="error">{{ form.title.errors.as_text }}</label>
+                            {% endif %}
+                        </div> 
+                        
+                        <div class="form-group fg-line">
+                            <label for="{{ form.shop.id_for_label }}">
+                                {{ form.shop.label }}
+                                {% if form.shop.field.required %}
+                                    <small class="star">*</small>
+                                {% endif %}
+                                
+                                {% if form.shop.help_text %}
+                                    <span data-original-title="Field Info" title="" data-content="{{ form.shop.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                {% endif %}
+                            </label>
+                            {{ form.shop }}
+                            
+                            {% if form.shop.errors %}
+                                <label class="error">{{ form.shop.errors.as_text }}</label>
+                            {% endif %}
+                        </div>
+                        <div class="form-group fg-line">
+                            <label for="{{ form.date.id_for_label }}">
+                                {{ form.date.label }}
+                                {% if form.date.field.required %}
+                                    <small class="star">*</small>
+                                {% endif %}
+                                
+                                {% if form.date.help_text %}
+                                    <span data-original-title="Field Info" title="" data-content="{{ form.date.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                {% endif %}
+                            </label>
+                            {% if is_create_page %}
+                                <input id="{{ form.date.id_for_label }}" type="text" class="required form-control date-picker"  name="{{form.date.html_name}}" placeholder="Enter start date" value="{% now "d/m/Y" %}">
+                            {% else %}
+                                <input id="{{ form.date.id_for_label }}" type="text" class="required form-control date-picker"  name="{{form.date.html_name}}" placeholder="Enter start date" value="{{ form.date.value|date:'m/d/Y' }}">
+                            {% endif %}
+                            
+                            {% if form.date.errors %}
+                                <label class="error">{{ form.date.errors.as_text }}</label>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group fg-line">
+                            <label for="{{ form.note.id_for_label }}">
+                                {{ form.note.label }}
+                                {% if form.note.field.required %}
+                                    <small class="star">*</small>
+                                {% endif %}
+                                
+                                {% if form.note.help_text %}
+                                    <span data-original-title="Field Info" title="" data-content="{{ form.note.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                {% endif %}
+                            </label>
+                            {{ form.note }}
+                            
+                            {% if form.note.errors %}
+                                <label class="error">{{ form.note.errors.as_text }}</label>
+                            {% endif %}
+                        </div>
+
+                    </div> 
+                </div>
+                </div>
+
+                <div class="m-t-20">
+                    <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                </div> 
+            </form>  
+            
+        </div>
+    </section>
+{% endblock %}
+
+{% block static %}
+    {% load static %}
+{% endblock %}

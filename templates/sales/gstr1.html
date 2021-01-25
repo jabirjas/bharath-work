@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	{% load static %}
+	{% load main_template_tags %}
+	<meta charset="UTF-8">
+	<title>{{title}} | {{app_title}}</title>
+	<link rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}" />
+</head>
+<body>
+	<div class="print_container">
+
+		<table class="content">
+			<tr>
+				<th>GSTIN/UIN</th>
+				<th class="first">
+					<table>
+						<tr>
+							<td colspan="6">Invoice</td>
+						</tr>
+						<tr>
+							<td>NO</td>
+							<td>Date</td>
+							<td>Value</td>
+							<td>Goods/ <br>Services</td>
+							<td>HSN/ <br> SAC</td>
+							<td>Taxable <br> value</td>
+						</tr>
+					</table>
+				</th>
+				<th class="tax_values">
+					<table>
+						<tr>
+							<td colspan="2">SGST</td>
+							<td colspan="2">CGST</td>
+							<td colspan="2">IGST</td>
+						</tr>
+					</table>
+				</th>
+			</tr>
+			{% for instance in instances %}
+				<tr>
+					<td>{{current_shop.gstin}}</td>
+
+					<td class="last">
+						<table>
+							<tr colspan="6">
+								<td>{{instance.invoice_id}}</td>
+								<td>{{instance.time.date|date:"d/m/y"}}</td>
+								<td>{{instance.total}}</td>
+								<td>{{instance.product_list}}</td>
+								<td>{{instance.hsn_list}}</td>
+								<td>{{instance.total_taxable_amount}}</td>
+							</tr>
+						</table>
+					</td>
+					<td class="tax_values">
+						<table>
+							<tr colspan="6">
+								{% if instance.gst_type == "sgst" %}       
+			                        <td>{{instance.total_tax_amount|default:0|tax_devide}}</td>
+			                        <td>{{instance.total_tax_amount|default:0|tax_devide}}</td>
+			                        <td>0</td>
+			                    {% elif instance.gst_type == "igst" %}
+			                        <td>{{instance.total_tax_amount}}</td>
+			                        <td>0.00</td>
+			                        <td>0.00</td>
+			                    {% endif %}
+							</tr>
+						</table>
+					</td>
+				</tr>
+			{% endfor %}
+		</table>
+	</div>
+	
+	<style>
+		body {
+			margin: 0;
+			font-family: Helvetica,Courier, Arial, sans-serif;
+			background: #f5f5f5;
+		}
+		.print_container {
+			width: 210mm;
+			margin: 0 auto;
+			background: #fff;
+		}
+		table {  
+		    border-collapse: collapse;
+		}
+		th, td {
+		    padding: 0;
+		}
+		table {
+			width: 100%;
+		}
+		h5, h6, h4 {
+			margin: 0;
+		}
+		.header.top {
+			background: #0A0A3C;
+			font-size: 13pt;
+			text-transform: uppercase;
+			color: #fff;
+		}
+		.header.top td:nth-child(1){
+			text-align: left;
+		}
+		.header.top td {
+			text-align: center;
+			padding: 10px;
+		}
+		.header.top td.small {
+			width: 120px;
+		}
+		.header.top td:nth-child(3) {
+			border-left: 2px solid rgba(255,255,255,.5);
+			border-right: 2px solid rgba(255,255,255,.5);
+			width: 
+		}
+		.header.top td:last-child{
+			text-align: right;
+		}
+		.address tr td {
+			border-bottom: 1px solid #0A0A3C;
+		}
+		.address h2 {
+			font-size: 13pt;
+			margin: 0;
+			margin-bottom: 10px;
+			margin-top: 20px;
+		}
+		.address h3 {
+			font-size: 12pt;
+			color: #9E9E9E;
+			font-weight: normal;
+			margin-top: 0;
+		}
+		.address .user_details td {
+			border-bottom: none;
+		}
+		.address .user_details td:first-child p {
+			max-width: 250px;
+		}
+		.address p {
+			font-size: 11pt;
+		}
+		.address td:nth-child(2) {
+			width: 250px;
+		}
+		.spotlight td:first-child {
+			text-align: right;
+			padding-right: 20px;
+		}
+		.spotlight td:nth-child(2) {
+			width: 150px;
+			border-left: 2px solid #9E9E9E;
+			border-right: 2px solid #9E9E9E;
+			text-align: center;
+		}
+		.spotlight td:last-child {
+			text-align: left;
+			padding-left: 20px;
+		}
+		.spotlight {
+			table-layout: fixed;
+		}
+		.spotlight td:first-child, .spotlight td:last-child, {
+			width: 40%;
+		}
+		.spotlight h5 {
+			margin-bottom: 5px;
+		}
+		.spotlight h6 {
+			font-weight: normal;
+		}
+		.content {
+			margin-top: 20px;
+		}
+		.content td, .content th{
+			border: 1px solid #f5f5f5;
+			font-size: 9pt;
+			font-weight: normal;
+			text-align: center;
+			padding: 5px 0;
+		}
+		.content .first table {
+			table-layout: fixed;
+		}
+		th.tax_values td {
+			border: none !important;
+			border-right : 1px solid #9E9E9E !important;
+			height: 100%;
+		}
+		.content .first td, .content .second td{
+			padding:5px;
+			margin: 0
+		}
+		.content .last td, .content .last td{
+			border-top:none;
+			border-bottom: none;
+		}
+		.content .last table, .content .last table{
+			table-layout: fixed;
+		}
+		.content .tax_values{
+			table-layout: fixed;
+			width: 180px;
+		}
+		.bottom {
+			margin-top: 20px;
+		}
+		.bottom td:nth-child(2) {
+			width: 250px;
+		}
+		.bottom td:nth-child(3) {
+			width: 250px;
+		}
+		.bottom h4 {
+			font-weight: normal;
+			font-size: 11pt;
+			margin-bottom: 10px;
+		}
+		.bottom h5 {
+			font-weight: normal;
+			font-size: 10pt;
+			margin-bottom: 10px;
+		}
+		.bottom table.value {
+			table-layout: fixed;
+		}
+		.bottom table.value td {
+			border: 1px solid #9E9E9E;
+			text-align: center;
+			padding : 5px 0;
+		}
+		.bottom table.value td:nth-child(2) {
+			width: auto;
+		}
+		.footer {
+			table-layout: fixed;
+			border-top: 1px solid #9E9E9E;
+			border-bottom: 1px solid #9E9E9E;
+			margin-top: 20px;
+		}
+		.footer td {
+			width: 35%;
+		}
+		.footer td:nth-child(2) {
+			text-align: center;
+		}
+		.footer td:last-child {
+			width: 30%;
+		}
+		.footer h3{
+			margin-top: 20px;
+			font-weight: 500;
+		}
+		.footer p {
+			font-size: 10pt;
+		}
+	</style>
+</body>
+</html>

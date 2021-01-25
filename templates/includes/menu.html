@@ -1,0 +1,752 @@
+{% load static %}
+<aside id="s-main-menu" class="sidebar">
+    <div class="smm-header">
+        <i class="zmdi zmdi-long-arrow-left" data-ma-action="sidebar-close"></i>
+    </div>
+
+    <ul class="smm-alerts">
+        <li data-user-alert="sua-messages" data-ma-action="sidebar-open" data-ma-target="user-alerts">
+            <i class="zmdi zmdi-email"></i>
+        </li>
+        <li class="p-relative" data-user-alert="sua-notifications" data-ma-action="sidebar-open" data-ma-target="user-alerts">
+            <i class="zmdi zmdi-notifications"></i>
+            <span class="notification-count palette-Red-500 bg">0</span>
+        </li>
+        <li data-user-alert="sua-tasks" data-ma-action="sidebar-open" data-ma-target="user-alerts">
+            <i class="zmdi zmdi-view-list-alt"></i>
+        </li>
+    </ul>
+
+    <ul class="main-menu">
+        <li class="active">
+            <a href="{% url 'app' %}"><i class="zmdi zmdi-home"></i> Dashboard</a>
+        </li>
+        {% if not current_role == "distributor" %}
+            {% if is_superuser or 'can_manage_product' in user_instance.permissionlist %}
+                <li class="sub-menu {% if active_parent == 'product_module_open' %}active{% endif %}">
+                    <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-view-comfy"></i> Products</a>
+                    <ul>
+                        <!-- <li class="{% if active_menu == 'batch_open' %}active{% endif %} m-b-5">
+                            {% if is_superuser or 'can_view_batch' in user_instance.permissionlist %}
+                                <a class="pull-left p-r-0" title="Batches" href="{% url 'products:batches' %}?active=batch_open&active_parent=product_module_open">Batches</a>
+                            {% endif %}
+                            {% if is_superuser or 'can_create_batch' in user_instance.permissionlist %}
+                                <a title="Create Product" href="{% url 'products:create_batch' %}?active=batch_open&active_parent=product_module_open">
+                                <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                                </a>
+                            {% endif %}
+                            <div class="clearfix"></div>
+                        </li> -->
+                        <li class="{% if active_menu == 'product_open' %}active{% endif %} m-b-5">
+                            {% if is_superuser or 'can_view_product' in user_instance.permissionlist %}
+                                <a class="pull-left p-r-0" title="Products" href="{% url 'products:products' %}?active=product_open&active_parent=product_module_open">Products</a>
+                            {% endif %}
+                            {% if is_superuser or 'can_create_product' in user_instance.permissionlist %}
+                                <a title="Create Product" href="{% url 'products:create' %}?active=product_open&active_parent=product_module_open">
+                                <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                                </a>
+                            {% endif %}
+                            <div class="clearfix"></div>
+                        </li>
+                        <li class="{% if active_menu == 'measurement_open' %}active{% endif %} m-b-5">
+                            {% if is_superuser or 'can_view_measurement' in user_instance.permissionlist %}
+                                <a class="pull-left p-r-0" title="Measurements" href="{% url 'products:units' %}?active=measurement_open&active_parent=product_module_open">Measurements</a>
+                            {% endif %}
+                            {% if is_superuser or 'can_create_measurement' in user_instance.permissionlist %}
+                                <a title="Create Measurement" href="{% url 'products:create_unit' %}?active=measurement_open&active_parent=product_module_open">
+                                <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                                </a>
+                            {% endif %}
+                            <div class="clearfix"></div>
+                        </li>
+                        <li class="{% if active_menu == 'alternative_unit_open' %}active{% endif %} m-b-5">
+                            {% if is_superuser or 'can_view_alternative_unit' in user_instance.permissionlist %}
+                                <a class="pull-left p-r-0" title="Alternative Units" href="{% url 'products:alternative_units' %}?active=alternative_unit_open&active_parent=product_module_open">Product Alternative Units</a>
+                            {% endif %}
+                            {% if is_superuser or 'can_create_alternative_unit' in user_instance.permissionlist %}
+                                <a title="Create Alternative Unit" href="{% url 'products:create_alternative_unit' %}?active=alternative_unit_open&active_parent=product_module_open">
+                                <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                                </a>
+                            {% endif %}
+                            <div class="clearfix"></div>
+                        </li>
+                        <li class="{% if active_menu == 'purchase_open' %}active{% endif %}">
+                            {% if is_superuser or 'can_view_purchase' in user_instance.permissionlist %}
+                            <a class="pull-left p-r-0" title="Purchase" href="{% url 'purchases:purchases' %}?active=purchase_open&active_parent=product_module_open">Purchases</a>
+                            {% endif %}
+                            {% if is_superuser or 'can_create_purchase' in user_instance.permissionlist %}
+                            <a title="Create Purchase" href="{% url 'purchases:create_purchase' %}?active=purchase_open&active_parent=product_module_open">
+                                <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                            </a>
+                            {% endif %}
+                            <div class="clearfix"></div>
+                        </li>
+                        <li class="{% if active_menu == 'barcode_open' %}active{% endif %} m-b-5">
+                            {% if is_superuser or 'can_view_product' in user_instance.permissionlist %}
+                                <a class="pull-left p-r-0" title="Create Barcode" href="{% url 'products:create_barcode' %}?active=barcode_open&active_parent=product_module_open">Create Barcode</a>
+                            {% endif %}
+                            <div class="clearfix"></div>
+                        </li>
+                        <!--
+                        <li class="{% if active_menu == 'invoice_open' %}active{% endif %}">
+                            {% if is_superuser or 'can_view_purchase_invoice' in user_instance.permissionlist %}
+                            <a class="pull-left p-r-0" title="Purchase Invoice" href="{% url 'purchases:invoices' %}?active=invoice_open&active_parent=product_module_open">Purchase Invoices</a>
+                            {% endif %}
+                            {% if is_superuser or 'can_create_purchase_invoice' in user_instance.permissionlist %}
+                            <a title="Create Purchase Invoice" href="{% url 'purchases:create_invoice' %}?active=invoice_open&active_parent=product_module_open">
+                                <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                            </a>
+                            {% endif %}
+                            <div class="clearfix"></div>
+                        </li>
+                        <li class="{% if active_menu == 'asset_purchase_open' %}active{% endif %}">
+                            {% if is_superuser or 'can_view_asset_purchase' in user_instance.permissionlist %}
+                            <a class="pull-left p-r-0" title="Asset Purchase" href="{% url 'purchases:asset_purchases' %}?active=asset_purchase_open&active_parent=product_module_open">Asset Purchases</a>
+                            {% endif %}
+                            {% if is_superuser or 'can_create_asset_purchase' in user_instance.permissionlist %}
+                            <a title="Create Asset Purchase" href="{% url 'purchases:create_asset_purchase' %}?active=asset_purchase_open&active_parent=product_module_open">
+                                <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                            </a>
+                            {% endif %}
+                            <div class="clearfix"></div>
+                        </li> 
+                        {% if is_superuser or 'can_view_product' in user_instance.permissionlist %}
+                            <li><a href="{% url 'products:upload_product_list' %}">Upload Product List</a></li>
+                        {% endif %}-->
+                    </ul>
+                </li>
+            {% endif %}
+
+            {% if is_superuser or 'can_manage_inventory' in user_instance.permissionlist %}
+                <li class="sub-menu {% if active_parent == 'inventory_module_open' %}active{% endif %}">
+                    <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-shopping-basket"></i>Inventory</a>
+                    <ul>                      
+                        <li class="{% if active_menu == 'inventory_adjustment_open' %}active{% endif %} m-b-5">
+                            {% if is_superuser or 'can_create_inventory' in user_instance.permissionlist %}
+                                <a class="pull-left p-r-0" title="Inventory" href="{% url 'products:inventory_adjustments' %}?active=inventory_adjustment_open&active_parent=inventory_module_open">Admin Inventory</a>
+                            {% endif %}
+                            {% if is_superuser or 'can_create_inventory' in user_instance.permissionlist %}
+                                <a title="Create Inventory Adjustment" href="{% url 'products:create_inventory_adjustment' %}?active=inventory_adjustment_open&active_parent=inventory_module_open">
+                                <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                                </a>
+                            {% endif %}
+                            <div class="clearfix"></div>
+                        </li>  
+                        <li class="{% if active_menu == 'dis_inventory_adjustment_open' %}active{% endif %} m-b-5">
+                            {% if is_superuser or 'can_create_inventory' in user_instance.permissionlist %}
+                                <a class="pull-left p-r-0" title="Inventory" href="{% url 'products:inventory_adjustments' %}?distributor=True&active=dis_inventory_adjustment_open&active_parent=inventory_module_open">Sales Man Inventory</a>
+                            {% endif %}
+                            {% if is_superuser or 'can_create_inventory' in user_instance.permissionlist %}
+                                <a title="Create Inventory Adjustment" href="{% url 'products:create_inventory' %}?active=dis_inventory_adjustment_open&active_parent=inventory_module_open">
+                                <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                                </a>
+                            {% endif %}
+                            <div class="clearfix"></div>
+                        </li>  
+                    </ul>
+                </li>
+            {% endif %} 
+            {% if is_superuser or 'can_manage_report' in user_instance.permissionlist %}
+            <li class="sub-menu {% if active_parent == 'report_module_open' %}active{% endif %}">
+                <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-chart"></i> Reports</a>
+                <ul>
+                    {% if is_superuser or 'sale_report' in user_instance.permissionlist %}
+                    <li class="{% if active_menu == 'create_sale_report_open' %}active{% endif %} m-b-5">
+                        <a class="p-r-0" title="Create GST Report" href="{% url 'reports:create_sale_report' %}?active=gstr1_open&active_parent=report_module_open">GST Report</a>
+                    </li>
+                    {% endif %}
+                    {% if is_superuser or 'monthly_report' in user_instance.permissionlist %}
+                    <li class="{% if active_menu == 'create_daily_report_open' %}active{% endif %} m-b-5">
+                        <a class="p-r-0" title="Create Detailed GST Report" href="{% url 'reports:create_monthly_report' %}?active=create_daily_report_open&active_parent=report_module_open">Detailed GST Report</a>
+                    </li>
+                    {% endif %}
+                    {% if is_superuser or 'distributor_report' in user_instance.permissionlist %}
+                    <li class="{% if active_menu == 'create_distributor_report_open' %}active{% endif %} m-b-5">
+                        <a class="p-r-0" title="Create Sales Man Report" href="{% url 'reports:create_distributor_report' %}?active=create_distributor_report_open&active_parent=report_module_open">Sales Man Daily Report</a>
+                    </li>
+                    {% endif %}<!-- 
+                    {% if is_superuser or 'manufacture_report' in user_instance.permissionlist %}
+                    <li class="{% if active_menu == 'create_manufacture_report_open' %}active{% endif %} m-b-5">
+                        <a class="p-r-0" title="Create Distributor Report" href="{% url 'reports:create_manufacture_report' %}?active=create_manufacture_report_open&active_parent=report_module_open">Manufacture Report</a>
+                    </li>
+                    {% endif %} -->
+                    {% if is_superuser or 'collect_amount_report' in user_instance.permissionlist %}
+                    <li class="{% if active_menu == 'create_collect_amount_report_open' %}active{% endif %} m-b-5">
+                        <a class="p-r-0" title="Create Sales Man Report" href="{% url 'reports:create_collect_amount_report' %}?active=create_collect_amount_report_open&active_parent=report_module_open">Collect Amount Report</a>
+                    </li>
+                    {% endif %}
+                    {% if is_superuser or 'performance_report' in user_instance.permissionlist %}
+                    <li class="{% if active_menu == 'performance_report_open' %}active{% endif %} m-b-5">
+                        <a class="p-r-0" title="Create Performance Report" href="{% url 'reports:create_performance_report' %}?active=performance_report_open&active_parent=report_module_open">Performance Report</a>
+                    </li>
+                    {% endif %}
+                    {% if is_superuser or 'customer_report' in user_instance.permissionlist %}
+                    <li class="{% if active_menu == 'customer_report_open' %}active{% endif %} m-b-5">
+                        <a class="p-r-0" title="Create Customer Report" href="{% url 'reports:create_customer_report' %}?active=customer_report_open&active_parent=report_module_open">Customer Report</a>
+                    </li>
+                    {% endif %}
+                    {% if is_superuser or 'return_report' in user_instance.permissionlist %}
+                    <li class="{% if active_menu == 'return_report_open' %}active{% endif %} m-b-5">
+                        <a class="p-r-0" title="Create Return Report" href="{% url 'reports:create_return_report' %}?active=return_report_open&active_parent=report_module_open">Return Report</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </li>
+            {% endif %}
+
+            {% if is_superuser or 'can_manage_vendor' in user_instance.permissionlist %}
+            <li class="sub-menu {% if active_parent == 'vendor_module_open' %}active{% endif %}">
+                <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-account-box-phone"></i>Vendors</a>
+                <ul>
+                    <li class="{% if active_menu == 'vendor_open' %}active{% endif %} m-b-5">
+                        {% if is_superuser or 'can_view_vendor' in user_instance.permissionlist %}
+                        <a class="pull-left p-r-0" title="Vendors" href="{% url 'vendors:vendors' %}?active=vendor_open&active_parent=vendor_module_open">Vendors</a>
+                        {% endif %}
+                       {% if is_superuser or 'can_create_vendor' in user_instance.permissionlist %}
+                        <a title="Create Vendor" href="{% url 'vendors:create_vendor' %}?active=vendor_open&active_parent=vendor_module_open">
+                            <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                        </a>
+                        {% endif %}
+                        <div class="clearfix"></div>
+                    </li>
+                    <!-- <li class="{% if active_menu == 'paid_open' %}active{% endif %} m-b-5">
+                        {% if is_superuser or 'can_view_paid' in user_instance.permissionlist %}
+                        <a class="pull-left p-r-0" title="Paid Amounts" href="{% url 'purchases:paids'%}?active=paid_open&active_parent=vendor_module_open">Paid Amounts</a>
+                        {% endif %}
+                       {% if is_superuser or 'can_create_paid' in user_instance.permissionlist %}
+                        <a title="Create Paid Amount" href="{% url 'purchases:create_paid' %}?active=paid_open&active_parent=vendor_module_open">
+                            <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                        </a>
+                        {% endif %}
+                        <div class="clearfix"></div>
+                    </li> -->
+                </ul>
+            </li>
+            {% endif %}
+
+            {% if is_superuser or 'can_manage_sale' in user_instance.permissionlist %}
+                <li class="sub-menu {% if active_parent == 'sale_module_open' %}active{% endif %}">
+                    <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-view-list"></i> Sales</a>
+                    <ul>
+                        <li class="{% if active_menu == 'sale_dashboard_open' %}active{% endif %}">
+                            {% if is_superuser or 'can_view_sale' in user_instance.permissionlist %}
+                                <a title="Sales" href="{% url 'sales:dashboard' %}?active=sale_dashboard_open&active_parent=sale_module_open">Dashboard</a>
+                            {% endif %}
+                        </li>
+                        
+                        <li class="{% if active_menu == 'sale_open' %}active{% endif %}">
+                            <a class="pull-left p-r-0" title="Sales" href="{% url 'sales:sales' %}?active=sale_open&active_parent=sale_module_open">Sales</a>
+                            {% if is_superuser or 'can_create_sale' in user_instance.permissionlist %}
+
+                            <a title="Create Sale" target="_blank" href="{% url 'sales:create' %}?active=sale_open&active_parent=sale_module_open">
+                                <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                                </a>
+                            {% endif %}
+                            <div class="clearfix"></div>
+                        </li>
+                       
+                        <li class="{% if active_menu == 'estimate_open' %}active{% endif %}">
+                            {% if is_superuser or 'can_view_estimate' in user_instance.permissionlist %}
+                                <a class="pull-left p-r-0" title="Estimates" href="{% url 'sales:estimates' %}?active=estimate_open&active_parent=sale_module_open">Estimates</a>
+                            {% endif %}
+                            {% if is_superuser or 'can_create_estimate' in user_instance.permissionlist %}
+
+                            <a title="Create Estimate" target="_blank" href="{% url 'sales:create_estimate' %}?active=estimate_open&active_parent=sale_module_open">
+                                <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                                </a>
+                            {% endif %}
+                            <div class="clearfix"></div>
+                        </li>
+                        
+                       <!--  <li class="{% if active_menu == 'stock_report_open' %}active{% endif %}">
+                            {% if is_superuser or 'can_view_stock_report' in user_instance.permissionlist %}
+                                <a title="Sales" href="{% url 'sales:stock_report' %}?active=stock_report_open&active_parent=sale_module_open">Stock Movement</a>
+                            {% endif %}
+                        </li> -->
+                    </ul>
+                </li>
+            {% endif %}
+           <!--  {% if is_superuser or 'can_manage_salesman' in user_instance.permissionlist %}
+                <li class="sub-menu {% if active_parent == 'salesman_module_open' %}active{% endif %}">
+                    <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-run"></i> Sales Man</a>
+                    <ul>
+                        <li class="{% if active_menu == 'purchase_request_open' %}active{% endif %}">
+                            {% if is_superuser or 'can_view_purchase_request' in user_instance.permissionlist %}
+                                <a class="pull-left p-r-0" title="Purchase Request" href="{% url 'sales:purchase_requests' %}?active=purchase_request_open&active_parent=salesman_module_open">Purchase Request</a>
+                            {% endif %}                        
+                            <div class="clearfix"></div>
+                        </li>
+                        <li class="{% if active_menu == 'collect_open' %}active{% endif %} m-b-5">
+                            {% if is_superuser or 'can_view_collect_amount' in user_instance.permissionlist %}
+                                 <a class="pull-left p-r-0" title="Collect Amounts" href="{% url 'sales:collect_amounts' %}?active=collect_open&active_parent=salesman_module_open">Collected Amounts</a> 
+                            {% endif %}
+                            {% if is_superuser or 'can_create_collect_amount' in user_instance.permissionlist %}
+                             <a title="Create collect " href="{% url 'sales:create_collect_amount' %}?active=customers_open&active_parent=customer_module_open">
+                                <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                                </a> 
+                            {% endif %}
+                            <div class="clearfix"></div>
+                        </li>
+                        <li class="{% if active_menu == 'cheque_open' %}active{% endif %} m-b-5">
+                            {% if is_superuser or 'can_view_transaction' in user_instance.permissionlist %}
+                                <a class="pull-left p-r-0" title="Cheque Lists" href="{% url 'sales:cheque_lists' %}?active=cheque_open&active_parent=salesman_module_open">Cheque Lists</a>
+                            {% endif %}
+                        <div class="clearfix"></div>
+                        </li>
+                        <li class="{% if active_menu == 'return_request_open' %}active{% endif %} m-b-5">
+                                <a class="pull-left p-r-0" title="Cheque Lists" href="{% url 'sales:purchase_request_returns' %}?active=return_request_open&active_parent=salesman_module_open">Return Requests</a>
+                        <div class="clearfix"></div>
+                        </li>                           
+                    </ul>
+                </li>
+            {% endif %} -->
+
+            {% if is_superuser or 'can_manage_sale' in user_instance.permissionlist %}
+                <li class="sub-menu {% if active_parent == 'return_module_open' %}active{% endif %}">
+                    <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-arrow-missed"></i>Returns</a>
+                    <ul>                    
+                        <li class="{% if active_menu == 'sale_return_open' %}active{% endif %} m-b-5">
+                            {% if is_superuser or 'can_view_sale_return' in user_instance.permissionlist %}
+                            <a class="pull-left p-r-0" title="Sale Returns" href="{% url 'sales:sale_returns' %}?active=sale_return_open&active_parent=return_module_open">Sale Returns</a>
+                            {% endif %}
+                            <div class="clearfix"></div>
+                        </li>
+                        <li class="{% if active_menu == 'product_return_open' %}active{% endif %} m-b-5">
+                            {% if is_superuser or 'can_view_sale_return' in user_instance.permissionlist %}
+                                <a class="pull-left p-r-0" title="Product Returns" href="{% url 'sales:product_returns' %}?active=product_return_open&active_parent=return_module_open">Product Returns</a>
+                            {% endif %}
+                            {% if is_superuser or 'can_view_sale_return' in user_instance.permissionlist %}
+                                <a title="Create Product Return" href="{% url 'sales:create_product_return' %}?active=product_return_open&active_parent=return_module_open">
+                                    <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                                </a>
+                            {% endif %}
+                            <div class="clearfix"></div>
+                        </li>
+                        <li class="{% if active_menu == 'vendor_return_open' %}active{% endif %} m-b-5">
+                            {% if is_superuser or 'can_view_vendor_return' in user_instance.permissionlist %}
+                                <a class="pull-left p-r-0" title="Vendor Returns" href="{% url 'sales:vendor_returns' %}?active=vendor_return_open&active_parent=return_module_open">Vendor Returns</a>
+                            {% endif %}
+                            {% if is_superuser or 'can_view_vendor_return' in user_instance.permissionlist %}
+                                <a title="Create Vendor Return" href="{% url 'sales:create_vendor_return' %}?active=vendor_return_open&active_parent=return_module_open">
+                                    <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                                </a>
+                            {% endif %}
+                            <div class="clearfix"></div>
+                        </li>
+                    </ul>
+                </li>
+            {% endif %}
+
+            {% if is_superuser or 'can_manage_customer' in user_instance.permissionlist %}
+            <li class="sub-menu {% if active_parent == 'customer_module_open' %}active{% endif %}">
+                <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-accounts-alt"></i>Customers</a>
+                <ul>
+                    <li class="{% if active_menu == 'customer_create_open' %}active{% endif %} m-b-5">
+                        {% if is_superuser or 'can_view_customer' in user_instance.permissionlist %}
+                            <a class="pull-left p-r-0" title="Customers" href="{% url 'customers:customers' %}?active=customer_create_open&active_parent=customer_module_open">Customers</a>
+                        {% endif %}
+                       {% if is_superuser or 'can_create_customer' in user_instance.permissionlist %}
+                            <a title="Create customer " href="{% url 'customers:create' %}?active=customers_open&active_parent=customer_module_open">
+                            <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                            </a>
+                        {% endif %}
+                        <div class="clearfix"></div>
+                    </li>
+                    <li class="{% if active_menu == 'collect_open' %}active{% endif %} m-b-5">
+                            {% if is_superuser or 'can_view_collect_amount' in user_instance.permissionlist %}
+                                <a class="pull-left p-r-0" title="Collect Amounts" href="{% url 'sales:collect_amounts' %}?active=collect_open&active_parent=customer_module_open">Collected Amounts</a>
+                            {% endif %}
+                            <div class="clearfix"></div>
+                        </li>
+                    <li class="{% if active_menu == 'customer_payment_open' %}active{% endif %} m-b-5">
+                        {% if is_superuser or 'can_view_customer_payment_amount' in user_instance.permissionlist %}
+                        <a class="pull-left p-r-0" title="Customer payment" href="{% url 'sales:customer_payments' %}?active=customer_payment_open&active_parent=customer_module_open">Customer Payments</a>
+                        {% endif %}
+                        <div class="clearfix"></div>
+                    </li>
+                </ul>
+            </li>
+            {% endif %}
+             {% if is_superuser or 'can_manage_staff' in user_instance.permissionlist %}
+                <li class="sub-menu {% if active_parent == 'staff_module_open' %}active{% endif %}">
+                    <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-account-o"></i> Staffs</a>
+                    <ul>
+                        <li class="{% if active_menu == 'designation_open' %}active{% endif %} m-b-5">
+                            {% if is_superuser or 'can_view_designation' in user_instance.permissionlist %}
+                                <a class="pull-left p-r-0" title="Staffs" href="{% url 'staffs:designations' %}?active=designation_open&active_parent=staff_module_open">Designations</a>
+                            {% endif %}
+                            {% if is_superuser or 'can_create_designation' in user_instance.permissionlist %}
+                                <a title="Create Designation" href="{% url 'staffs:create_designation' %}?active=designation_open&active_parent=staff_module_open">
+                                <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                                </a>
+                            {% endif %}
+                            <div class="clearfix"></div>
+                        </li>
+                        <li class="{% if active_menu == 'staff_open' %}active{% endif %} m-b-5">
+                            {% if is_superuser or 'can_view_staff' in user_instance.permissionlist %}
+                                <a class="pull-left p-r-0" title="Staffs" href="{% url 'staffs:staffs' %}?active=staff_open&active_parent=staff_module_open">Staffs</a>
+                            {% endif %}
+                            {% if is_superuser or 'can_create_staff' in user_instance.permissionlist %}
+                                <a title="Create Staff" href="{% url 'staffs:create_staff' %}?active=staff_open&active_parent=staff_module_open">
+                                <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                                </a>
+                            {% endif %}
+                            <div class="clearfix"></div>
+                        </li>
+                        <li class="{% if active_menu == 'finance_open' %}active{% endif %}">
+                            {% if is_superuser or 'can_create_staff_payment' in user_instance.permissionlist %}
+                            <a class="pull-left p-r-0"  href="{% url 'staffs:staff_salaries' %}?active=finance_open&active_parent=staff_module_open">Staff Salary</a>
+                            {% endif %}
+                            {% if is_superuser or 'can_create_staff_payment' in user_instance.permissionlist %}
+                            <a title="Create Staff Payment" href="{% url 'staffs:create_staff_salary' %}?active=finance_open&active_parent=staff_module_open">
+                                <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                            </a>
+                            {% endif %}
+                            <div class="clearfix"></div>
+                        </li>
+                        <li class="{% if active_menu == 'tasks_open' %}active{% endif %}">
+                            {% if is_superuser or 'can_view_task' in user_instance.permissionlist %}
+                            <a class="pull-left p-r-0" title="Asset Purchase" href="{% url 'tasks:tasks' %}?active=tasks_open&active_parent=staff_module_open">Tasks</a>
+                            {% endif %}
+                            {% if is_superuser or 'can_create_task' in user_instance.permissionlist %}
+                            <a title="Create Task" href="{% url 'tasks:create_task' %}?active=tasks_open&active_parent=staff_module_open">
+                                <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                            </a>
+                            {% endif %}
+                            <div class="clearfix"></div>
+                        </li>
+
+                        <li class= "{% if active_menu == 'users_open' %}active{% endif %}">
+                            {% if is_superuser or 'can_view_user' in user_instance.permissionlist %}
+                            <a class="pull-left p-r-0" title="Users" href="{% url 'users:users' %}?active=users_open&active_parent=staff_module_open"">Users</a>
+                            {% endif %}
+                            <div class="clearfix"></div>
+                        </li>
+
+                        <li class= "{% if active_menu == 'user_activity_open' %}active{% endif %}">
+                            {% if is_superuser %}
+                            <a class="pull-left p-r-0" title="User Activities" href="{% url 'users:user_activities' %}?active=user_activity_open&active_parent=staff_module_open">User Activities</a>
+                            {% endif %}  
+                            <div class="clearfix"></div>
+                        </li>
+
+                    </ul>
+                </li>
+            {% endif %}
+            {% if is_superuser or 'can_manage_distributor' in user_instance.permissionlist %}
+            <li class="sub-menu {% if active_parent == 'distributor_module_open' %}active{% endif %}">
+                <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-local-shipping"></i>Sales Man</a>
+                <ul>
+                    <li class="{% if active_menu == 'distributor_create_open' %}active{% endif %} m-b-5">
+                        {% if is_superuser or 'can_view_distributor' in user_instance.permissionlist %}
+                            <a class="pull-left p-r-0" title="Sales Man" href="{% url 'distributors:distributors' %}?active=distributor_create_open&active_parent=distributor_module_open">Sales Man</a>
+                        {% endif %}
+                       {% if is_superuser or 'can_create_distributor' in user_instance.permissionlist %}
+                            <a title="Create sales man " href="{% url 'distributors:create' %}?active=distributors_open&active_parent=distributor_module_open">
+                            <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                            </a>
+                        {% endif %}
+                        <div class="clearfix"></div>
+                    </li>
+                    <li class="{% if active_menu == 'distributor_stock_open' %}active{% endif %} m-b-5">
+                        {% if is_superuser or 'can_view_distributor' in user_instance.permissionlist %}
+                            <a class="p-r-0" title="Sales Man Stocks" href="{% url 'distributors:distributor_stocks' %}?active=distributor_stock_open&active_parent=distributor_module_open">Sales Man Stocks</a>
+                        {% endif %}
+                    </li>
+                    <li class="{% if active_menu == 'stock_transfer_create_open' %}active{% endif %} m-b-5">
+                        {% if is_superuser or 'can_view_stock_transfer' in user_instance.permissionlist %}
+                            <a class="pull-left p-r-0" title="Stock Transfers" href="{% url 'distributors:stock_transfers' %}?active=stock_transfer_create_open&active_parent=stock_transfer_module_open">Stock Transfers</a>
+                        {% endif %}
+                       {% if is_superuser or 'can_create_stock_transfer' in user_instance.permissionlist %}
+                            <a title="Create stock transfer" href="{% url 'distributors:create_stock_transfer' %}?active=stock_transfers_open&active_parent=stock_transfer_module_open">
+                            <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                            </a>
+                        {% endif %}
+                        <div class="clearfix"></div>
+                    </li>
+
+                    <li class="{% if active_menu == 'distributor_stock_transfer_create_open' %}active{% endif %} m-b-5">
+                        {% if is_superuser or 'can_view_distributor_stock_transfer' in user_instance.permissionlist %}
+                            <a class="pull-left p-r-0" title="Stock Transfers" href="{% url 'distributors:distributor_stock_transfers' %}?active=distributor_stock_transfer_create_open&active_parent=distributor_stock_transfer_module_open">Sales Man Transfers</a>
+                        {% endif %}
+                       {% if is_superuser or 'can_create_distributor_stock_transfer' in user_instance.permissionlist %}
+                            <a title="Create sales man transfer" href="{% url 'distributors:create_distributor_stock_transfer' %}?active=distributor_stock_transfers_open&active_parent=distributor_stock_transfer_module_open">
+                            <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                            </a>
+                        {% endif %}
+                        <div class="clearfix"></div>
+                    </li>
+                    <li class="{% if active_menu == 'direct_stock_transfer_create_open' %}active{% endif %} m-b-5">
+                            <a class="pull-left p-r-0" title="Stock Transfers" href="{% url 'distributors:direct_stock_transfers' %}?active=direct_stock_transfer_create_open&active_parent=distributor_module_open">Stock Return</a>
+                            <a title="Create distributor transfer" href="{% url 'distributors:create_direct_stock_transfer' %}?active=direct_stock_transfers_open&active_parent=distributor_module_open">
+                            <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                            </a>
+                        <div class="clearfix"></div>
+                    </li>
+                </ul>
+            </li>
+            {% endif %}
+
+            {% if is_superuser or 'can_manage_finance' in user_instance.permissionlist %}
+                <li class="sub-menu {% if active_parent == 'finance_module_open' %}active{% endif %}">
+                    <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-money"></i>Finance</a>
+                    <ul>
+
+                        <li class="{% if active_menu == 'bank_open' %}active{% endif %} m-b-5">
+                            {% if is_superuser or 'can_view_bank_account' in user_instance.permissionlist %}
+                            <a class="pull-left p-r-0" title="Bank Accounts" href="{% url 'finance:bank_accounts' %}?active=bank_open&active_parent=finance_module_open">Bank Accounts</a>
+                            {% endif %}
+                            {% if is_superuser or 'can_create_bank_account' in user_instance.permissionlist %}
+                            <a title="Create Bank Account" href="{% url 'finance:create_bank_account' %}?active=bank_open&active_parent=finance_module_open">
+                                <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                            </a>
+                            {% endif %}
+                            <div class="clearfix"></div>
+                        </li>
+                        <li class="{% if active_menu == 'cash_open' %}active{% endif %} m-b-5">
+                            {% if is_superuser or 'can_view_cash_account' in user_instance.permissionlist %}
+                            <a class="pull-left p-r-0" title="Cash Accounts" href="{% url 'finance:cash_accounts' %}?active=cash_open&active_parent=finance_module_open">Cash Accounts</a>
+                            {% endif %}
+                            {% if is_superuser or 'can_create_cash_account' in user_instance.permissionlist %}
+                            <a title="Create Cash Account" href="{% url 'finance:create_cash_account' %}?active=cash_open&active_parent=finance_module_open">
+                                <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                            </a>
+                            {% endif %}
+                            <div class="clearfix"></div>
+                        </li>
+                        <li class="{% if active_menu == 'transaction_category_open' %}active{% endif %} m-b-5">
+                            {% if is_superuser or 'can_view_transaction_category' in user_instance.permissionlist %}
+                            <a class="pull-left p-r-0" title="Transaction Categories" href="{% url 'finance:transaction_categories' %}?active=transaction_category_open&active_parent=finance_module_open">Transaction Categories</a>
+                            {% endif %}
+                            {% if is_superuser or 'can_create_transaction_category' in user_instance.permissionlist %}
+                            <a title="Create Transaction Categories" href="{% url 'finance:create_transaction_category' %}?active=transaction_category_open&active_parent=finance_module_open">
+                                <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                            </a>
+                            {% endif %}
+                            <div class="clearfix"></div>
+                        </li>
+                        <li class="{% if active_menu == 'tax_category_open' %}active{% endif %} m-b-5">
+                            {% if is_superuser or 'can_view_tax_category' in user_instance.permissionlist %}
+                            <a class="pull-left p-r-0" title="Tax Categories" href="{% url 'finance:tax_categories' %}?active=tax_category_open&active_parent=finance_module_open">Tax Categories</a>
+                            {% endif %}
+                            {% if is_superuser or 'can_create_tax_category' in user_instance.permissionlist %}
+                            <a title="Create Tax Categories" href="{% url 'finance:create_tax_category' %}?active=tax_category_open&active_parent=finance_module_open">
+                                <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                            </a>
+                            {% endif %}
+                            <div class="clearfix"></div>
+                        </li>
+                        <!-- <li class="{% if active_menu == 'income_open' %}active{% endif %} m-b-5">
+                            {% if is_superuser or 'can_create_income' in user_instance.permissionlist %}
+                            <a class="pull-left p-r-0" title="Create Income" href="{% url 'finance:create_income' %}?active=income_open&active_parent=finance_module_open">Create Income</a>
+                            {% endif %}
+                            {% if is_superuser or 'can_create_income' in user_instance.permissionlist %}
+                            <a title="Create Income" href="{% url 'finance:create_income' %}?active=income_open&active_parent=finance_module_open">
+                                <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                            </a>
+                            {% endif %}
+                            <div class="clearfix"></div>
+                        </li> -->
+                        <li class="{% if active_menu == 'expense_open' %}active{% endif %} m-b-5">
+                            {% if is_superuser or 'can_create_expense' in user_instance.permissionlist %}
+                            <a class="pull-left p-r-0" title="Create Expense" href="{% url 'finance:create_expense' %}?active=expense_open&active_parent=finance_module_open">Create Expense</a>
+                            {% endif %}
+                            {% if is_superuser or 'can_create_expense' in user_instance.permissionlist %}
+                            <a title="Create Expense" href="{% url 'finance:create_expense' %}?active=expense_open&active_parent=finance_module_open">
+                                <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                            </a>
+                            {% endif %}
+                            <div class="clearfix"></div>
+                        </li>
+                        <li class="{% if active_menu == 'transaction_open' %}active{% endif %} m-b-5">
+                            {% if is_superuser or 'can_view_transaction' in user_instance.permissionlist %}
+                            <a class="pull-left p-r-0" title="Create Expense" href="{% url 'finance:transactions' %}?active=transaction_open&active_parent=finance_module_open">Transactions</a>
+                            {% endif %}
+                            <div class="clearfix"></div>
+                        </li>
+
+                        <li class="{% if active_menu == 'expense_open' %}active{% endif %} m-b-5">
+                            <a class="pull-left p-r-0" title="Create Cash Transfer" href="{% url 'finance:cash_transfers' %}?active=expense_open&active_parent=finance_module_open">Cash Transfers</a>
+                            <a title="Create Cash Transfer" href="{% url 'finance:create_cash_transfer' %}?active=expense_open&active_parent=finance_module_open">
+                                <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                            </a>
+                            <div class="clearfix"></div>
+                        </li>
+                        <li class="{% if active_menu == 'balance_sheet_open' %}active{% endif %} m-b-5">
+                            <a class="pull-left p-r-0" title="Create Balance Sheet" href="{% url 'finance:create_balance_sheet' %}?active=balance_sheet_open&active_parent=finance_module_open">Balance Sheet</a>
+                            <a title="Balance Sheet" href="{% url 'finance:balance_sheet' %}?active=balance_sheet_open&active_parent=finance_module_open">
+                                <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                            </a>
+                            <div class="clearfix"></div>
+                        </li>
+                    </ul>
+                </li>
+            {% endif %}
+           
+            {% if is_superuser or 'can_create_shop' in user_instance.permissionlist %}
+            <li><a href="{% url 'users:settings' %}"><i class="zmdi zmdi-settings"></i> Settings</a></li>
+            {% endif %}
+        {% else %}
+            <li class="sub-menu {% if active_parent == 'customer_module_open' %}active{% endif %}">
+                <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-accounts-alt"></i>Customers</a>
+                <ul>
+                    <li class="{% if active_menu == 'customer_create_open' %}active{% endif %} m-b-5">
+                            <a class="pull-left p-r-0" title="Customers" href="{% url 'customers:customers' %}?active=customer_create_open&active_parent=customer_module_open">Customers</a>
+                            <a title="Create customers " href="{% url 'customers:create' %}?active=customers_open&active_parent=customer_module_open">
+                            <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                            </a>
+                        <div class="clearfix"></div>
+                    </li>
+                    <li class="{% if active_menu == 'collect_open' %}active{% endif %} m-b-5">
+                            <a class="pull-left p-r-0" title="Collect Amounts" href="{% url 'sales:collect_amounts' %}?active=collect_open&active_parent=customer_module_open">Collected Amounts</a>
+                             <a title="Create collect " href="{% url 'sales:create_collect_amount' %}?active=customers_open&active_parent=customer_module_open">
+                            <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                            </a>
+                        <div class="clearfix"></div>
+                    </li>
+                    <li class="{% if active_menu == 'customer_payment_open' %}active{% endif %} m-b-5">
+                        <a class="pull-left p-r-0" title="Customer payment" href="{% url 'sales:customer_payments' %}?active=customer_payment_open&active_parent=customer_module_open">Customer Payments</a>
+                        <a title="Create pay " href="{% url 'sales:create_customer_payment' %}?active=customers_open&active_parent=customer_module_open">
+                            <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                        </a>
+                        <div class="clearfix"></div>
+                    </li>
+                </ul>
+            </li>
+            {% if not salesman %}
+            <li class="sub-menu {% if active_parent == 'distributor_module_open' %}active{% endif %}">
+                <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-view-comfy"></i> Products</a>
+                <ul>
+                    <li class="{% if active_menu == 'distributor_create_open' %}active{% endif %} m-b-5">
+                        <a class="p-r-0" title="Sales Man Stocks" href="{% url 'distributors:distributor_stocks' %}?active=distributor_stock_open&active_parent=distributor_module_open">Sales Man Stocks</a>
+                    </li>                    
+                </ul>
+            </li>
+            {% endif %}
+            <li class="sub-menu {% if active_parent == 'sale_module_open' %}active{% endif %}">
+                <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-view-list"></i> Sales</a>
+                <ul>
+                    <li class="{% if active_menu == 'sale_open' %}active{% endif %}">
+                        <a class="pull-left p-r-0" title="Sales" href="{% url 'sales:sales' %}?active=sale_open&active_parent=sale_module_open">Sales</a>
+                        {% if not salesman %}
+                        <a title="Create Sale" target="_blank" href="{% url 'sales:create' %}?active=sale_open&active_parent=sale_module_open">
+                            <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                            </a>
+                        {% endif %}
+                        <div class="clearfix"></div>
+                    </li>
+                    <li class="{% if active_menu == 'estimate_open' %}active{% endif %}">
+                        <a class="pull-left p-r-0" title="Estimates" href="{% url 'sales:estimates' %}?active=estimate_open&active_parent=sale_module_open">Estimates</a>
+
+                        <a title="Create Estimate" target="_blank" href="{% url 'sales:create_estimate' %}?active=estimate_open&active_parent=sale_module_open">
+                            <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                            </a>
+                        <div class="clearfix"></div>
+                    </li>
+                    {% if not salesman %}
+                    <li class="{% if active_menu == 'purchase_request_open' %}active{% endif %}">
+                            <a class="pull-left p-r-0" title="Purchase Request" href="{% url 'sales:purchase_requests' %}?active=purchase_request_open&active_parent=salesman_module_open">Purchase Request</a>
+
+                        <a title="Create Purchase Request" target="_blank" href="{% url 'sales:create_purchase_request' %}?active=purchase_request_open&active_parent=salesman_module_open">
+                            <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                            </a>
+                        <div class="clearfix"></div>
+                    </li>                      
+                    {% endif %}
+                </ul>
+            </li>
+            {% if salesman %}
+            <li class="sub-menu {% if active_parent == 'salesman_module_open' %}active{% endif %}">
+                <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-run"></i> Sales Man</a>
+                <ul>
+                    <li class="{% if active_menu == 'purchase_request_open' %}active{% endif %}">
+                            <a class="pull-left p-r-0" title="Purchase Request" href="{% url 'sales:purchase_requests' %}?active=purchase_request_open&active_parent=salesman_module_open">Purchase Request</a>
+
+                        <a title="Create Purchase Request" target="_blank" href="{% url 'sales:create_purchase_request' %}?active=purchase_request_open&active_parent=salesman_module_open">
+                            <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                            </a>
+                        <div class="clearfix"></div>
+                    </li>
+                    <li class="{% if active_menu == 'collect_open' %}active{% endif %} m-b-5">
+                            <a class="pull-left p-r-0" title="Collect Amounts" href="{% url 'sales:collect_amounts' %}?active=collect_open&active_parent=salesman_module_open">Collected Amounts</a>
+                        <a title="Create collect " href="{% url 'sales:create_collect_amount' %}?active=customers_open&active_parent=customer_module_open">
+                            <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                            </a>
+                        <div class="clearfix"></div>
+                    </li>
+                    <li class="{% if active_menu == 'cheque_open' %}active{% endif %} m-b-5">
+                            <a class="pull-left p-r-0" title="Cheque Lists" href="{% url 'sales:cheque_lists' %}?active=cheque_open&active_parent=salesman_module_open">Cheque Lists</a>
+                        <div class="clearfix"></div>
+                    </li> 
+                    <li class="{% if active_menu == 'return_request_open' %}active{% endif %} m-b-5">
+                            <a class="pull-left p-r-0" title="Cheque Lists" href="{% url 'sales:purchase_request_returns' %}?active=return_request_open&active_parent=salesman_module_open">Return Requests</a>
+                    <div class="clearfix"></div>
+                    </li>                    
+                </ul>
+            </li>
+            {% endif %}
+            <li class="sub-menu {% if active_parent == 'report_module_open' %}active{% endif %}">
+            <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-chart"></i> Reports</a>
+            <ul>                
+                <li class="{% if active_menu == 'create_daily_report_open' %}active{% endif %} m-b-5">
+                    <a class="p-r-0" title="Create Day Report" href="{% url 'reports:create_daily_report' %}?active=create_daily_report_open&active_parent=report_module_open">Create Daily Report</a>
+                </li>  
+                <!-- <li class="{% if active_menu == 'create_collect_amount_report_open' %}active{% endif %} m-b-5">
+                    <a class="p-r-0" title="Create Collect Amount Report" href="{% url 'reports:create_collect_amount_report' %}?active=create_collect_amount_report_open&active_parent=report_module_open">Collect Amount Report</a>
+                </li>   -->            
+            </ul>
+        </li>
+            <li class="sub-menu {% if active_parent == 'return_module_open' %}active{% endif %}">
+                <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-arrow-missed"></i> Returns</a>
+                <ul>
+                    <!-- <li class="{% if active_menu == 'direct_return_open' %}active{% endif %} m-b-5">
+                        <a class="pull-left p-r-0" title="Sale Returns" href="{% url 'sales:return_sales' %}?active=direct_return_open&active_parent=return_module_open">Direct Returns</a>
+                        <div class="clearfix"></div>
+                    </li> -->
+                   
+                    <li class="{% if active_menu == 'damaged_products_open' %}active{% endif %} m-b-5">
+                        <a class="pull-left p-r-0" title="Damaged Products" href="{% url 'sales:damaged_products' %}?active=damaged_products_open&active_parent=return_module_open">Damaged Products</a>
+                        <a title="Create damaged product" href="{% url 'sales:create_damaged_product' %}?active=sale_return_open&active_parent=return_module_open">
+                            <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                        </a>
+                        <div class="clearfix"></div>
+                    </li>
+                </ul>
+            </li>
+            <li class="sub-menu {% if active_parent == 'finance_module_open' %}active{% endif %}">
+                <a href="" data-ma-action="submenu-toggle"><i class="zmdi zmdi-money"></i>Finance</a>
+                <ul>
+                    <li class="{% if active_menu == 'transaction_category_open' %}active{% endif %} m-b-5">
+                        <a class="pull-left p-r-0" title="Transaction Categories" href="{% url 'finance:transaction_categories' %}?active=transaction_category_open&active_parent=finance_module_open">Transaction Categories</a>
+                        <a title="Create Transaction Categories" href="{% url 'finance:create_transaction_category' %}?active=transaction_category_open&active_parent=finance_module_open">
+                            <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                        </a>
+                        <div class="clearfix"></div>
+                    </li>
+                    <li class="{% if active_menu == 'cash_open' %}active{% endif %} m-b-5">
+                        <a class="pull-left p-r-0" title="Cash Accounts" href="{% url 'finance:cash_accounts' %}?active=cash_open&active_parent=finance_module_open">Cash Accounts</a>
+                        <div class="clearfix"></div>
+                    </li>
+                   <!--  <li class="{% if active_menu == 'income_open' %}active{% endif %} m-b-5">
+                        <a class="pull-left p-r-0" title="Create Income" href="{% url 'finance:create_income' %}?active=income_open&active_parent=finance_module_open">Create Income</a>
+                        <a title="Create Income" href="{% url 'finance:create_income' %}?active=income_open&active_parent=finance_module_open">
+                            <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                        </a>
+                        <div class="clearfix"></div>
+                    </li> -->
+                    <li class="{% if active_menu == 'expense_open' %}active{% endif %} m-b-5">
+                        <a class="pull-left p-r-0" title="Create Expense" href="{% url 'finance:create_expense' %}?active=expense_open&active_parent=finance_module_open">Create Expense</a>
+                        <a title="Create Expense" href="{% url 'finance:create_expense' %}?active=expense_open&active_parent=finance_module_open">
+                            <span class="pull-right glyphicon glyphicon-plus-sign"></span>
+                        </a>
+                        <div class="clearfix"></div>
+                    </li>
+                    <li class="{% if active_menu == 'transaction_open' %}active{% endif %} m-b-5">
+                        <a class="pull-left p-r-0" title="Transaction" href="{% url 'finance:transactions' %}?active=transaction_open&active_parent=finance_module_open">Transactions</a>
+                        <div class="clearfix"></div>
+                    </li>
+                </ul>
+            </li>
+        {% endif %}
+    </ul>
+</aside>

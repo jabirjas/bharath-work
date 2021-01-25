@@ -1,0 +1,389 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load tz %}
+
+{% block content %}
+    <section id="content">
+        <div class="container">
+           <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+
+                <div class="ah-search">
+                    <form method="get" action="">
+                        <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+
+                        <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+                        <input type="submit" class="hidden" />
+                    </form>
+                </div>
+            </div>
+            <form class="ajax reset {% if redirect %}redirect{% endif %} skip_empty_row" method="post" action="{{url}}">
+                {% csrf_token %}
+                <div class="card">
+                    <div class="card-body card-padding">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group fg-line m-b-0">
+                                    <label for="{{ form.time.id_for_label }}">
+                                        {{ form.time.label }}
+                                        {% if form.time.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+
+                                        {% if form.time.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.time.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+
+                                    {% timezone user_time_zone %}
+                                        <input id="{{ form.time.id_for_label }}" type="text" class="required form-control date-time-picker"  name="{{form.time.html_name}}" placeholder="Enter time" value="{% now "m-d-Y H:i:s" %}">
+                                    {% endtimezone %}
+
+
+                                    {% if form.time.errors %}
+                                        <label class="error">{{ form.time.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group fg-line m-b-0">
+                                    <label for="{{ form.distributor.id_for_label }}">
+                                        {{ form.distributor.label }}
+                                        {% if form.distributor.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+
+                                        {% if form.distributor.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.distributor.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+                                    {{ form.distributor }}
+
+                                    {% if form.distributor.errors %}
+                                        <label class="error">{{ form.distributor.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+                            </div>                            
+                            <div class="col-md-3">
+                                <div class="form-group fg-line m-b-0">
+                                    <label>Total</label>
+                                    <input type="text" value="0.00" id="id_total" disabled="disabled" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class=item_head >Items <small></small></h2>
+                    </div>
+
+                    <div class="table-responsive card-body card-padding add_item_container direct_stock_transfer_item_formset">
+                        <table id="data-table-basic" class="table table-striped table-vmiddle">
+                            <thead>
+                                <tr>
+                                    <th data-column-id="product">Product</th>
+                                    <th data-column-id="qty">Unit</th>
+                                    <th data-column-id="qty">Qty</th>
+                                    <th data-column-id="stock">Stock</th>
+                                    <th data-column-id="price">Price</th>
+                                    <th data-column-id="subtotal">Subtotal</th>
+                                    <th class="one"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for form in direct_stock_transfer_item_formset.forms %}
+                                <tr class="form_set_row">
+                                    <td style="width:30%;">
+                                        {{ form.id }}
+                                        <span class="distributor_stock_transfer p-relative">
+                                            {{ form.product }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="distributor_stock_transfer_unit p-relative">
+                                            {{ form.unit }}
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <span class="distributor_stock_transfer_qty check_empty p-relative">
+                                            {{ form.qty }}
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <span class="product_stock p-relative">
+                                            <input type="text" value="0" disabled="disabled" class="form-control">
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <span class="distributor_stock_transfer_price check_empty p-relative">
+                                            <input type="text" value="0.00" disabled="disabled" class="form-control">
+                                        </span>
+                                    </td>
+
+
+                                    <td>
+                                        <span class="distributor_stock_transfer_subtotal p-relative">
+                                            <input type="text" value="0.00" disabled="disabled" class="form-control">
+                                        </span>
+                                    </td>
+
+                                    <td class="one">{% if form.instance.pk %}{{ form.DELETE }}{% endif %}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {{ direct_stock_transfer_item_formset.management_form }}
+                    </div>
+                </div>
+
+                <div class="m-t-20">
+                    <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                </div>
+            </form>
+         </div>
+    </section>
+{% endblock %}
+
+{% block static %}
+    {% load static %}
+    <script src="{% static 'vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.formset.js' %}"></script>
+    <script src="{% static 'js/jquery-ui.min.js' %}"></script>
+    <script src="{% static 'js/DateTimePicker.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/DateTimePicker.css' %}">
+
+    <script>
+        function getProductInfo($selector,barcode){
+            var url = "{% url 'products:get_product' %}";
+            var id = $selector.val();
+            var distributor = $('#id_distributor').val();
+            var $parent = $selector.parents('tr.form_set_row');
+            if(id != '' && id != null && distributor != '' && distributor != null){
+                var code = "no";
+                if(barcode){
+                    code = "yes";
+                }
+                $.ajax({
+                    type : "GET",
+                    url : url,
+                    dataType : 'json',
+                    data : {
+                        id : id,
+                        barcode : code,
+                        distributor : distributor,
+                    },
+                    success : function(data) {
+                        var qty = 1;
+                        var status = data['status'];
+                        var pk = data['pk'];
+                        var name = data['name'];
+                        var code = data['code'];
+                        var stock = data['stock'];
+                        var price = data['price'];
+                        var units = data['units'];
+
+                        if (status == "true"){
+                            $parent.find('.distributor_stock_transfer_qty input').val(qty);
+                            $parent.find('.product_stock input').val(stock);
+                            $parent.find('.distributor_stock_transfer_price input').val(price);
+
+                            var options = '';
+                            for (var i = 0; i < units.length; i++) {
+                                options += '<option data-product="' + pk + '" value="' + units[i].pk + '">' + units[i].code + '</option>';
+                            }
+                            $parent.find('.distributor_stock_transfer_unit select').html(options).trigger("change").selectpicker('refresh');
+
+                            unit = $parent.find('.distributor_stock_transfer_unit select').val();
+                            if(parseFloat(stock) < parseFloat(qty)){
+                                var title = "Out of Stock";
+                                var message = "Sorry! You can't transfer."; 
+                                swal(title, message, "error");
+                            }
+                            calculate();
+
+                            if(barcode){
+                                $parent.find('.distributor_stock_transfer select.select2-hidden-accessible').html('<option value=' + pk + '>' + code +  '-' + name + '</option>');
+                                var title = {{code}} + " - " {{name}}
+                                $parent.find('.distributor_stock_transfer .select2.select2-container').addClass();
+                                $parent.find('.distributor_stock_transfer select2 .select2-selection__rendered').attr('title',title);
+
+
+                            }else{
+                                $parent.find('.distributor_stock_transfer_barcode input').val(code);
+                            }
+
+                            $('.add_item_container.direct_stock_transfer_item_formset .icon_add_item').click();
+                            $('.add_item_container.direct_stock_transfer_item_formset table tbody tr:nth-last-child(2) span.distributor_stock_transfertable .select2-container .select2-selection--single .select2-selection__rendered').click();
+                            $('.add_item_container.direct_stock_transfer_item_formset table tbody tr:nth-last-child(2) span.distributor_stock_transfer .select2-search--dropdown .select2-search__field').focus();
+                        }
+                        remove_popup();
+                    },
+                    error : function(data){
+                        remove_popup();
+                        var title = "An error occurred";
+                        var message = "An error occurred. Please try again later.";
+                        swal(title, message, "error");
+                    }
+                });
+            }else{
+                    $parent.find('input').val('');
+                    $parent.find('span.distributor_stock_transfer_unit select').html('<option selected="selected" value="">---------</option>').selectpicker('refresh');
+                }
+
+        }
+
+        function getInitialData($selector, $unit){
+            var url = "{% url 'products:get_product' %}";
+            var id = $selector.val();
+            var unit_value = $unit.val();
+            var distributor = $('#id_distributor').val();
+            var $parent = $selector.parents('tr.form_set_row');
+            if(id != '' && id != null && distributor != '' && distributor != null){
+                show_loader();
+                $.ajax({
+                    type : "GET",
+                    url : url,
+                    dataType : 'json',
+                    data : {
+                        id : id,
+                        transfer : "true",
+                    },
+                    success : function(data) {
+                        qty = $parent.find('.distributor_stock_transfer_qty input').val();
+                        var status = data['status'];
+                        var stock = data['stock'];
+                        var price = data['price'];
+                        var code = data['code'];
+                        var units = data['units']; 
+                        var pk = data['pk'];       
+                        
+                        if (status == "true"){
+                            $parent.find('.distributor_stock_transfer_barcode input').val(code);
+                            $parent.find('.distributor_stock_transfer_price input').val(price);
+                            var total_stock = parseFloat(stock) + parseFloat($parent.find('.distributor_stock_transfer_qty input').val());
+                            $parent.find('.distributor_stock_transfer_stock input').val(total_stock);
+
+                            var options = '';
+                            for (var i = 0; i < units.length; i++) {
+                                options += '<option data-product="' + pk + '" value="' + units[i].pk + '">' + units[i].name + ' (' + units[i].code + ')</option>';
+                            }
+                            $parent.find('.distributor_stock_transfer_unit select').addClass('first_time').html(options).trigger("change").val(unit_value).selectpicker('refresh');
+
+                            calculate();
+                        }   
+                        remove_popup();                     
+                    },
+                    error : function(data){
+                        remove_popup(); 
+                        var title = "An error occurred";
+                        var message = "An error occurred. Please try again later."; 
+                        swal(title, message, "error");
+                    }
+                });                 
+            }
+        }
+
+        function calculate(){
+            var total = 0; 
+            
+            $('.direct_stock_transfer_item_formset table tr.form_set_row').each(function(){
+                $this = $(this);
+                var qty = parseFloat($this.find('.distributor_stock_transfer_qty input').val());
+                if(!qty){
+                    qty = 0;
+                }
+                var price = parseFloat($this.find('.distributor_stock_transfer_price input').val());
+                if(!price){
+                    price = 0;
+                }               
+                
+                var subtotal = qty * price;
+                $this.find('.distributor_stock_transfer_subtotal input').val(subtotal.toFixed(2));
+
+                total += subtotal;
+
+            });
+
+            $('#id_total').val(total.toFixed(2)); 
+
+        }
+
+        $(document).on('change, keyup','.distributor_stock_transfer_price input, .distributor_stock_transfer_qty input',function(){
+            calculate();
+        });
+
+        $(document).on('change','.distributor_stock_transfer_qty input',function(){
+            var $this = $(this);
+            var qty = $this.val();
+            var $parent = $this.parents("tr.form_set_row");
+            var stock = $parent.find(".product_stock input").val();
+            if(parseFloat(stock) < parseFloat(qty)){
+                var title = "Out of Stock";
+                var message = "Sorry! You can't transfer."; 
+                swal(title, message, "error");
+            }
+        });
+
+        $(document).ready(function(){
+            $.fn.modal.Constructor.prototype.enforceFocus=function(){};
+
+            calculate();
+
+            $('.direct_stock_transfer_item_formset table tr.form_set_row').formset({
+                prefix: '{{ direct_stock_transfer_item_formset.prefix }}',
+                formCssClass: 'dynamic-formset1',
+                'added' : function (row) {
+                    row.find('.distributor_stock_transfer_unit select').selectpicker();
+                    row.find('.distributor_stock_transfer_period select').selectpicker();
+                }
+            });
+
+            $('.direct_stock_transfer_item_formset table tr.form_set_row').each(function(){
+                $this = $(this);
+                var product = $this.find('.distributor_stock_transfer select');
+                var unit = $this.find('.distributor_stock_transfer_unit select');
+
+                if(product != '' && product != null){
+                    getInitialData(product,unit);
+                }
+            }); 
+
+            $('input[type=text]').focus(function () {
+              $(this).select();
+            });
+
+          $(document).on('change','tr.form_set_row .distributor_stock_transfer select',function(){
+                $selector = $(this);
+                getProductInfo($selector,false);
+          });
+
+          $('.direct_stock_transfer_item_formset table tr.form_set_row').each(function(){
+                $this = $(this);
+                var product = $this.find('.distributor_stock_transfer select');
+                var unit = $this.find('.distributor_stock_transfer_unit select');
+          });
+
+           $(document).on('keypress','tr.form_set_row .distributor_stock_transfer_barcode input',function(event){
+                if (event.which == '10' || event.which == '13') {
+                    event.preventDefault();
+                    $selector = $(this);
+                    getProductInfo($selector,true);
+                }
+          });
+        });
+    </script>
+
+    <style>
+        .select2-dropdown {
+          z-index: 999999;
+        }
+    </style>
+    {{form.media}}
+{% endblock %}

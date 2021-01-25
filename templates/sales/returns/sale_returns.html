@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %} {{title}} {% endblock %}
+
+{% block content %}
+<section id="content" class="list">
+	<section class="head">
+		<h2>{{title}}</h2>
+	</section>
+	<section class="innerBox">
+		{% if instances %}
+			<section class="widget one_by_one">
+				<ul class="table">
+					<li class="tr">
+						<div class="th">Sale ID</div>
+						<div class="th">Time</div>
+						<div class="th">Action</div>
+					</li>
+					{% load static %}
+					{% load endless %}
+					{% paginate instances %}
+					{% for instance in instances %}
+					<li class="tr">
+						<div class="td">
+							<a href="{% url 'products:product_return:sale_return' pk=instance.pk %}">{{instance.sale_id}}</a>
+						</div>
+						<div class="td">
+							<a href="{% url 'products:product_return:sale_return' pk=instance.pk %}">{{instance.time}}</a>
+						</div>
+						<div class="td">
+							<span class="icon action icon-ellipsis-vert"></span>
+							<div class="actions hidden">
+								<small class="arrow"></small>
+								<div class="action_items">
+									<ul>
+										<li>
+											<a href="{% url 'products:product_return:sale_return' pk=instance.pk %}">
+												<small class="icon-eye icon"></small>
+												<span>View</span>
+											</a>
+										</li>
+										<!-- <li>
+											<a href="{% url 'products:product_return:edit_sale_return' pk=instance.pk %}">
+												<small class="icon-pencil icon"></small>
+												<span>Edit</span>
+											</a>
+										</li> -->
+										<li>
+											<a class="redirect doit with_alert"  href="javascript:void(0)" data-id="{{instance.pk}}" data-url="{% url 'products:product_return:delete_sale_return' pk=instance.pk  %}" data-message="{{confirm_delete_message}}">
+												<small class="icon icon-trash"></small>
+												<span>Delete</span>
+											</a>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</li>
+					{% endfor %}
+				</ul>
+			</section>
+			<br class="clear" />
+			<section class="widget one_by_one navigation mbn">		
+				{% get_pages %}
+				<h4>Showing {{title}} <span class="current_page_index">{{ pages.current_start_index }}</span> - <span class="current_end_status">{{ pages.current_end_index }}</span> of <span class="total_count">{{ pages.total_count }}</span></h4>
+				<div class="pagination">
+					{% show_pages %}
+				</div>
+				<br class="clear">
+			</section>
+		{% else %}
+			{% include 'includes/not_found.html' %}
+		{% endif %}	
+	</section><!--(.innerBox)-->				
+</section>
+{% endblock %}
+
+{% block right_menu %}
+	<span id="rightMenuArrow"><small class="icon icon-left-open"></small></span>
+	<section id="rightMenuArea" class="full hidden">			
+		<section id="rightMenu" class="mainMenu">
+			<section id="rightMenuContainer">
+				<span class="arrow"><small class="icon icon-left-open"></small></span>
+				
+				<br class="clear" />
+				<div class="menuBox">
+					<h4>View</h4>
+					{% include 'product_return/includes/view_menu.html' %}
+				</div>
+				<div class="menuBox">
+					<h4>Create</h4>
+					{% include 'product_return/includes/create_menu.html' %}
+				</div>
+			</section>
+		</section>
+		
+		<section id="filterArea">
+			<section id="filterContainer">
+				<div class="filter_form">
+					<small class="arrow"></small>
+					<form action="">
+						<div class="field">
+							<label for="filter_q">Query</label>
+							<input id="filter_q" type="text" name="q" placeholder="Enter Query..."/>
+						</div>
+						<section class="submitContainer">
+							<input type="submit" value="Filter" class="button" />
+						</section>
+					</form>
+				</div>
+			</section>
+		</section>
+		
+		<br class="clear" />
+	</section>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+{% endblock %}

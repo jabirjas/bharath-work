@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+{% block content %}
+	<section id="content">
+        <div class="container">
+            
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+	            <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+	
+	            <div class="ah-search">
+	            	<form method="get" action="{% url 'sales:customer_payments' %}">
+	                    <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+	
+	                    <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+	                    <input type="submit" class="hidden" />
+	                </form>
+	            </div>
+	
+	            <ul class="ah-actions actions a-alt">
+	                <li>
+	                    <a title="Search" href="" class="ah-search-trigger" data-ma-action="ah-search-open">
+	                        <i class="zmdi zmdi-search"></i>
+	                    </a>
+	                </li>
+	                
+	                <li>
+	                    <a title="Filter" class="filter_button" href="">
+	                        <i class="zmdi zmdi-filter-list"></i>
+	                    </a>
+	                </li>
+	                {% if is_superuser or 'can_create_customer_payment' in user_instance.permissionlist %}
+    	                <li>
+                            <a title="Create Collect Amount" href="{% url 'sales:create_customer_payment' %}">
+                                <i class="zmdi zmdi-plus"></i>
+                            </a>
+                        </li>
+	                {% endif %}
+                    <li>
+                        <a title="Print Sale payment" target="Print sales" href="{% url 'sales:print_customer_payments' %}">
+                            <i class="zmdi zmdi-print"></i>
+                        </a>
+                    </li>
+	                {% if instances %}
+    	                {% if is_superuser or 'can_delete_customer_payment' in user_instance.permissionlist %}
+        	                <li>
+        	                    <a title="Select All" class="check_all" href="">
+        	                        <i class="zmdi zmdi-select-all"></i>
+        	                    </a>
+        	                </li>
+        	                
+        	                <li>
+        	                    <a title="Delete selected collect_amounts" data-id="" href="{% url 'sales:delete_selected_customer_payments' %}" data-text="{{confirm_delete_selected_message}}" data-title="Are you sure?" class="action-button reload selected-items-button">
+        	                        <i class="zmdi zmdi-delete"></i>
+        	                    </a>
+        	                </li>
+    	                {% endif %}
+                    {% endif %}
+	            </ul>
+	            
+	        </div>
+
+
+            <div class="card">
+				
+				{% if instances %}
+				
+                <div class="table-responsive">
+                    <table id="data-table-basic" class="table table-striped table-vmiddle">
+                        <thead>
+                            <tr>
+                            	<th style="width:20px;"></th>
+                                <th data-column-id="id" data-type="numeric">ID</th>
+                                <th>Date</th>
+                                <th>Customer</th>
+                                <th>Balance</th>
+                                <th>Paid Amount</th>
+                                <th>Remaining Balance</th>
+                                <th data-column-id="action" class="four">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        	{% load el_pagination_tags %}
+							{% paginate 21 instances %}
+                        	{% for instance in instances %}
+                                <tr class="check_items_row">
+                                	<td style="width:20px;">
+                                		<div class="checkbox lgi-checkbox m-t-5">
+    			                            <label>
+    			                                <input class="check check_item" type="checkbox" value="{{instance.pk}}" name="delete_item">
+    			                                <i class="input-helper"></i>
+    			                            </label>
+    			                        </div>
+                                	</td>
+                                    <td><a href="{% url 'sales:customer_payment' pk=instance.pk %}">{{instance.a_id}}</a></td>
+                                    <td>{{instance.date}}</td>
+                                    <td>{{instance.customer}}</td>
+                                    <td>{{instance.balance}}</td>
+                                    <td>{{instance.paid_amount}}</td>
+                                    <td>{{instance.remaining_balance}}</td>
+                                    <td class="five">
+                                        {% if is_superuser or 'can_view_collect_amount' in user_instance.permissionlist or instance.creator == user %}
+                                    	   <a href="{% url 'sales:customer_payment' pk=instance.pk %}" title="View collect amount" class="btn btn-default btn-icon waves-effect waves-circle waves-float"><i class="zmdi zmdi-eye"></i></a>
+                                        {% endif %}
+                                        {% if is_superuser or 'can_modify_collect_amount' in user_instance.permissionlist %}
+                                    	   <a href="{% url 'sales:edit_customer_payment' pk=instance.pk %}" title="Edit collect amount" class="btn btn-default btn-icon waves-effect waves-circle waves-float"><i class="zmdi zmdi-edit"></i></a>
+                                        {% endif %}
+                                        {% if is_superuser or 'can_delete_collect_amount' in user_instance.permissionlist  %}
+                                    	   <a data-id="{{instance.pk}}" href="{% url 'sales:delete_customer_payment' pk=instance.pk %}" title="Delete collect amount" data-text="{{confirm_delete_message}}" data-title="Are you sure?" class="action-button remove btn btn-default btn-icon waves-effect waves-circle waves-float"><i class="zmdi zmdi-delete"></i></a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!--pagination -->
+                <div class="bootgrid-footer container-fluid" id="data-table-selection-footer">
+                	{% get_pages %}
+                	<div class="row">
+                		<div class="col-sm-6">
+                			<div class="pagination">
+                				{% show_pages %}
+                			</div>
+                		</div>
+                		<div class="col-sm-6 infoBar">
+                			<div class="infos">
+                				Showing {{title}} <span class="current_page_index">{{ pages.current_start_index }}</span> - <span class="current_end_status">{{ pages.current_end_index }}</span> of <span class="total_count">{{ pages.total_count }}</span>
+                			</div>
+                		</div>
+                	</div>
+                </div>   
+                <!--pagination-->
+                {% else %}
+                	{% include 'includes/not_found.html' %}
+                {% endif %}            
+            </div>
+            
+        </div>
+    </section>
+{% endblock %}
+
+{% block filter_box %}
+<div class="filter-box">
+	 <form method="get" action="{% url 'sales:sales' %}">
+	 	<div class="card">
+			<div class="card-header">
+		        <h2>Filter <small></small></h2>
+		        <span class="back-button-poupup palette-Cyan bg white btn btn-default btn-icon-text waves-effect"><i class="zmdi zmdi-arrow-back"></i> Back</span>
+		    </div>
+		    
+			<div class="card-body card-padding">
+			 	<div class="form-group fg-line">
+		            <label>Query</label>
+		            <input name="q" type="text" class="form-control" placeholder="Enter your query..." />
+		        </div>
+		        
+		         <div class="m-t-20">
+                    <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                </div>
+		    </div>
+		 </div>
+	 </form>
+</div>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+{% endblock %}

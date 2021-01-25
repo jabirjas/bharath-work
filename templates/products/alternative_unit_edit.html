@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+{% block content %}
+	<section id="content">
+        <div class="container">
+            <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>
+			
+			<div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+
+                <div class="ah-search">
+	            	<form method="get" action="{% url 'products:alternative_units' %}">
+	                    <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+	
+	                    <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+	                    <input type="submit" class="hidden" />
+	                </form>
+	            </div>
+
+                <ul class="ah-actions actions a-alt">
+                    <li>
+                        <a title="Search" data-ma-action="ah-search-open" class="ah-search-trigger" href="">
+                            <i class="zmdi zmdi-search"></i>
+                        </a>
+                    </li>
+                    {% if instance %}
+                    <li>
+                        <a title="Create Alternative Unit" href="{% url 'products:create_alternative_unit' %}">
+                            <i class="zmdi zmdi-plus"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a title="View Alternative Unit" href="{% url 'products:alternative_unit' pk=instance.pk %}">
+                            <i class="zmdi zmdi-eye"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a title="Delete Alternative Unit" data-id="{{instance.pk}}" data-text="{{confirm_delete_message}}" data-title="Are you sure?" href="{% url 'products:delete_alternative_unit' pk=instance.pk %}" class="action-button redirect">
+                            <i class="zmdi zmdi-delete"></i>
+                        </a>
+                    </li> 
+                    {% endif %}                               
+                </ul>
+            </div>
+            
+            <form class="ajax reset {% if redirect %}redirect{% endif %}" method="post" action="{{url}}" method="get">
+            	{% csrf_token %}
+            	
+            	<div id="c-grid" class="clearfix" data-columns="2">
+					<div class="card">
+						<div class="card-header">
+					        <h2>Basic Info <small></small></h2>
+					    </div>
+						<div class="card-body card-padding">
+                            {{ form.shop }}
+                            <div class="form-group fg-line">
+                                <label for="{{ form.product.id_for_label }}">
+                                    {{ form.product.label }}
+                                    {% if form.product.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.product.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.product.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                    {% endif %}
+                                    </span>
+                                </label>
+                                {{ form.product }}
+                                
+                                {% if form.product.errors %}
+                                    <label class="error">{{ form.product.errors.as_text }}</label>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group fg-line">
+                                <label for="{{ form.unit.id_for_label }}">
+                                    {{ form.unit.label }}
+                                    {% if form.unit.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.unit.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.unit.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                    {% endif %}
+                                    </span>
+                                </label>
+                                {{ form.unit }}
+                                
+                                {% if form.unit.errors %}
+                                    <label class="error">{{ form.unit.errors.as_text }}</label>
+                                {% endif %}
+                            </div>
+                            <div class="form-group fg-line">
+                                <label for="{{ form.cost.id_for_label }}">
+                                    {{ form.cost.label }}
+                                    {% if form.cost.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.cost.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.cost.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                    {% endif %}
+                                    </span>
+                                </label>
+                                {{ form.cost }}
+                                
+                                {% if form.cost.errors %}
+                                    <label class="error">{{ form.cost.errors.as_text }}</label>
+                                {% endif %}
+                            </div>
+                            <div class="form-group fg-line">
+                                <label for="{{ form.price.id_for_label }}">
+                                    {{ form.price.label }}
+                                    {% if form.price.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.price.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.price.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                    {% endif %}
+                                    </span>
+                                </label>
+                                {{ form.price }}
+                                
+                                {% if form.price.errors %}
+                                    <label class="error">{{ form.price.errors.as_text }}</label>
+                                {% endif %}
+                            </div>
+						</div> 
+                        
+					</div> 
+	                </div>
+	                
+					<div>
+					    <button type="submit" class="btn btn-info waves-effect">Submit</button>
+					</div>
+                
+             	</div>
+         	</form>  
+         </div> 
+    </section>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+	{{form.media}}
+{% endblock %}

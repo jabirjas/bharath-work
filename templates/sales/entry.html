@@ -1,0 +1,1492 @@
+{% extends "blank_base.html" %}
+{% load i18n %}
+
+{% load tz %}
+{% block content %}
+    <section id="content">
+        <div class="container p-10">
+            <form class="ajax reset redirect skip_empty_row not_allowed_without_formset " method="post" action="{{url}}">
+            	{% csrf_token %}
+
+                <div class="row">
+                    <div class="col-md-3 col-lg-3 col-sm-6 p-l-5 p-r-5">
+                        <div class="card m-b-5">
+                            <div class="card-body p-10">
+                                <div class="form-group m-b-10 fg-line m-b-0">
+                                    <label for="{{ form.sale_type.id_for_label }}">
+                                        {{ form.sale_type.label }}
+                                        {% if form.sale_type.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+
+                                        {% if form.sale_type.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.sale_type.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+                                    {{ form.sale_type }}
+
+                                    {% if form.sale_type.errors %}
+                                        <label class="error">{{ form.sale_type.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-lg-3 col-sm-6 p-l-5 p-r-5">
+                        <div class="card m-b-0">
+                            <div class="card-body p-10">
+                                <div class="form-group m-b-10 fg-line">
+                                    <label for="{{ form.customer.id_for_label }}">
+                                        {{ form.customer.label }}
+                                        {% if form.customer.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+
+                                        {% if form.customer.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.customer.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+                                    {{ form.customer }}
+
+                                    {% if form.customer.errors %}
+                                        <label class="error">{{ form.customer.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-lg-3 col-sm-6 p-l-5 p-r-5">
+                        <div class="card m-b-5">
+                            <div class="card-body p-10">
+                                <div class="form-group m-b-10 fg-line">
+                                    <label for="{{ form.time.id_for_label }}">
+                                        {{ form.time.label }}
+                                        {% if form.time.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+
+                                        {% if form.time.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.time.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+
+                                    {% if is_create_page %}
+                                        {% timezone user_time_zone %}
+                                            <input id="{{ form.time.id_for_label }}" type="text" class="required form-control date-time-picker"  name="{{form.time.html_name}}" placeholder="Enter time" value="{% now "m-d-Y H:i:s" %}">
+                                        {% endtimezone %}
+                                    {% else %}
+                                        <input id="{{ form.time.id_for_label }}" type="text" class="required form-control date-time-picker"  name="{{form.time.html_name}}" placeholder="Enter time" value="{{ form.time.value|date:'m-d-Y H:i:s' }}">
+                                    {% endif %}
+
+
+                                    {% if form.time.errors %}
+                                        <label class="error">{{ form.time.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-lg-3 col-sm-6 p-l-5 p-r-5">
+                        <div class="card m-b-0">
+                            <div class="card-body p-10">
+                                <div class="form-group m-b-10 fg-line">
+                                    <label>Sub Total</label>
+                                    <input id="id_total_subtotal_without_discount" class="form-control" disabled type="text" value="0.00" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-2 col-md-4 col-sm-6 p-l-5 p-r-5 customer-info">
+                        <div class="card m-b-5">
+                            <div class="card-body p-10">
+                                <div class="form-group m-b-10 fg-line">
+                                    <label for="{{ form.customer_name.id_for_label }}">
+                                        {{ form.customer_name.label }}
+                                        <small class="star">*</small>
+
+                                        {% if form.customer_name.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.customer_name.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+                                    {{ form.customer_name }}
+
+                                    {% if form.customer_name.errors %}
+                                        <label class="error">{{ form.customer_name.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-6 p-l-5 p-r-5 customer-info">
+                        <div class="card m-b-5">
+                            <div class="card-body p-10">
+                                <div class="form-group m-b-10 fg-line">
+                                    <label for="{{ form.customer_phone.id_for_label }}">
+                                        {{ form.customer_phone.label }}
+
+                                        {% if form.customer_phone.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.customer_phone.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+                                    {{ form.customer_phone }}
+
+                                    {% if form.customer_phone.errors %}
+                                        <label class="error">{{ form.customer_phone.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-6 p-l-5 p-r-5 customer-info">
+                        <div class="card m-b-5">
+                            <div class="card-body p-10">
+                                <div class="form-group m-b-10 fg-line">
+                                    <label for="{{ form.customer_address.id_for_label }}">
+                                        {{ form.customer_address.label }}
+                                        <small class="star">*</small>
+
+                                        {% if form.customer_address.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.customer_address.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+                                    {{ form.customer_address }}
+
+                                    {% if form.customer_address.errors %}
+                                        <label class="error">{{ form.customer_address.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-6 p-l-5 p-r-5 customer-info">
+                        <div class="card m-b-5">
+                            <div class="card-body p-10">
+                                <div class="form-group m-b-10 fg-line">
+                                    <label for="{{ form.gstin.id_for_label }}">
+                                        {{ form.gstin.label }}
+
+                                        {% if form.gstin.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.gstin.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+                                    {{ form.gstin }}
+
+                                    {% if form.gstin.errors %}
+                                        <label class="error">{{ form.gstin.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-6 p-l-5 p-r-5 customer-info">
+                        <div class="card m-b-5">
+                            <div class="card-body p-10">
+                                <div class="form-group m-b-10 fg-line">
+                                    <label for="{{ form.customer_state.id_for_label }}">
+                                        {{ form.customer_state.label }}
+                                        <small class="star">*</small>
+
+                                        {% if form.customer_state.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.customer_state.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+                                    {{ form.customer_state }}
+
+                                    {% if form.customer_state.errors %}
+                                        <label class="error">{{ form.customer_state.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+                            </div>                    
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-6 p-l-5 p-r-5 customer-info">
+                        <div class="card m-b-5">
+                            <div class="card-body p-10">
+                                <div class="form-group m-b-10 fg-line">
+                                    <label for="{{ form.customer_discount.id_for_label }}">
+                                        {{ form.customer_discount.label }}%
+                                        <small class="star">*</small>
+
+                                        {% if form.customer_discount.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.customer_discount.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+                                    {{ form.customer_discount }}
+
+                                    {% if form.customer_discount.errors %}
+                                        <label class="error">{{ form.customer_discount.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+                            </div>                    
+                        </div>
+                    </div>
+                </div>
+
+            	<div class="card m-b-5 sale-item-card">
+
+					<div class="table-responsive card-body add_item_container sale_item_formset">
+						<table id="data-table-basic" class="table table-striped table-vmiddle">
+	                        <thead>
+	                            <tr>
+	                                <th data-column-id="product"  >Product</th>
+                                    <th data-column-id="barcode">Barcode</th>
+	                                <th data-column-id="qty">Qty</th>
+	                                <th data-column-id="unit">Unit</th>
+	                                {% if not instance %}
+	                                <th data-column-id="qty">Stock</th>
+	                                {% endif %}
+	                                <th data-column-id="price">Price</th>
+	                                <th data-column-id="tax">Tax Amt</th>
+                                    <th data-column-id="discount">Disc(%)</th>
+	                                <th data-column-id="discount_amount">Disc Amt</th>
+                                    <th data-column-id="return_item">Retn. Item</th>
+	                                <th data-column-id="subtotal">Sub Total</th>
+	                                <th class="one"></th>
+	                            </tr>
+	                        </thead>
+	                        <tbody>
+	                        	{% for item in sale_item_formset.forms %}
+								<tr class="form_set_row">
+                                    <td style="width:30%;" >
+                                        {{ item.id }}
+                                        <span class="sale_item p-relative">
+                                            {{ item.product }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="sale_item_barcode p-relative">
+                                            <input type="text" name="barcode" class="form-control">
+                                        </span>
+                                    </td>
+									<td>
+										<span class="sale_item_qty check_empty p-relative">
+											{{ item.qty }}
+										</span>
+									</td>
+									<td>
+										<span class="sale_item_unit p-relative">
+											{{ item.unit }}
+										</span>
+									</td>
+									{% if not instance %}
+									<td>
+										<span class="sale_item_stock p-relative">
+											<input type="text" value="0.00" disabled class="form-control" />
+										</span>
+									</td>
+									{% endif %}
+                                    <td class="hidden">
+                                        <span class="sale_item_cost p-relative">
+                                            {{ item.cost }}
+                                        </span>
+                                    </td>
+									<td>
+										<span class="sale_item_price p-relative">
+											{{ item.price }}
+										</span>
+									</td>
+									<td>
+										<span class="sale_item_tax_amount p-relative">
+											<input type="text" value="0.00" disabled class="form-control" />
+										</span>
+									</td>
+
+                                    <td>
+                                        <span class="sale_item_discount p-relative">
+                                            {{ item.discount }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="sale_item_discount_amount p-relative">
+                                            {{ item.discount_amount }}
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <span class="return_item p-relative">
+                                            <div class="checkbox lgi-checkbox m-t-5">
+                                                <label>
+                                                    {{ item.return_item }}
+                                                    <i class="input-helper"></i>
+                                                </label>
+                                            </div>
+                                        </span>
+                                    </td>
+                            
+                                    <td class="hidden">
+                                        <span class="sale_item_tax p-relative">
+                                            <input type="text" value="0.00">
+                                        </span>
+                                    </td>
+
+                                    <td class="hidden">
+                                        <span class="sale_item_is_mrp p-relative">
+                                            <input type="text" value="false">
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <span class="sale_item_subtotal p-relative">
+                                            <input type="text" value="0.00" disabled class="form-control" />
+                                        </span>
+                                    </td>
+                                    <td class="one">{% if form.instance.pk %}{{ form.DELETE }}{% endif %}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {{ sale_item_formset.management_form }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 col-lg-3 col-sm-6 p-l-5 p-r-5">
+                        <div class="card m-b-0">
+                            <div class="card-body p-10">
+                                {% if is_create_page %}
+                                <div class="row">
+                                    <div class="col-xs-6">
+                                        <div class="form-group m-b-15 fg-line">
+                                            <label>credit (+)</label>
+                                            <input id="credit" class="form-control" disabled type="text" value="0.00" />
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <div class="form-group m-b-15 fg-line">
+                                            <label>debit (-)</label>
+                                            <input id="debit" class="form-control" disabled type="text" value="0.00" />
+                                        </div>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="row">
+                                    <div class="col-xs-6">
+                                        <div class="form-group m-b-15 fg-line">
+                                            <label>credit (+)</label>
+                                            <input id="credit" class="form-control" disabled type="text" value="{{old_credit}}" />
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <div class="form-group m-b-15 fg-line">
+                                            <label>debit (-)</label>
+                                            <input id="debit" class="form-control" disabled type="text" value="{{old_debit}}" />
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                <div class="form-group m-b-15 fg-line">
+                                    <label>Return Amount</label>
+                                    <input id="return_amount" class="form-control" disabled type="text" value="0.00" />
+                                </div>
+
+                                <div class="form-group m-b-0 fg-line">
+                                    <label>Returned</label>
+                                    <input id="id_amount_returned" class="form-control" disabled type="text" value="0.00" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 col-lg-3 col-sm-6 p-l-5 p-r-5">
+                        <div class="card m-b-0">
+                            <div class="card-body p-10">
+
+                                <div class="form-group m-b-10 fg-line">
+                                    <label for="{{ form.special_discount.id_for_label }}">
+                                        {{ form.special_discount.label }}
+                                        {% if form.special_discount.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+
+                                        {% if form.special_discount.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.special_discount.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+                                    {{ form.special_discount }}
+
+                                    {% if form.special_discount.errors %}
+                                        <label class="error">{{ form.special_discount.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+                                <div class="form-group m-b-10 fg-line">
+                                    <label>Total</label>
+                                    <input id="total_amount" class="form-control" disabled type="text" value="0.00" />
+                                </div>
+
+                                <div class="form-group m-b-10 fg-line hidden">
+                                    <label>Credit Total</label>
+                                    <input id="credit_added_total" class="form-control" type="text" value="0.00" />
+                                </div>
+
+                                <div class="form-group m-b-10 fg-line">
+                                    <label for="{{ form.payment_received.id_for_label }}">
+                                        {{ form.payment_received.label }}
+                                        {% if form.payment_received.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+
+                                        {% if form.payment_received.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.payment_received.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+                                    {{ form.payment_received }}
+
+                                    {% if form.payment_received.errors %}
+                                        <label class="error">{{ form.payment_received.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+
+                    <div class="col-md-4 col-lg-3 col-sm-6 p-l-5 p-r-5">
+                        <div class="card m-b-0">
+                            <div class="card-body p-10">
+
+                                <div class="form-group m-b-10 fg-line">
+                                    <label>Total Tax Amount</label>
+                                    <input id="id_total_tax_amount" class="form-control" disabled type="text" value="0.00" />
+                                </div>
+
+                                <div class="form-group m-b-10 fg-line">
+                                    <label>Total Discount Amount</label>
+                                    <input id="id_total_discount_amount" class="form-control" disabled type="text" value="0.00" />
+                                </div>
+                                <div class="form-group m-b-10 fg-line m-b-0">
+                                    <label>Round Off</label>
+                                    <input id="id_round_off" class="form-control" disabled type="text" value="0.00" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 col-lg-3 col-sm-6 p-l-5 p-r-5 ">
+                        <div class="card m-b-0">
+                            <div class="card-body p-10 transaction">
+
+                                <div class="form-group m-b-10 fg-line">
+                                    <label for="{{ form.transaction_mode.id_for_label }}">
+                                        {{ transaction_form.transaction_mode.label }}
+                                        {% if transaction_form.transaction_mode.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+
+                                        {% if transaction_form.transaction_mode.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.transaction_mode.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+                                    {{ transaction_form.transaction_mode }}
+
+                                    {% if transaction_form.transaction_mode.errors %}
+                                        <label class="error">{{ transaction_form.transaction_mode.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+
+                                 <div class="form-group m-b-10 fg-line">
+                                    <label for="{{ form.payment_mode.id_for_label }}">
+                                        {{ transaction_form.payment_mode.label }}
+                                        {% if transaction_form.payment_mode.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+
+                                        {% if transaction_form.payment_mode.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.payment_mode.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+                                    {{ transaction_form.payment_mode }}
+
+                                    {% if transaction_form.payment_mode.errors %}
+                                        <label class="error">{{ transaction_form.payment_mode.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+
+                                <div class="form-group m-b-10 fg-line m-b-0">
+                                    <label for="{{ form.cheque_details.id_for_label }}">
+                                        {{ transaction_form.cheque_details.label }}
+                                        {% if transaction_form.cheque_details.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+
+                                        {% if transaction_form.cheque_details.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.cheque_details.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+                                    {{ transaction_form.cheque_details }}
+
+                                    {% if transaction_form.cheque_details.errors %}
+                                        <label class="error">{{ transaction_form.cheque_details.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+                                <div class="form-group m-b-10 fg-line m-b-0">
+                                    <label for="{{ form.cheque_date.id_for_label }}">
+                                        {{ transaction_form.cheque_date.label }}
+                                        {% if transaction_form.cheque_date.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+
+                                        {% if transaction_form.cheque_date.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.cheque_date.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+                                    {{ transaction_form.cheque_date }}
+
+                                    {% if transaction_form.cheque_date.errors %}
+                                        <label class="error">{{ transaction_form.cheque_date.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+
+                               <!--  <div class="row">
+                                    <div class="form-group m-b-10 col-sm-5 m-b-20">
+                                        <div class="toggle-switch">
+                                            <label class="ts-label" for="{{ form.is_cheque_withdrawed.id_for_label }}">
+                                                {{ transaction_form.is_cheque_withdrawed.label }}
+                                                {% if transaction_form.is_cheque_withdrawed.field.required %}
+                                                    <small class="star">*</small>
+                                                {% endif %}
+
+                                                {% if transaction_form.is_cheque_withdrawed.help_text %}
+                                                    <span data-original-title="Field Info" title="" data-content="{{ form.is_cheque_withdrawed.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                                {% endif %}
+                                            </label>
+                                            {{ transaction_form.is_cheque_withdrawed }}
+                                            <label class="ts-helper" for="ts1"></label>
+                                        </div>
+
+                                        {% if transaction_form.is_cheque_withdrawed.errors %}
+                                            <label class="error">{{ transaction_form.is_cheque_withdrawed.errors.as_text }}</label>
+                                    {% endif %}
+                                    </div>
+                                </div> -->
+
+                                <div class="form-group m-b-10 fg-line m-b-0">
+                                    <label for="{{ form.card_details.id_for_label }}">
+                                        {{ transaction_form.card_details.label }}
+                                        {% if transaction_form.card_details.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+
+                                        {% if transaction_form.card_details.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.card_details.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+                                    {{ transaction_form.card_details }}
+
+                                    {% if transaction_form.card_details.errors %}
+                                        <label class="error">{{ transaction_form.card_details.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+
+                                <div class="form-group m-b-10 fg-line">
+                                    <label for="{{ form.payment_to.id_for_label }}">
+                                        {{ transaction_form.payment_to.label }}
+                                        {% if transaction_form.payment_to.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+
+                                        {% if transaction_form.payment_to.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.payment_to.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+                                    {{ transaction_form.payment_to }}
+
+                                    {% if transaction_form.payment_to.errors %}
+                                        <label class="error">{{ transaction_form.payment_to.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+
+                                <div class="form-group m-b-10 fg-line m-b-0">
+                                    <label for="{{ form.bank_account.id_for_label }}">
+                                        {{ transaction_form.bank_account.label }}
+                                        {% if transaction_form.bank_account.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+
+                                        {% if transaction_form.bank_account.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.bank_account.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+                                    {{ transaction_form.bank_account }}
+
+                                    {% if transaction_form.bank_account.errors %}
+                                        <label class="error">{{ form.bank_account.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+
+                                <div class="form-group m-b-10 fg-line">
+                                    <label for="{{ transaction_form.cash_account.id_for_label }}">
+                                        {{ transaction_form.cash_account.label }}
+                                        {% if transaction_form.cash_account.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+
+                                        {% if transaction_form.cash_account.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ transaction_form.cash_account.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+                                    {{ transaction_form.cash_account }}
+
+                                    {% if transaction_form.cash_account.errors %}
+                                        <label class="error">{{ transaction_form.cash_account.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+                                <div class="form-group m-b-10 fg-line m-b-0">
+                                    <label for="{{ form.payment_remainder_date.id_for_label }}">
+                                        {{ form.payment_remainder_date.label }}
+                                        {% if form.payment_remainder_date.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+
+                                        {% if form.payment_remainder_date.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.payment_remainder_date.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+
+                                    {% if is_create_page %}
+                                        <input id="{{ form.payment_remainder_date.id_for_label }}" type="text" class="form-control date-picker"  name="{{form.payment_remainder_date.html_name}}" placeholder="Enter Date" value="">
+                                    {% else %}
+                                        <input id="{{ form.payment_remainder_date.id_for_label }}" type="text" class="form-control date-picker"  name="{{form.payment_remainder_date.html_name}}" placeholder="Enter Date" value="{{ form.payment_remainder_date.value|date:'m-d-Y' }}">
+                                    {% endif %}
+
+
+                                    {% if form.payment_remainder_date.errors %}
+                                        <label class="error">{{ form.payment_remainder_date.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="m-t-20">
+                    <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                </div>
+            </form>
+         </div>
+    </section>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+    <style>
+        .table > tbody > tr:last-child > td {
+            padding-bottom: 10px !important;;
+        }
+        .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+            padding: 5px !important;
+        }
+        .row {
+            margin-left: -5px !important;
+            margin-right: -5px !important;
+        }
+        .sale-item-card {
+            overflow-y:auto;
+        }
+    </style>
+    <script>
+        $(document).ready(function(){
+            window_height = $(window).height();
+            h = window_height - 394;
+            $('.sale-item-card').css('max-height', h+"px");
+        });
+    </script>
+	<script type="text/javascript" src="{% static 'js/jquery.formset.js' %}"></script>
+
+	<script>
+	    function showHideCreditUser(){
+			var category = $('#id_transaction_category option:selected').text();
+			var $user_parent = $('#id_shop_credit_user').parents('div.form-group');
+			if(category == "debit"){
+				$user_parent.show();
+			}else{
+				$user_parent.hide();
+			}
+		}
+
+		function showHideCashBank(){
+			var mode = $('#id_transaction_mode').val();
+			var $bank_parents = $('.bank_item').parents('div.form-group');
+			if (mode == "cash"){
+				$bank_parents.hide();
+				$('#id_payment_to').val('cash_account').change();
+				$('#id_cash_account').parents('div.form-group').show();
+			}else{
+				$bank_parents.show();
+				showHidePaymentModeItems();
+			}
+		}
+
+		function showHidePaymentModeItems(){
+			var transaction_mode = $('#id_transaction_mode').val();
+			if(transaction_mode == "bank"){
+				var mode = $('#id_payment_mode').val();
+				var $cheque_parents = $('.cheque_item').parents('div.form-group');
+				var $card_parents = $('.card_item').parents('div.form-group');
+				if (mode == "cheque_payment"){
+					$cheque_parents.show();
+					$card_parents.hide();
+					$('#id_payment_to').val('bank_account').change();
+					$('#id_cash_account').parents('div.form-group').hide();
+
+				}else if(mode == "card_payment"){
+					$cheque_parents.hide();
+					$card_parents.show();
+					$('#id_payment_to').val('bank_account').change();
+					$('#id_payment_to').parents('div.form-group').hide();
+
+				}else if(mode == "internet_banking"){
+					$card_parents.hide();
+					$cheque_parents.hide();
+					$('#id_payment_to').val('bank_account').change();
+					$('#id_payment_to').parents('div.form-group').hide();
+				}
+
+				showHidePaymentToItems();
+			}
+		}
+
+		function showHidePaymentToItems(){
+			var transaction_mode = $('#id_transaction_mode').val();
+			if(transaction_mode == "bank"){
+				var to = $('#id_payment_to').val();
+				if(to == "bank_account"){
+					$('#id_bank_account').parents('div.form-group').show();
+					$('#id_cash_account').parents('div.form-group').hide();
+				}else{
+					$('#id_cash_account').parents('div.form-group').show();
+					$('#id_bank_account').parents('div.form-group').hide();
+				}
+			}
+		}
+
+    	$(document).ready(function(){
+            showHideCreditUser();
+            showHideCashBank();
+            showHidePaymentModeItems();
+            showHidePaymentToItems();
+
+            $(document).on('change','#id_transaction_category',function(){
+                showHideCreditUser();
+            });
+
+            $(document).on('change','#id_transaction_mode',function(){
+                showHideCashBank();
+            });
+
+            $(document).on('change','#id_payment_mode',function(){
+                showHidePaymentModeItems();
+            });
+
+            $(document).on('change','#id_payment_to',function(){
+                showHidePaymentToItems();
+            });
+
+            $('.sale_item_barcode input').focus();
+
+            $('input[type=text]').focus(function () {
+                $(this).select();
+            });
+
+    		$('.sale_item_formset table tr.form_set_row').formset({
+    		    prefix: '{{ sale_item_formset.prefix }}',
+    		    formCssClass: 'dynamic-formset1',
+    		    'added' : function (row) {
+    		        row.find('.sale_item select').val(null).trigger('change');
+    		        row.find('.select2-selection').click();
+    		        row.find('.sale_item_unit select').selectpicker();
+                    row.find('.sale_item_batch_code select').selectpicker();
+    		    },
+                'removed' : function (row) {
+                    calculate();
+                }
+    		});
+
+            $('.sale_item_formset table tr.form_set_row').each(function(){
+                $this = $(this);
+                var product = $this.find('.sale_item select');
+                var unit = $this.find('.sale_item_unit select');
+
+                if(product != '' && product != null){
+                    getInitialData(product,unit);
+                    getCustomerDiscount();
+                }
+            });
+
+            $('.customer-info').hide();
+            $(document).on('change','#id_customer',function(){            
+                showCredit()
+                getCustomerDiscount()
+                var value = $(this).val();
+                if (value != '' && value != null){
+                    $('.customer-info').hide();
+                }
+                else {
+                    $('.customer-info').show();
+                }
+            });
+            $(document).on('change keyup','#id_customer_discount',function(){
+                var discount = $(this).val();
+                getCustomerDiscount(discount)
+                calculate();
+            });
+
+            $('input[type=text]').focus(function () {
+                $(this).select();
+            });
+            $('input[type=text]').mouseup(function (e) { // fix for chrome and safari
+                e.preventDefault();
+            });
+            $('input[type=text]').select(function () {
+                $('.log').append(' Handler for .select() called. ');
+            });
+            var customer = $('#id_customer').val()
+            if (customer != '' || customer != null){
+                showCredit()
+            }
+            function update_payment_received(){
+                {% if not is_edit %}
+                    var total_amount = parseFloat($("#total_amount").val());
+                    if (!total_amount){
+                        total_amount = 0;
+                    }
+                    $('#id_payment_received').val(total_amount);
+                {% endif %}
+            }
+
+            function calculate(){
+    			var sale_item_total = 0;
+    			var total_tax_amount = 0;
+    			var total_discount_amount = 0;
+                var total_subtotal_without_discount = 0
+                var total_return_amount = 0
+
+    			$('.sale_item_formset table tr.form_set_row').each(function(){
+    				$this = $(this);
+    				var qty = parseFloat($this.find('.sale_item_qty input').val());
+    				if(!qty){
+    					qty = 0;
+    				}
+    				var price = parseFloat($this.find('.sale_item_price input').val());
+    				if(!price){
+    					price = 0;
+    				}
+    				var tax = parseFloat($this.find('.sale_item_tax input').val());
+    				if(!tax){
+    					tax = 0;
+    				}
+    				var discount = parseFloat($this.find('.sale_item_discount input').val());
+    				if(!discount){
+    					discount = 0;
+    				}
+                    var discount_amount = parseFloat($this.find('.sale_item_discount_amount input').val());
+                    if(!discount_amount){
+                        discount_amount = 0;
+                    }
+                    var return_item = $this.find('.return_item input').prop("checked");
+                    
+    				var is_mrp = $this.find('.sale_item_is_mrp input').val();
+                    if (discount_amount > 0) {
+                        var actual_price = price - (discount_amount / qty );   
+                    }
+                    else {
+                        var actual_price = price - discount_amount;  
+                    }
+                    if (is_mrp == "true"){
+                        var subtotal = (qty * price) - discount_amount;
+                        var subtotal_without_discount = (qty * price);
+                        var tax_amount = qty * ((100*actual_price)/(100+tax)) * tax/100;
+                        
+                    }
+                    else{
+                        var tax_amount = qty * actual_price * tax/100;
+                        var subtotal = (qty *price) - discount_amount + tax_amount;
+                        var subtotal_without_discount = (qty * price) + tax_amount;
+                        
+                    } 			    
+                    if (return_item){
+                        total_return_amount += subtotal;
+                    }
+    				$this.find('.sale_item_subtotal input').val(subtotal.toFixed(2));
+    				$this.find('.sale_item_tax_amount input').val(tax_amount.toFixed(2));
+
+    				sale_item_total += subtotal;
+    				total_tax_amount += tax_amount;
+    				total_discount_amount += discount_amount;
+                    total_subtotal_without_discount += subtotal
+    			});
+    			$('#id_total_tax_amount').val(total_tax_amount.toFixed(2));
+    			$('#id_total_discount_amount').val(total_discount_amount.toFixed(2));           
+
+    			var special_discount = parseFloat($('#id_special_discount').val());
+    			if(!special_discount){
+    				special_discount = 0;
+    			}
+
+                var credit = parseFloat($('#credit').val());
+                var return_amount = parseFloat($('#return_amount').val());
+                var debit = parseFloat($('#debit').val());
+                var total_subtotal_without_discount = total_subtotal_without_discount + credit - debit
+                $('#id_total_subtotal_without_discount').val(total_subtotal_without_discount.toFixed(2));
+                {% if remove_previous_balance_from_bill %}
+                var total = sale_item_total - special_discount - total_return_amount;
+                {% else %}
+                var total = sale_item_total - special_discount + credit - debit - total_return_amount;
+                {% endif %}
+                var credit_added_total = sale_item_total - special_discount + credit - debit - total_return_amount;
+    			$('#sub_total_amount').val(sale_item_total.toFixed(2));
+                $('#id_amount_returned').val(total_return_amount)
+    			var rounded_amount = Math.round(total);
+    			var extra = rounded_amount - total;
+    			var round_off = Math.round(extra * 100) / 100
+    			$('#id_round_off').val(round_off);
+    			$('#total_amount').val(rounded_amount);
+                $('#id_payment_received').val(rounded_amount);
+                var credit_rounded_amount = Math.round(credit_added_total);
+                $('#credit_added_total').val(credit_rounded_amount);
+                var payment_total = sale_item_total - special_discount
+                var payment_rounded_amount = Math.round(payment_total);             
+                balance_calculate();       
+
+    		}
+
+            function checkSaleRestriction(credit_added_total){
+                var $this = $(this);
+                var payment_received = parseFloat($('#id_payment_received').val());
+                var total = credit_added_total
+                var customer = $('#id_customer').val()
+                var balance = total - payment_received
+                var url = "{% url 'customers:check_sale_restriction' %}";
+                if (customer !='' && customer !=null){
+                    $.ajax({
+                        type : "GET",
+                        url : url,
+                        dataType : 'json',
+                        data : {
+                            balance : balance,
+                            customer : customer,
+                        },
+                        success : function(data) {
+                            var status = data['status'];
+                            if(status == "true"){
+                                $(':input[type="submit"]').prop('disabled', false);
+                            }
+                            else {
+                                var title = "Credit Limit Exceded";
+                                var message = "Balance greater than credit limit.";
+                                swal(title, message, "error");
+                                $(':input[type="submit"]').prop('disabled', true);
+                            }
+                        },
+                        error : function(data){
+                            remove_popup(); 
+                            var title = "An error occurred";
+                            var message = "An error occurred. Please try again later."; 
+                            swal(title, message, "error");
+                        }
+                    });
+                }
+            }
+
+            function balance_calculate(){
+                var credit_added_total = parseFloat($('#credit_added_total').val());
+                if (credit_added_total > 0)
+                    checkSaleRestriction(credit_added_total);
+
+                var payment_received = parseFloat($('#id_payment_received').val());
+                if(!payment_received){
+                    payment_received = 0;
+                }
+                var rounded_amount = $('#total_amount').val();
+                var balance = rounded_amount - payment_received;
+                if (balance < 0 ){
+                    remove_popup();
+                    var title = "Check Payment Recieved";
+                    var message = "Recieved amount greater than actual amount.";
+                    swal(title, message, "error");
+                    $(':input[type="submit"]').prop('disabled', true);
+                }
+                else{
+                    $(':input[type="submit"]').prop('disabled', false);
+                }
+                $('#balance').val(balance);
+            }
+
+            $(document).on('change','#id_customer',function(){
+                if ($(this).val == '' || $(this).val() == null){
+                    $('#credit').val(0);
+                    $('#debit').val(0);
+                    calculate();
+                    update_payment_received()
+                }
+            });
+            update_payment_received();
+
+    		$(document).on('change keyup','.sale_item_discount_amount input,.return_item input',function(){
+    			calculate();
+                update_payment_received()
+    		});
+            $(document).on('change','.sale_item_price input',function(){
+                calculate();
+                update_payment_received()
+            });
+            $(document).on('change','#id_payment_received',function(){
+                balance_calculate();
+            });
+
+            $(document).on('change','#id_special_discount',function(){
+                calculate();
+                update_payment_received()
+            });
+
+            $(document).on('change','.sale_item_unit select',function(){
+                $this = $(this);
+                unit = $(this).val();
+                if ($this.hasClass('first_time')){
+                    $this.removeClass('first_time');
+                } else {
+                    product = $(this).find('option:selected').attr('data-product');
+                    var $parent = $(this).parents('tr.form_set_row');
+                    getUnitCostPrice(unit,product,$parent);
+                }
+                
+            }); 
+            function showCredit(){
+                var credit_cus = $('#id_customer').val();
+                if(credit_cus == "" || credit_cus == null){
+                    $('#id_balance').attr("value",0);
+                }else{
+                    var url = "{% url 'customers:get_credit' %}";
+                    $.ajax({
+                        type : "GET",
+                        url : url,
+                        data: {
+                            id : credit_cus
+                        } ,
+                        dataType : 'json',
+                        success : function(data){
+                            var status = data['status'];
+                            var credit = data['credit'];
+                            var debit = data['debit'];
+                            var return_amount = data['return_amount'];
+                            if(status == "true"){
+                                $('#credit').val(credit);
+                                $('#debit').val(debit);
+                                $('#return_amount').val(return_amount);
+                            }
+                            calculate();
+                            update_payment_received()
+                        },
+                    });
+                }
+            }
+            
+            function getCustomerDiscount(discount){
+                var credit_cus = $('#id_customer').val();
+                $('.sale_item_formset table tr.form_set_row').each(function(){
+                    var $this = $(this);
+                    var product = $this.find('.sale_item select').val();
+                    var sale_type = $("#id_sale_type").val();
+                    
+                    if(credit_cus != "" && credit_cus != null && product != '' && product != null || discount ){
+                        var url = "{% url 'customers:get_customer_discount' %}";
+                        $.ajax({
+                            type : "GET",
+                            url : url,
+                            data: {
+                                id : credit_cus,
+                                product : product,
+                                sale_type : sale_type,
+                                new_discount : discount,
+                            } ,
+                            dataType : 'json',
+                            success : function(data){
+                                var status = data['status'];
+                                var discount = parseFloat(data['discount']);
+                                var price = parseFloat(data['price']);
+                                var discount_amount = parseFloat(data['discount_amount']);
+                                var is_mrp = data['is_mrp']
+                                var qty = $this.find('.sale_item_qty input').val();
+                                discount_amount = discount_amount * parseFloat(qty)
+                                if(status == "true"){
+                                    $this.find('.sale_item_discount input').val(discount.toFixed(2));
+                                    $this.find('.sale_item_discount_amount input').val(discount_amount.toFixed(2));
+                                    $this.find('.sale_item_price input').val(price.toFixed(2));
+                                    $this.find('.sale_item_is_mrp input').val(is_mrp)
+
+                                }
+                                calculate();
+                                update_payment_received()
+                            },
+                        });
+                    }
+                });
+            }
+
+            function getUnitPrice(unit,product,$selector){
+                var url = "{% url 'products:get_unit_price' %}";
+                var sale_type = $("#id_sale_type").val();
+                var customer = $("#id_customer").val();
+                var customer_discount = $("#id_customer_discount").val();
+                if((unit != '' && unit != null)||(product != '' && product != null)){
+                    $.ajax({
+                        type : "GET",
+                        url : url,
+                        dataType : 'json',
+                        data : {
+                            unit : unit,
+                            product : product,
+                            sale_type :sale_type,
+                            customer : customer,
+                            customer_discount : customer_discount,
+                        },
+                        success : function(data) {
+                            var qty = 1;
+                            var status = data['status'];
+                            var price = parseFloat(data['price']);
+                            var cost = parseFloat(data['cost']);
+                            var discount = parseFloat(data['discount']); 
+                            var discount_amount = parseFloat(data['discount_amount']);     
+                            var is_mrp = data['is_mrp'];
+                            if(status == "true"){                         
+                                $selector.find('.sale_item_price input').val(price.toFixed(2));
+                                $selector.find('.sale_item_cost input').val(cost.toFixed(2));
+                                $selector.find('.sale_item_discount input').val(discount.toFixed(2));
+                                $selector.find('.sale_item_discount_amount input').val(discount_amount.toFixed(2));
+                                $selector.find('.sale_item_is_mrp input').val(is_mrp)
+                                calculate();
+                                update_payment_received()
+                            }
+                        },
+                        error : function(data){
+                        }
+                    });
+                }
+            }
+
+            function getUnitCostPrice(unit,product,$selector){
+                var url = "{% url 'products:get_unit_cost_price' %}";
+                var sale_type = $("#id_sale_type").val();
+                $.ajax({
+                    type : "GET",
+                    url : url,
+                    dataType : 'json',
+                    data : {
+                        unit : unit,
+                        product : product,
+                        sale_type :sale_type,
+                    },
+                    success : function(data) {
+                        var qty = 1;
+                        var status = data['status'];
+                        var price = data['price'];
+                        var cost = data['cost'];
+                        var product_price = parseFloat(price);
+                        if(status == "true"){
+                            $selector.find('.sale_item_price input').val(product_price.toFixed(2))
+                            $selector.find('.sale_item_real_price input').val(product_price.toFixed(2));
+                            $selector.find('.sale_item_cost input').val(cost);
+                            calculate();
+                            update_payment_received();
+                        }
+                    },
+                    error : function(data){
+                    }
+                });
+            }
+
+        function getProductInfo($selector,barcode){
+            var url = "{% url 'products:get_product' %}";
+            var id = $selector.val();
+            var $parent = $selector.parents('tr.form_set_row');
+            var sale_type = $("#id_sale_type").val();
+            if(id != '' && id != null){
+                var code = "no";
+                if(barcode){
+                    code = "yes";
+                }
+                $.ajax({
+                    type : "GET",
+                    url : url,
+                    dataType : 'json',
+                    data : {
+                        id : id,
+                        barcode : code,
+                        sale_type : sale_type
+                    },
+                    success : function(data) {
+                        var qty = 1;
+                        var status = data['status'];
+                        var pk = data['pk'];
+                        var name = data['name'];
+                        var code = data['code'];
+                        var stock = data['stock'];
+                        var price = data['price'];
+                        var vendor = data['vendor'];
+                        var cost = data['cost'];
+                        var tax = data['tax'];
+                        var units = data['units'];                      
+                        var discount_amount = 0;
+                        var is_sess_need = data['is_sess_need'];
+
+                        if (status == "true"){
+                            product_price = parseFloat(price);
+                            tax_percentage = parseFloat(tax);
+                            if(tax_percentage){
+                                tax_amount = (tax_percentage * price * qty) / 100
+                            }
+
+                            discount_amount = parseFloat(discount_amount);
+
+                            var discount = 0;
+                            if(discount_amount){
+                                discount = (discount_amount * 100 )/(qty * price)
+                                discount_amount = discount_amount * qty  
+                            }
+
+                            tax_excluded_price = (100*price)/(100+tax)         
+                           
+
+                            single_price = price - discount_amount 
+                        
+                            
+                            tax_amount = qty * (single_price * tax/100).toFixed(2);
+
+                            if(is_sess_need){
+                                sess_amount_percentage = (qty * single_price) * 1/100;
+                                
+                            }
+                            else{
+                                sess_amount_percentage = 0
+                            }
+                            
+                            $parent.find('.sale_item_qty input').val(qty);
+                            $parent.find('.sale_item_price input').val(price);
+                            $parent.find('.sale_item_tax input').val(tax);
+                            $parent.find('.sale_item_vendor input').val(vendor);
+                            $parent.find('.sale_item_cost input').val(cost);
+                            $parent.find('.sale_item_need_sess input').val(is_sess_need);
+                            $parent.find('.sale_item_tax_amount input').val(tax_amount.toFixed(4));
+                            $parent.find('.sale_item_sess_amount input').val(sess_amount_percentage.toFixed(2));
+                            $parent.find('.sale_item_discount_amount input').val(discount_amount.toFixed(2));
+                            $parent.find('.sale_item_discount input').val(discount.toFixed(2));
+                            $parent.find('.sale_item_stock input').val(stock);
+
+                            var options = '';
+                            for (var i = 0; i < units.length; i++) {
+                                options += '<option data-product="' + pk + '" value="' + units[i].pk + '">' + units[i].name + ' (' + units[i].code + ')</option>';
+                            }
+                            $parent.find('.sale_item_unit select').html(options).trigger("change").selectpicker('refresh');
+                            
+                            unit = $parent.find('.sale_item_unit select').val();
+                            getUnitPrice(unit,pk,$parent);
+                            
+                            if(barcode){
+                                $parent.find('.sale_item select.select2-hidden-accessible').html('<option value=' + pk + '>' + code +  '-' + name + '</option>');
+                                var title = {{code}} + " - " {{name}}
+                                $parent.find('.sale_item .select2.select2-container').addClass();
+                                $parent.find('.sale_item select2 .select2-selection__rendered').attr('title',title);
+
+                            }else{
+                                $parent.find('.sale_item_barcode input').val(code);
+                            }
+                            calculate();
+                            
+                            $('.add_item_container.sale_item_formset .icon_add_item').click();  
+                            $('.add_item_container.sale_item_formset table tbody tr:nth-last-child(2) span.sale_itemtable .select2-container .select2-selection--single .select2-selection__rendered').click();
+                            $('.add_item_container.sale_item_formset table tbody tr:nth-last-child(2) span.sale_item_barcode input').focus();
+                        }   
+                        remove_popup();                     
+                    },
+                    error : function(data){
+                        remove_popup(); 
+                        var title = "An error occurred";
+                        var message = "An error occurred. Please try again later."; 
+                        swal(title, message, "error");
+                    }
+                });                 
+            }else{
+                $parent.find('input').val('');
+                $parent.find('span.sale_item_unit select').html('<option selected="selected" value="">---------</option>').trigger("change").selectpicker('refresh');
+            }
+        }
+            
+            function getInitialData($selector, $unit){
+                var url = "{% url 'products:get_product' %}";
+                var id = $selector.val();
+                var unit_value = $unit.val();
+                var $parent = $selector.parents('tr.form_set_row');
+                purchase_request = false
+                {% if is_purchase_request %}
+                    purchase_request = true
+                {% endif %}
+                if(id != '' && id != null){
+                    $.ajax({
+                        type : "GET",
+                        url : url,
+                        dataType : 'json',
+                        data : {
+                            id : id,
+                            purchase_request : purchase_request,
+                        },
+                        success : function(data) {
+                            var qty = 1;
+                            qty = $parent.find('.sale_item_qty input').val();
+                            var status = data['status'];
+                            var pk = data['pk'];
+                            var name = data['name'];
+                            var code = data['code'];
+                            var stock = data['stock'];
+                            var price = data['price'];
+                            var cost = data['cost'];
+                            var tax = data['tax'];
+                            var discount_amount = data['discount'];
+                            var units = data['units'];
+                            
+                            if (status == "true"){
+                                product_price = parseFloat(price)
+                                tax_percentage = parseFloat(tax);
+                                discount_amount = parseFloat(discount_amount);
+                                tax_amount = 0;
+                                if(tax_percentage){
+                                    tax_amount = tax_percentage * product_price * qty / 100
+                                }
+
+                                {% if is_purchase_request %}
+                                    $parent.find('.sale_item_stock input').val(stock);
+                                {% endif %}
+                                
+                                $parent.find('.sale_item_tax input').val(tax);
+                                $parent.find('.sale_item_tax_amount input').val(tax_amount.toFixed(2));
+                                $parent.find('.sale_item_barcode input').val(code);
+                                $parent.find('.sale_item_discount input').val(discount_amount.toFixed(2));
+
+                                var options = '';
+                                for (var i = 0; i < units.length; i++) {
+                                    options += '<option data-product="' + pk + '" value="' + units[i].pk + '">' + units[i].name + ' (' + units[i].code + ')</option>';
+                                }
+                                $parent.find('.sale_item_unit select').addClass('first_time').html(options).trigger("change").val(unit_value).selectpicker('refresh');
+
+                                calculate();
+                                update_payment_received();
+                            }
+                        },
+                        error : function(data){
+                            var title = "An error occurred";
+                            var message = "An error occurred. Please try again later.";
+                            swal(title, message, "error");
+                        }
+                    });
+                }
+            }
+
+            $(document).on('click','.icon-trash',function(){
+            	calculate();
+            });
+
+            $(document).on('change keyup','.sale_item_price input',function(){
+            	var $this = $(this);
+            	var price = $this.val();
+            	var $parent = $this.parents("tr.form_set_row");
+            	var tax = $parent.find(".sale_item_tax input").val();
+            	var qty = $parent.find(".sale_item_qty input").val();
+            	var discount = $parent.find(".sale_item_discount input").val();
+                tax_percentage = parseFloat(tax);
+    			var tax_amount = 0;
+                var discount_amount = 0;
+    			if(tax){
+                    product_tax_excluded_price = (100*price)/(100+tax_percentage)
+    				tax_amount = (tax * product_tax_excluded_price * qty) / 100;
+    			}
+    			if(discount){
+    				discount_amount = price * discount * qty / 100;
+    			}
+    			$parent.find('.sale_item_tax_amount input').val(tax_amount);
+    			$parent.find('.sale_item_discount_amount input').val(discount_amount.toFixed(2));
+    			calculate();
+                update_payment_received();
+    		});
+            $(document).on('change keyup','.sale_item_qty input',function(){
+                var $this = $(this);
+                var qty = $this.val();
+                var $parent = $this.parents("tr.form_set_row");
+                var discount = $parent.find(".sale_item_discount input").val();
+                var price = $parent.find(".sale_item_price input").val();
+                var discount_amount = (qty*price*discount)/100
+                $parent.find('.sale_item_discount_amount input').val(discount_amount.toFixed(2));
+                calculate();
+                update_payment_received();
+            });
+            $(document).on('change keyup','.sale_item_discount input',function(){
+                var $this = $(this);
+                var discount = $this.val();
+                var $parent = $this.parents("tr.form_set_row");
+                var price = $parent.find(".sale_item_price input").val();
+                var qty = $parent.find(".sale_item_qty input").val();
+                var discount_amount = 0;
+                if(discount){
+                    discount_amount = price * discount * qty / 100;
+                }
+                $parent.find('.sale_item_discount_amount input').val(discount_amount.toFixed(2));
+                calculate();
+                update_payment_received();
+            });
+
+            $(document).on('change keyup','.sale_item_discount_amount input',function(){
+                var $this = $(this);
+                var discount_amount = $this.val();
+                var $parent = $this.parents("tr.form_set_row");
+                var price = $parent.find(".sale_item_price input").val();
+                var qty = $parent.find(".sale_item_qty input").val();
+                var discount = 0;
+                if(discount_amount){
+                    discount = (discount_amount * 100 )/(qty * price)
+                }
+                $parent.find('.sale_item_discount input').val(discount.toFixed(2));
+                calculate();
+                update_payment_received();
+            });
+
+
+           $(document).on('change','tr.form_set_row .sale_item select',function(){
+                $selector = $(this);
+                getProductInfo($selector,false);
+           });
+
+           $(document).on('keypress','tr.form_set_row .sale_item_barcode input',function(event){
+                if (event.which == '10' || event.which == '13') {
+                    event.preventDefault();
+                    $selector = $(this);
+                    getProductInfo($selector,true);
+                }
+           });
+
+           $(document).keydown(function(e) {
+                if (e.altKey) {
+                    if (e.keyCode == 40) {
+                        $('.add_item_container .icon_add_item').click();
+                        return false;
+                    }
+                    if (e.keyCode == 38) {
+                        $('.add_item_container table tr:nth-last-child(2) td:last-child .icon.icon-trash').click();
+                        return false;
+                    }
+                }
+            });
+
+        });
+        
+        $(document).on('change','tr.form_set_row .return_item input',function(){
+            var $this = $(this);
+            var checked = $this.prop('checked');
+            if(checked){          
+                $(this).val('checked');
+            }else{
+               $(this).val('');
+            }
+       });
+    </script>
+    {{form.media}}
+{% endblock %}

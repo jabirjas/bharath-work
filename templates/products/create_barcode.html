@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load tz %}
+
+{% block content %}
+    <section id="content">
+        <div class="container">
+           <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>           
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+
+                <div class="ah-search">
+                    <form method="get" action="">
+                        <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+    
+                        <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+                        <input type="submit" class="hidden" />
+                    </form>
+                </div>
+
+                
+            </div>
+            <form method="get" action="{% url 'products:print_barcodes' %}" id="barcode_form">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-sm-10">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class=item_head >Items <small></small></h2>
+                            </div>
+                            
+                            <div class="table-responsive card-body card-padding add_item_container product_barcode_formset">
+                                <table id="data-table-basic" class="table table-striped table-vmiddle">
+                                    <thead>
+                                        <tr>
+                                            <!-- <th style="width:10%;">Hide MRP</th> -->
+                                            <th data-column-id="product">Product</th>
+                                            <th data-column-id="qty">Unit</th>
+                                            <th></th>
+                                            <th class="one"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for form in product_barcode_formset.forms %}               
+                                        <tr class="form_set_row">
+                                            <!-- <td style="width:10%;">
+                                                <div class="checkbox lgi-checkbox m-t-5">
+                                                    <label>
+                                                        <input class="check_hide_price" type="checkbox" name="check_hide_price">
+                                                        <i class="input-helper"></i>
+                                                    </label>
+                                                </div>
+                                            </td> -->
+                                            <td>
+                                                {{ form.id }}
+                                                <span class="barcode_item p-relative">                                 
+                                                    {{ form.product }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="barcode_item_unit check_empty p-relative">
+                                                    {{ form.unit }}
+                                                </span>
+                                            </td>
+                                            <td class='hidden check_hidden'>
+                                                <span class="check_status">
+                                                    <input type="hidden" name="checkitem_price" value="false">
+                                                </span>
+                                            </td>
+                                            <td class="one">{% if form.instance.pk %}{{ form.DELETE }}{% endif %}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                {{ product_barcode_formset.management_form }}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div class="col-sm-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Skip Row<small></small></h2>
+                            </div>
+                            <div class="card-body card-padding">
+                                 {{ form.shop }}
+                                <div class="form-group fg-line">
+                                    <label for="{{ form.skip_row.id_for_label }}">
+                                        {{ form.skip_row.label }}
+                                        {% if form.skip_row.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+                                        
+                                        {% if form.skip_row.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.skip_row.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                        </span>
+                                    </label>
+                                    {{ form.skip_row }}
+                                    
+                                    {% if form.skip_row.errors %}
+                                        <label class="error">{{ form.skip_row.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>                
+                            </div> 
+                        </div> 
+                    </div> -->
+                </div>
+               
+                <div class="m-t-20">
+                    <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                </div>
+            </form>  
+         </div>
+    </section>
+{% endblock %}
+
+{% block static %}
+{{product_barcode_formset.media}}
+    {% load static %}
+  <style>
+    .select2-dropdown {
+      z-index: 999999;
+    }
+    </style>
+    <script type="text/javascript" src="{% static 'js/jquery.formset.js' %}"></script>    
+    <script>        
+        $('.product_barcode_formset table tr.form_set_row').formset({
+            prefix: '{{ product_barcode_formset.prefix }}',
+            formCssClass: 'dynamic-formset1',
+            'added' : function (row) {
+                row.find('.barcode_item select').val(null).trigger('change');
+                row.find('.select2-selection').click();
+            }
+        });
+        $(document).ready(function(){
+            document.getElementById("barcode_form").reset();
+            $('input[type=text]').focus(function () { 
+                $(this).select();
+            });
+        })
+
+        $(document).on('change','tr.form_set_row .barcode_item select', function() {
+            var $this = $(this);
+            getProductInfo($this,false);
+                   
+        });
+        $(document).on('change','tr.form_set_row .barcode_item_unit input', function() {
+            var $this = $(this);
+            var $parent = $this.parents('tr');
+            var unit = $this.val()
+            var unit = parseFloat(unit)
+            if(unit != '' && unit != null){
+                var unit_el = '<input type="hidden" name="barcode_unit" value="'+unit+'">';
+                $parent.find('.barcode_item_unit .unit_number').remove();
+                $parent.find('.barcode_item_unit').append(unit_el);
+            }       
+        });
+        $(document).on('change','tr.form_set_row .check_hide_price', function() {
+            var $this = $(this);
+            var $parent = $this.parents('tr');
+            if($this.is(":checked")) {
+                $parent.find('.check_hidden .check_status input').remove()
+                var check_el = '<input type="hidden" name="checkitem_price" value="true">';
+                $parent.find('.check_hidden .check_status').append(check_el);
+
+            } else {
+                $parent.find('.check_hidden .check_status input').remove()
+                var check_el = '<input type="hidden" name="checkitem_price" value="false">';
+                $parent.find('.check_hidden .check_status').append(check_el);
+            }   
+                 
+        });
+            
+        function getProductInfo($selector,barcode){
+            var url = "{% url 'products:get_product' %}";
+            var id = $selector.val();
+            var $parent = $selector.parents('tr.form_set_row');
+            if(id != '' && id != null){
+                var code = "no";
+                if(barcode){
+                    code = "yes";
+                }
+                $.ajax({
+                    type : "GET",
+                    url : url,
+                    dataType : 'json',
+                    data : {
+                        id : id,
+                        barcode : code,
+                    },
+                    success : function(data) {
+                        var qty = 1;
+                        var stock = data['stock'];                     
+                        var discount_amount = data['discount'];
+                        var status = data['status'];
+                        if (status == "true"){
+                            $parent.find('.barcode_item_unit input').val(stock);
+
+                            var unit = parseFloat(stock)
+                            if(id != '' && id != null){
+                                var input_el = '<input type="hidden" class="form-control" name="barcode" value="'+ id+ '" />';
+                                var unit_el = '<input class="unit_number" type="hidden" name="barcode_unit" value="'+unit+'">';
+                                $parent.find('.barcode_item_unit').append(unit_el);
+                                $parent.find('.barcode_item').append(input_el);
+                            }
+                            $('.add_item_container.product_barcode_formset .icon_add_item').click();  
+                            $('.add_item_container.product_barcode_formset table tbody tr:nth-last-child(2) span.sale_itemtable .select2-container .select2-selection--single .select2-selection__rendered').click();
+                            $('.add_item_container.product_barcode_formset table tbody tr:nth-last-child(2) span.sale_item_barcode input').focus();
+                        }   
+                        remove_popup();                     
+                    },
+                    error : function(data){
+                        remove_popup(); 
+                        var title = "An error occurred";
+                        var message = "An error occurred. Please try again later."; 
+                        swal(title, message, "error");
+                    }
+                });                 
+            }else{
+                $parent.find('input').val('');
+            }
+        }
+    </script>
+{% endblock %}

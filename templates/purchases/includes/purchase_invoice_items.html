@@ -1,0 +1,44 @@
+
+<table id="data-table-basic" class="table table-striped table-vmiddle">
+    <thead>
+        <tr>
+            <th style="width:20px;"></th>
+            <th data-column-id="product">Product</th>
+            <th data-column-id="stock">Stock</th>
+            <th data-column-id="qty">QTY</th>
+            <th data-column-id="unit">Unit</th>
+            <th data-column-id="price">Cost</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for item in purchase_invoice_items %}
+    <tr class="return_data">
+        <td style="width:20px;"><div class="checkbox lgi-checkbox m-t-5">
+                <label>
+                    <input class="check check_item return_product_check" data-unit="{{item.product.unit.pk}}" type="checkbox" data-qty="{{item.product.actual_qty}}" value="{{item.product.pk}}" name="product_pk">
+                    <i class="input-helper"></i>
+                </label>
+            </div>
+        </td>
+        <td class="product_datail">
+            {{item.product}}
+        </td>
+        <td class="product_datail">
+            {{item.product.stock}}
+        </td>
+        <td>
+            <span class="sale_return_item_qty p-relative">
+                {{item.product.qty|default:0}}
+            </span>
+        </td>
+        <td>
+            {{item.product.unit}}
+        </td>
+        <td class="product_price">
+            {{item.product.cost}}
+        </td>
+    </tr>
+    {% endfor %}
+
+    </tbody>
+</table>

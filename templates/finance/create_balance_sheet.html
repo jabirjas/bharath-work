@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load tz %}
+
+
+{% block content %}
+    <section id="content">
+        <div class="container">
+            <div class="c-header">
+                <h2>{{ title }}</h2>
+            </div>
+
+            <div class="action-header palette-theme {{ current_theme }} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{ title }}</div>
+
+                <ul class="ah-actions actions a-alt">
+                    <li>
+                        <a title="Search" data-ma-action="ah-search-open" class="ah-search-trigger" href="">
+                            <i class="zmdi zmdi-search"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <form target='_blank' action="{{url}}" method="get">
+
+                <div id="c-grid" class="clearfix" data-columns="2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Basic Info
+                                <small></small>
+                            </h2>
+                        </div>
+                        <div class="card-body card-padding">
+                            <div class="form-group fg-line dtp-container">
+                                <label for="{{ form.from_date.id_for_label }}">
+                                    {{ form.from_date.label }}
+                                    {% if form.from_date.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+
+                                    {% if form.from_date.help_text %}
+                                        <span data-original-title="Field Info" title=""
+                                              data-content="{{ form.from_date.help_text }}" data-placement="left"
+                                              data-toggle="popover" data-trigger="hover"
+                                              class="help-text-icon zmdi zmdi-info-outline"></span>
+                                    {% endif %}
+                                </label>
+                                {% if is_create_page %}
+                                    {% timezone user_time_zone %}
+                                        <input id="{{ form.from_date.id_for_label }}" type="text"
+                                               class="required form-control date-picker"
+                                               name="{{ form.from_date.html_name }}" placeholder="Enter date"
+                                               value="{% now "m-d-Y" %}">
+                                    {% endtimezone %}
+                                {% else %}
+                                    <input id="{{ form.from_date.id_for_label }}" type="text"
+                                           class="required form-control date-picker"
+                                           name="{{ form.from_date.html_name }}" placeholder="Enter date"
+                                           value="{{ form.from_date.value|date:'m-d-Y' }}">
+                                {% endif %}
+                                {% if form.from_date.errors %}
+                                    <label class="error">{{ form.from_date.errors.as_text }}</label>
+                                {% endif %}
+                            </div>
+                            <div class="form-group fg-line dtp-container">
+                                <label for="{{ form.to_date.id_for_label }}">
+                                    {{ form.to_date.label }}
+                                    {% if form.to_date.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+
+                                    {% if form.to_date.help_text %}
+                                        <span data-original-title="Field Info" title=""
+                                              data-content="{{ form.to_date.help_text }}" data-placement="left"
+                                              data-toggle="popover" data-trigger="hover"
+                                              class="help-text-icon zmdi zmdi-info-outline"></span>
+                                    {% endif %}
+                                </label>
+                                {% if is_create_page %}
+                                    {% timezone user_time_zone %}
+                                        <input id="{{ form.to_date.id_for_label }}" type="text"
+                                               class="required form-control date-picker"
+                                               name="{{ form.to_date.html_name }}" placeholder="Enter date"
+                                               value="{% now "m-d-Y" %}">
+                                    {% endtimezone %}
+                                {% else %}
+                                    <input id="{{ form.to_date.id_for_label }}" type="text"
+                                           class="required form-control date-picker" name="{{ form.to_date.html_name }}"
+                                           placeholder="Enter date" value="{{ form.to_date.value|date:'m-d-Y' }}">
+                                {% endif %}
+                                {% if form.to_date.errors %}
+                                    <label class="error">{{ form.to_date.errors.as_text }}</label>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                </div>
+
+
+            </form>
+        </div>
+
+    </section>
+{% endblock %}
+
+{% block static %}
+    {% load static %}
+    <script>
+        $(document).ready(function () {
+
+            $('input[type=text]').focus(function () {
+                $(this).select();
+            });
+            $('input[type=text]').mouseup(function (e) { // fix for chrome and safari
+                e.preventDefault();
+            });
+            $('input[type=text]').select(function () {
+                $('.log').append(' Handler for .select() called. ');
+            });
+            var value = $('#id_shop').val();
+            if (value == 'distributor') {
+                $('.distributor').show();
+            } else {
+                $('.distributor').hide();
+            }
+            $(document).on('change', '#id_shop', function () {
+                var value = $(this).val();
+                if (value == 'distributor') {
+                    $('.distributor').show();
+                } else {
+                    $('.distributor').hide();
+                }
+            });
+        });
+    </script>
+    {{ form.media }}
+{% endblock %}

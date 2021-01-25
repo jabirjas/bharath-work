@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %} {{title}} {% endblock %}
+
+{% block content %}
+<section id="content">
+    <div class="container">
+        <div class="c-header">
+            <h2>{{title}}</h2>
+        </div>
+        <div class="action-header palette-theme {{current_theme}} bg clearfix">
+            <div class="ah-label hidden-xs palette-White text">{{instance.user}}</div>
+
+            <div class="ah-search">
+            	<form method="get" action="{% url 'users:users' %}">
+                    <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+
+                    <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+                    <input type="submit" class="hidden" />
+                </form>
+            </div>
+            
+       	 </div>
+        <div id="c-grid" class="clearfix" data-columns="2">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Basic Info <small></small></h2>
+                </div>
+
+                <div class="card-body">
+                    <div class="list-group lg-alt c-overflow">
+                    	
+                        <div class="list-group-item media">
+
+                            <div class="media-body">
+                                <div class="lgi-heading">User Name</div>
+                                <small class="lgi-text">{{instance.user}}</small>
+                            </div>
+                        </div>
+                        
+                        <div class="list-group-item media">
+
+                            <div class="media-body">
+                                <div class="lgi-heading">Title</div>
+                                <small class="lgi-text">{{instance.title|default:"-"}}</small>
+                            </div>
+                        </div>
+                        <div class="list-group-item media">
+
+                            <div class="media-body">
+                                <div class="lgi-heading">Time</div>
+                                <small class="lgi-text">{{instance.time|default:"-"}}</small>
+                            </div>
+                        </div>
+                        
+					</div>
+				</div>
+
+            </div> 
+        </div> 
+        <div class="card">
+            <div class="card-body">
+                <div class="">
+                    <small class="lgi-text">{{instance.description|safe}}</small>
+                </div>
+            </div>
+        </div>     
+   </div>
+</section>
+{% endblock %}
+
+{% block right_menu %}
+	
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+{% endblock %}
+
+
+
+
+
+

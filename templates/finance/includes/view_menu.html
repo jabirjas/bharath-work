@@ -1,0 +1,20 @@
+<ul>
+	{% if request.user.is_superuser or 'can_view_transaction' in user_instance.permissionlist %}
+		<li><a href="{% url 'finance:transactions' %}"><small class="icon icon-dollar"></small><b>Transactions</b></a></li>
+	{% endif %}
+	{% if request.user.is_superuser or 'can_view_bank_account' in user_instance.permissionlist %}
+		<li><a href="{% url 'finance:bank_accounts' %}"><small class="icon icon-bank"></small><b>Bank Accounts</b></a></li>
+	{% endif %}
+	{% if request.user.is_superuser or 'can_view_cash_account' in user_instance.permissionlist %}
+		<li><a href="{% url 'finance:cash_accounts' %}"><small class="icon icon-box"></small><b>Cash Accounts</b></a></li>
+	{% endif %}
+	{% if request.user.is_superuser or 'can_view_transaction_category' in user_instance.permissionlist %}
+		<li><a href="{% url 'finance:transaction_categories' %}"><small class="icon icon-tags"></small><b>Transaction Categories</b></a></li>
+	{% endif %}
+	{% if request.user.is_superuser or 'can_view_shop_credit_user' in user_instance.permissionlist %}
+		<li><a href="{% url 'finance:shop_credit_users' %}"><small class="icon icon-user"></small><b>Company Credit Users</b></a></li>
+	{% endif %}
+	{% if request.user.is_superuser or 'can_view_shop_credit' in user_instance.permissionlist %}
+		<li><a href="{% url 'finance:shop_credits' %}"><small class="icon icon-dollar"></small><b>Company Credits</b></a></li>
+	{% endif %}
+</ul>

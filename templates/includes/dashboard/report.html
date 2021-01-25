@@ -1,0 +1,171 @@
+<div class="card card-padding">
+    <div class="card-body card-padding">
+        <div class="row m-b-10">
+            <div class="col-md-4">
+                <div class="card palette-theme {{current_theme}} bg">
+                    <div class="card-header p-b-0 tz-white">
+                        <h2 class="tz-white">Income <small></small></h2>
+                    </div>
+
+                    <div class="card-body card-padding tz-white">
+                        <h3 id="id_total_income_amount" class="tz-white">0.00</h3>
+                        <div class='d-l-b m-r-45'>
+                            <small class="stats-label tz-white p-r-3 f-15 d-b">Sale Count</small>
+                            <small id="id_total_sales_created" class ='tz-white  p-r-3'>0.00</small>
+                        </div>
+                        <div class='d-l-b m-r-45'>
+                            <small class="stats-label tz-white p-r-3 f-15 d-b">Sale Amount</small>
+                            <small id="id_total_sales_amount" class ='tz-white  p-r-3'>0.00</small>
+                        </div>
+                        <div class='d-l-b'>
+                            <small class="stats-label tz-white p-r-3 f-15 d-b">Collected Amount</small>
+                            <small id="id_total_other_income" class ='tz-white  p-r-3'>0.00</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card palette-theme {{current_theme}} bg">
+                    <div class="card-header p-b-0 tz-white">
+                        <h2 class="tz-white">Expense<small></small></h2>
+                    </div>
+
+                    <div class="card-body card-padding tz-white">
+                        <h3 id="id_this_period_total_expense_amount" class="tz-white">0.00</h3>
+                        <div class='d-l-b m-r-45'>
+                            <small class="stats-label tz-white p-r-3 f-15 d-b">Return Count</small>
+                            <small id="id_return_count" class ='tz-white  p-r-3'>0.00</small>
+                        </div>
+                        <div class='d-l-b m-r-45'>
+                            <small class="stats-label tz-white p-r-3 f-15 d-b">Sale Return</small>
+                            <small id="id_total_sale_return_amount" class ='tz-white  p-r-3'>0.00</small>
+                        </div>
+                        <div class='d-l-b'>
+                            <small class="stats-label tz-white p-r-3 f-15 d-b">Other Expense</small>
+                            <small id="id_this_period_total_expense_amount" class ='tz-white  p-r-3'>0.00</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card palette-theme {{current_theme}} bg">
+                    <div class="card-body card-padding tz-white p-b-120">
+                        <div class='d-l-b m-r-45'>
+                            <small class="stats-label tz-white p-r-3 f-15 d-b">Bank Account</small>
+                            <small id="id_total_bank_amount" class ='tz-white  p-r-3'>0.00</small>
+                        </div>
+                        <div class='d-l-b m-r-45'>
+                            <small class="stats-label tz-white p-r-c-b f-15 d-b">Current Balance</small>
+                            <small id="id_current_balance" class ='tz-white  p-r-3'>0.00</small>
+                        </div>
+                        <div class='d-l-b m-r-45'>
+                            <small class="stats-label tz-white p-r-c-b f-15 d-b">Credit</small>
+                            <small id="id_sale_total_balance" class ='tz-white  p-r-3'>0.00</small>
+                        </div>
+                        {% if is_superuser %}
+                        <div class='d-l-b m-t-30'>
+                            <small class="stats-label tz-white p-r-3 f-15 d-b">Profit</small>
+                            <small id="id_total_profit_amount" class ='tz-white  p-r-3'>0.00</small>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+                <div>
+                    <canvas id="lineChart" height="114"></canvas>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <ul class="stat-list m-t-lg list-unstyled">
+                    <li>
+                        <h4 id="id_total_income" class="no-margins">0.00</h4>
+                        <small>Total Income in period</small>
+                        <div class="progress progress-mini">
+                            <div class="progress-bar" id="id_income_progress_bar"></div>
+                        </div>
+                    </li>
+                    <li>
+                        <h4 id="id_total_expense" class="no-margins ">0.00</h4>
+                        <small>Total Expense in period</small>
+                        <div class="progress progress-mini">
+                            <div class="progress-bar" id="id_expense_progress_bar"></div>
+                        </div>
+                    </li>
+                    <li class='width-half' style="border-right: 1px solid rgba(0,0,0,.15);"">
+                        <h4 id="id_total_vendor_expense" class="no-margins ">0.00</h4>
+                        <small>Monthly Vendor Expense</small>
+                    </li>
+                    <li class='width-half'>
+                        <h4 id="id_toatl_monthly_other_expense" class="no-margins ">0.00</h4>
+                        <small>Monthly Other Expense</small>
+                    </li>
+                    <li>
+                        <h4 id="id_total_monthly_balance" class="no-margins ">0.00</h4>
+                        <small>Total Monthly Balance</small>
+                    </li>
+                </ul>
+            </div>  
+        </div>
+        <div class="row m-t-20">
+            <div class="col-md-12">
+                <div class="card palette-theme {{current_theme}} bg">
+                    <div class="card-header p-b-0 tz-white">
+                        <h2 class="tz-white m-b-15 f-20">Distributor<small></small></h2>
+                    </div>
+
+                    <div class="card-body card-padding tz-white">
+                        <div class='d-l-b w-10'>
+                        {% if not current_role == 'distributor' %}
+                            <a id='filter_url' href="#" data-id='filter-url'>
+                                <small class="stats-label tz-white p-r-30 f-15 d-b">Distributors</small>
+                                <small id="id_total_distributors" class ='tz-white  p-r-30'>0.00</small>
+                            </a>
+                        {% else %}
+                            <small class="stats-label tz-white p-r-30 f-15 d-b">Distributors</small>
+                            <small id="id_total_distributors" class ='tz-white  p-r-30'>0.00</small>
+                        {% endif %}
+                        </div>
+                        <div class='d-l-b w-10'>
+                            <small class="stats-label tz-white p-r-30 f-15 d-b">Sale Amount</small>
+                            <small id="id_total_distributor_sale_amount" class ='tz-white  p-r-30'>0.00</small>
+                        </div>
+                        <div class='d-l-b w-10'>
+                            <small class="stats-label tz-white p-r-30 f-15 d-b">Bank Amount</small>
+                            <small id="id_total_distributor_bank_amount" class ='tz-white  p-r-30'>0.00</small>
+                        </div>
+                        <div class='d-l-b w-10'>
+                            <small class="stats-label tz-white p-r-30 f-15 d-b">Cash Amount</small>
+                            <small id="id_total_distributor_cash_amount" class ='tz-white  p-r-30'>0.00</small>
+                        </div>
+                        <div class='d-l-b w-13'>
+                            <small class="stats-label tz-white p-r-30 f-15 d-b">Transfer Amount</small>
+                            <small id="id_total_transfer_amount" class ='tz-white  p-r-30'>0.00</small>
+                        </div>
+                        <div class='d-l-b w-13'>
+                            <small class="stats-label tz-white p-r-30 f-15 d-b">Balance Amount</small>
+                            <small id="id_total_distributor_balance_amount" class ='tz-white  p-r-30'>0.00</small>
+                        </div>
+                        <div class='d-l-b w-10'>
+                            <small class="stats-label tz-white p-r-30 f-15 d-b">Stock Price</small>
+                            <small id="id_total_distributor_price" class ='tz-white  p-r-30'>0.00</small>
+                        </div>
+                        <div class='d-l-b w-10'>
+                            <small class="stats-label tz-white p-r-30 f-15 d-b">Other Income</small>
+                            <small id="id_total_distributor_income" class ='tz-white  p-r-30'>0.00</small>
+                        </div>
+                        <div class='d-l-b w-10'>
+                            <small class="stats-label tz-white p-r-30 f-15 d-b">Other Expense</small>
+                            <small id="id_total_distributor_expense" class ='tz-white  p-r-30'>0.00</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+        
+
+

@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load tz %}
+
+
+{% block content %}
+    <section id="content">
+        <div class="container">
+            <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>
+            
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+
+                <ul class="ah-actions actions a-alt">
+                    <li>
+                        <a title="Search" data-ma-action="ah-search-open" class="ah-search-trigger" href="">
+                            <i class="zmdi zmdi-search"></i>
+                        </a>
+                    </li>                              
+                </ul>
+            </div>
+            <form action="{% url 'products:create_inventory_adjustment' %}" method="get">
+                
+                <div id="c-grid" class="clearfix" data-columns="2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Basic Info <small></small></h2>
+                        </div>
+                        <div class="card-body card-padding">                                                 
+                            <div class="form-group fg-line">
+                                <label for="{{ form.distributor.id_for_label }}">
+                                    Select Sales Man
+                                    {% if form.distributor.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.distributor.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.distributor.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+                                    {% endif %}
+                                    </span>
+                                </label>
+                                {{ form.distributor }}
+                                
+                                {% if form.distributor.errors %}
+                                    <label class="error">{{ form.distributor.errors.as_text }}</label>
+                                {% endif %}
+                            </div> 
+                            
+                        </div> 
+                    </div>     
+                   
+               </div>
+                    <div>
+                        <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                    </div>
+                
+                </div>
+            </form>  
+         </div> 
+    </section>
+{% endblock %}
+
+{% block static %}
+    {% load static %}
+    <script>
+       $(document).ready(function(){
+
+            $('input[type=text]').focus(function () { 
+                $(this).select();
+            });
+            $('input[type=text]').mouseup(function (e) { // fix for chrome and safari
+                e.preventDefault();
+            });
+            $('input[type=text]').select(function () {
+                $('.log').append(' Handler for .select() called. ');
+            });
+            $('.category').hide();
+            $('.subcategory').hide();
+            $(document).on('change','#id_selection_type',function(){
+                var value = $(this).val();
+                if (value == 'category'){
+                    $('.category').show();
+                    $('.subcategory').show();
+                }
+                else {
+                    $('.category').hide();
+                    $('.subcategory').hide();
+                }
+            });
+        });
+    </script>
+    {{form.media}}
+{% endblock %}

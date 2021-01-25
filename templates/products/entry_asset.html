@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+{% block content %}
+	<section id="content">
+        <div class="container">
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+
+                <div class="ah-search">
+	            	<form method="get" action="{% url 'products:assets' %}">
+	                    <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+	
+	                    <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+	                    <input type="submit" class="hidden" />
+	                </form>
+	            </div>
+
+                <ul class="ah-actions actions a-alt">
+                    <li>
+                        <a title="Search" data-ma-action="ah-search-open" class="ah-search-trigger" href="">
+                            <i class="zmdi zmdi-search"></i>
+                        </a>
+                    </li>
+                    {% if instance %}
+	                    {% if user in super_users or 'can_create_asset' in user_instance.permissionlist %}
+		                    <li>
+		                        <a title="Create asset" href="{% url 'products:create_asset' %}">
+		                            <i class="zmdi zmdi-plus"></i>
+		                        </a>
+		                    </li>
+	                    {% endif %} 
+	                    {% if user in super_users or 'can_view_asset' in user_instance.permissionlist %}
+		                    <li>
+		                        <a title="View asset" href="{% url 'products:asset' pk=instance.pk %}">
+		                            <i class="zmdi zmdi-eye"></i>
+		                        </a>
+		                    </li>
+	                    {% endif %} 
+	                    {% if user in super_users or 'can_delete_asset' in user_instance.permissionlist %}
+		                    <li>
+		                        <a title="Delete asset" data-id="{{instance.pk}}" data-text="{{confirm_delete_message}}" data-title="Are you sure?" href="{% url 'products:delete_asset' pk=instance.pk %}" class="action-button redirect">
+		                            <i class="zmdi zmdi-delete"></i>
+		                        </a>
+		                    </li>
+	                    {% endif %} 
+                    {% endif %}                               
+                </ul>
+            </div>
+
+            <div class="card">
+                <form class="ajax reset {% if redirect %}redirect{% endif %}" method="post" action="{{url}}">
+                	{% csrf_token %}
+                    <div class="card-body card-padding">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group fg-line">
+	                                <label for="{{ form.name.id_for_label }}">
+	                                	{{ form.name.label }}
+	                                	{% if form.name.field.required %}
+							        		<small class="star">*</small>
+							        	{% endif %}
+							        	
+							        	{% if form.name.help_text %}
+							        		<span data-original-title="Field Info" title="" data-content="{{ form.name.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+	                                    {% endif %}
+	                                </label>
+	                                {{ form.name }}
+	                                
+	                                {% if form.name.errors %}
+	                                	<label class="error">{{ form.name.errors.as_text }}</label>
+	                                {% endif %}
+	                            </div>
+	                            
+	                            <div class="form-group fg-line">
+	                                <label for="{{ form.asset_category.id_for_label }}">
+	                                	{{ form.asset_category.label }}
+	                                	{% if form.asset_category.field.required %}
+							        		<small class="star">*</small>
+							        	{% endif %}
+							        	
+							        	{% if form.asset_category.help_text %}
+							        		<span data-original-title="Field Info" title="" data-content="{{ form.asset_category.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+	                                    {% endif %}
+	                                </label>
+	                                {{ form.asset_category }}
+	                                
+	                                {% if form.asset_category.errors %}
+	                                	<label class="error">{{ form.asset_category.errors.as_text }}</label>
+	                                {% endif %}
+	                            </div>
+	                            
+	                            <div class="form-group fg-line m-b-0">
+	                                <label for="{{ form.quantity.id_for_label }}">
+	                                	{{ form.quantity.label }}
+	                                	{% if form.quantity.field.required %}
+							        		<small class="star">*</small>
+							        	{% endif %}
+							        	
+							        	{% if form.quantity.help_text %}
+							        		<span data-original-title="Field Info" title="" data-content="{{ form.quantity.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+	                                    {% endif %}
+	                                </label>
+	                                {{ form.quantity }}
+	                                
+	                                {% if form.quantity.errors %}
+	                                	<label class="error">{{ form.quantity.errors.as_text }}</label>
+	                                {% endif %}
+	                            </div>
+                            </div>
+                            
+                            <div class="col-sm-6">
+                            	<div class="form-group fg-line">
+	                                <label for="{{ form.cost.id_for_label }}">
+	                                	{{ form.cost.label }}
+	                                	{% if form.cost.field.required %}
+							        		<small class="star">*</small>
+							        	{% endif %}
+							        	
+							        	{% if form.cost.help_text %}
+							        		<span data-original-title="Field Info" title="" data-content="{{ form.cost.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+	                                    {% endif %}
+	                                </label>
+	                                {{ form.cost }}
+	                                
+	                                {% if form.cost.errors %}
+	                                	<label class="error">{{ form.cost.errors.as_text }}</label>
+	                                {% endif %}
+	                            </div>
+	                            
+                                 <div class="form-group dtp-container fg-line m-b-0">
+	                                <label for="{{ form.date.id_for_label }}">
+	                                	{{ form.date.label }}
+	                                	{% if form.date.field.required %}
+							        		<small class="star">*</small>
+							        	{% endif %}
+							        	
+							        	{% if form.date.help_text %}
+							        		<span data-original-title="Field Info" title="" data-content="{{ form.date.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+	                                    {% endif %}
+	                                </label>
+	                                {{ form.date }}
+	                                
+	                                {% if form.date.errors %}
+	                                	<label class="error">{{ form.date.errors.as_text }}</label>
+	                                {% endif %}
+	                            </div>
+                                <br>	
+                            </div>
+                         </div>
+                         
+                         <div class="m-t-20">
+                            <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                        </div>
+                     </div>  
+                 </form>                    
+            </div>
+            
+        </div>
+    </section>
+{{ form.media }}
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+	<script src="{% static 'vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script>
+{% endblock %}

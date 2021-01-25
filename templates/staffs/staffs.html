@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+{% block content %}
+	<section id="content">
+        <div class="container">
+             <div class="c-header">
+            	<h2>{{title}}</h2>
+            </div>
+            
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+	            <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+	
+	            <div class="ah-search">
+	            	<form method="get" action="{% url 'staffs:staffs' %}">
+	                    <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+	
+	                    <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+	                    <input type="submit" class="hidden" />
+	                </form>
+	            </div>
+	
+	            <ul class="ah-actions actions a-alt">
+	                <li>
+	                    <a href="" class="ah-search-trigger" data-ma-action="ah-search-open">
+	                        <i class="zmdi zmdi-search"></i>
+	                    </a>
+	                </li>
+	                
+	                <li>
+	                    <a title="Filter" class="filter_button" href="">
+	                        <i class="zmdi zmdi-filter-list"></i>
+	                    </a>
+	                </li>
+	                {% if "is_superuser" or 'can_create_staff' in user_instance.permissionlist %}
+		                <li>
+	                        <a title="Create Staff" href="{% url 'staffs:create_staff' %}">
+	                            <i class="zmdi zmdi-plus"></i>
+	                        </a>
+	                    </li>
+	                {% endif %}
+	                {% if instances %}
+	
+		                <li>
+		                    <a title="Select All" class="check_all" href="">
+		                        <i class="zmdi zmdi-select-all"></i>
+		                    </a>
+		                </li>
+		                {% if "is_superuser" or 'can_delete_staff' in user_instance.permissionlist %}
+			                <li>
+			                    <a title="Delete selected staffs" data-id="" href="{% url 'staffs:delete_selected_staffs' %}" data-text="{{confirm_delete_selected_message}}" data-title="Are you sure?" class="action-button reload selected-items-button">
+			                        <i class="zmdi zmdi-delete"></i>
+			                    </a>
+			                </li>
+		                {% endif %}
+	                {% endif %}
+	            </ul>
+	            
+	        </div>
+
+            <div class="card">
+				
+				{% if instances %}
+                
+                <div class="table-responsive">
+                    <table id="data-table-basic" class="table table-striped table-vmiddle">
+                        <thead>
+                            <tr>
+                            	<th style="width:20px;"></th>
+                            	<th>Id</th>
+                                <th>Name</th>
+                                <th>Designation</th>
+                                <th>Salary</th>
+                                <th class="four" data-column-id="action">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        	{% load el_pagination_tags %}
+							{% paginate 21 instances %}
+                        	{% for instance in instances %}
+                            <tr class="check_items_row">
+                            	<td style="width:20px;">
+                            		<div class="checkbox lgi-checkbox m-t-5">
+			                            <label>
+			                                <input class="check check_item" type="checkbox" value="{{instance.pk}}" name="delete_item">
+			                                <i class="input-helper"></i>
+			                            </label>
+			                        </div>
+                            	</td>
+                            	<td>{{instance.auto_id}}</td>
+                                <td>{{instance.first_name}}{{instance.last_name}}</td>
+                                <td>{{instance.designation}}</td>
+                                <td>{{instance.salary}}</td>
+                                <td >
+                                	{% if "is_superuser" or 'can_view_staff' in user_instance.permissionlist %}
+                                	<a href="{% url 'staffs:staff' pk=instance.pk %}" class="btn btn-default btn-icon waves-effect waves-circle waves-float"><i title="View Staff" class="zmdi zmdi-eye"></i></a>
+                                	{% endif %}
+									{% if "is_superuser" or 'can_modify_staff' in user_instance.permissionlist %}
+                                	<a href="{% url 'staffs:edit_staff' pk=instance.pk %}" class="btn btn-default btn-icon waves-effect waves-circle waves-float"><i title="Edit Staff" class="zmdi zmdi-edit"></i></a>
+                                	{% endif %}
+									{% if "is_superuser" or 'can_create_user' in user_instance.permissionlist %}
+										{% if not instance.user %}
+										<a href="{% url 'users:create_user' pk=instance.pk %}" class="btn btn-default btn-icon waves-effect waves-circle waves-float"><i title="Create User" class="zmdi zmdi-account"></i></a>				
+										{% else %}                   				  
+                            			<a href="{% url 'users:revoke_access' pk=instance.pk %}" class="btn btn-default btn-icon waves-effect waves-circle waves-float action-button reload selected-items-button"><i title="Revoke Access" class="zmdi zmdi-rotate-left"></i></a>	
+                        				{% endif %} 
+                        			{% endif %}								
+									{% if "is_superuser" or 'can_delete_staff' in user_instance.permissionlist %}	
+                                	<a title="Delete Staff" data-id="{{instance.pk}}" href="{% url 'staffs:delete_staff' pk=instance.pk %}" data-text="{{confirm_delete_message}}" data-title="Are you sure?" class="action-button remove btn btn-default btn-icon waves-effect waves-circle waves-float"><i class="zmdi zmdi-delete"></i></a>
+                                	{% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!--pagination -->
+                <div class="bootgrid-footer container-fluid" id="data-table-selection-footer">
+                	{% get_pages %}
+                	<div class="row">
+                		<div class="col-sm-6">
+                			<div class="pagination">
+                				{% show_pages %}
+                			</div>
+                		</div>
+                		<div class="col-sm-6 infoBar">
+                			<div class="infos">
+                				Showing {{title}} <span class="current_page_index">{{ pages.current_start_index }}</span> - <span class="current_end_status">{{ pages.current_end_index }}</span> of <span class="total_count">{{ pages.total_count }}</span>
+                			</div>
+                		</div>
+                	</div>
+                </div>   
+                <!--pagination-->
+                {% else %}
+                	{% include 'includes/not_found.html' %}
+                {% endif %}            
+            </div>
+            
+        </div>
+    </section>
+{% endblock %}
+
+{% block filter_box %}
+<div class="filter-box">
+	 <form method="get" action="{% url 'staffs:staffs' %}">
+	 	<div class="card">
+			<div class="card-header">
+		        <h2>Filter <small></small></h2>
+		        <span class="back-button-poupup palette-Cyan bg white btn btn-default btn-icon-text waves-effect"><i class="zmdi zmdi-arrow-back"></i> Back</span>
+		    </div>
+		    
+			<div class="card-body card-padding">
+			 	<div class="form-group fg-line">
+		            <label>Query</label>
+		            <input name="q" type="text" class="form-control" placeholder="Enter your query..." />
+		        </div>
+		        
+		         <div class="m-t-20">
+                    <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                </div>
+		    </div>
+		 </div>
+	 </form>
+</div>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+{% endblock %}

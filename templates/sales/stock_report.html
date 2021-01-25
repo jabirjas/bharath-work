@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+{% block content %}
+    <section id="content">
+        <div class="container">
+             <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>
+            
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+    
+                <div class="ah-search">
+                    <form method="get" action="'products:stock_report'">
+                        <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+    
+                        <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+                        <input type="submit" class="hidden" />
+                    </form>
+                </div>
+    
+                <ul class="ah-actions actions a-alt">
+                    <li>
+                        <a href="" class="ah-search-trigger" data-ma-action="ah-search-open">
+                            <i class="zmdi zmdi-search"></i>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a title="Filter" class="filter_button" href="{% url 'sales:sales' %}">
+                            <i class="zmdi zmdi-filter-list"></i>
+                        </a>
+                    </li>
+                    
+                    
+                     
+                    
+                    {% if instances %}    
+                    
+                    
+                    <!-- <li>
+                        <a title="Delete selected sales" data-id="" href="" data-text="{{confirm_delete_selected_message}}" data-title="Are you sure?" class="action-button reload selected-items-button">
+                            <i class="zmdi zmdi-delete"></i>
+                        </a>
+                    </li> -->
+                    {% endif %}
+                </ul>
+                
+            </div>
+
+            <div class="card">
+                
+                {% if items %}
+                
+                <div class="table-responsive">
+                    <table id="data-table-basic" class="table table-striped table-vmiddle">
+                        <thead>
+                            <tr>
+                                <th style="width:20px;"></th>
+                                <th>Product</th>
+                                <th>Sale Count</th>
+                                <th>Available</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% load el_pagination_tags %}
+                            {% paginate 21 instances %}
+
+                            {% for key,value in items.items %}
+                            
+                            <tr class="check_items_row">
+                                <td style="width:20px;">
+                                    <div class="checkbox lgi-checkbox m-t-5">
+                                        <label>
+                                            <input class="check check_item" type="checkbox" value="{{instance.pk}}" name="delete_item">
+                                            <i class="input-helper"></i>
+                                        </label>
+                                    </div>
+                                </td>
+
+                                <td>{{value.product}}</td>
+                                <td>{{value.qty}}</td>
+                                <td>{{value.stock}}</td>                                
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!--pagination -->
+                <div class="bootgrid-footer container-fluid" id="data-table-selection-footer">
+                    {% get_pages %}
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="pagination">
+                                {% show_pages %}
+                            </div>
+                        </div>
+                        <div class="col-sm-6 infoBar">
+                            <div class="infos">
+                                Showing {{title}} <span class="current_page_index">{{ pages.current_start_index }}</span> - <span class="current_end_status">{{ pages.current_end_index }}</span> of <span class="total_count">{{ pages.total_count }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>   
+                <!--pagination-->
+                {% else %}
+                    {% include 'includes/not_found.html' %}
+                {% endif %}            
+            </div>
+            
+        </div>
+    </section>
+{% endblock %}
+
+{% block filter_box %}
+<div class="filter-box">
+     <form method="get" action="{% url 'sales:stock_report' %}">
+        <div class="card">
+            <div class="card-header">
+                <h2>Filter <small></small></h2>
+                <span class="back-button-poupup palette-Cyan bg white btn btn-default btn-icon-text waves-effect"><i class="zmdi zmdi-arrow-back"></i> Back</span>
+            </div>
+            
+            <div class="card-body card-padding">
+                <div class="form-group fg-line">
+                    <label>Product</label>
+                    <select name="product" id="id_period" class="selectpicker">
+                        <option value="">All</option>
+                        {% for product in products %}
+                            <option value="{{product.pk}}">{{product}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                 <div class="form-group fg-line">
+                    <label>Year</label>
+                    <input name="year" type="text" class="form-control" placeholder="yyyy" />
+                </div>
+
+                <div class="form-group fg-line">
+                    <label>Month</label>
+                    <select name="month" id="id_month" class="selectpicker">
+                        <option value="">All</option>
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+
+                    </select>
+                </div>
+                <div class="form-group fg-line">
+                    <label>Period</label>
+                    <select name="period" id="id_period" class="selectpicker">
+                        <option value="">All</option>
+                        <option value="today">Today</option>
+                        <option value="month">Month</option>
+                        <option value="year">Year</option>
+                    </select>
+                </div>
+                <div class="form-group fg-line">
+                    <label>Category</label>
+                    <select name="category" id="id_period" class="selectpicker">
+                        <option value="">All</option>
+                        {% for category in categories %}
+                            <option value="{{category.pk}}">{{category}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group fg-line">
+                    <label>Date</label>
+                    <input name="date" type="text" class="form-control date-picker" placeholder="Date" />
+                </div>
+                <div class="form-group fg-line">
+                    <label>Date Period</label>
+                    <div class="row">
+                        <div class="col-md-6 m-b-20">
+                            <input name="from_date" type="text" class="form-control date-picker" placeholder="From Date" />
+                        </div>
+                        <div class="col-md-6">
+                            <input name="to_date" type="text" class="form-control date-picker" placeholder=" To Date" />
+                        </div>
+                    </div>    
+                </div>
+
+                
+
+               <div class="m-t-20">
+                    <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                </div>
+            </div>
+         </div>
+     </form>
+</div>
+{% endblock %}
+
+{% block static %}
+    {% load static %}
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% load users_template_tags %}
+{% block content %}
+	<section id="content">
+        <div class="container">
+            <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>
+            
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{instance.name}}</div>
+
+                <ul class="ah-actions actions a-alt">
+                    <li>
+                        <a title="Add Alternative Unit" href="{% url 'products:create_alternative_unit' %}">
+                            <i class="zmdi zmdi-plus"></i>
+                        </a>
+                    </li>
+                    {% if is_superuser or 'can_modify_unit' in user_instance.permissionlist %}
+                    <li>
+                        <a title="Edit Unit" href="{% url 'products:edit_alternative_unit' pk=instance.pk %}">
+                            <i class="zmdi zmdi-edit"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if is_superuser or 'can_delete_unit' in user_instance.permissionlist %}
+                    <li>
+                        <a title="Delete Unit" data-id="{{instance.pk}}" data-text="{{confirm_delete_message}}" data-title="Are you sure?" href="{% url 'products:delete_alternative_unit' pk=instance.pk %}" class="action-button redirect">
+                            <i class="zmdi zmdi-delete"></i>
+                        </a>
+                    </li> 
+                    {% endif %}                               
+                </ul>
+            </div>
+
+            <div id="c-grid" class="clearfix" data-columns="2">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Basic Info <small></small></h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="list-group lg-alt c-overflow">
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">product</div>
+                                    <small class="lgi-text">{{instance.product}}</small>
+                                </div>
+                            </div>
+                             <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Unit</div>
+                                    <small class="lgi-text">{{instance.unit}}</small>
+                                </div>
+                            </div>
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Cost</div>
+                                    <small class="lgi-text">{{instance.cost}}</small>
+                                </div>
+                            </div>
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Price</div>
+                                    <small class="lgi-text">{{instance.price}}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>                               
+             </div>                    
+        </div>
+    </section>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+{% endblock %}

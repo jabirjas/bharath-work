@@ -1,0 +1,169 @@
+{% extends "invoice_base.html" %}
+{% load i18n %}
+{% load static %}
+{% load users_template_tags %}
+{% block content %}
+{% load main_template_tags %}
+
+    <section id="content">
+        <div class="container">
+            <div class="card">                
+                <div class="card-body card-padding">
+                    <div class="row m-b-25">
+                        <div class="col-xs-12">
+                            <div class="text-center">
+                                {% if current_shop.logo %}
+                                    <img class="i-logo" src="{{current_shop.logo.url}}" alt="{{current_shop.name}}">
+                                {% else %}
+                                    <img src="{% static 'img/logo-print.png' %}" alt="{{current_shop.name}}" />
+                                {% endif %}
+                                
+                                <h4>{{current_shop.name|upper}}</h4>
+
+                                <span class="text-muted">
+                                    <address>
+                                        {{current_shop.address}}
+                                    </address>
+                                    VAT Number : {{current_shop.vat_number|default:" - "}}<br/>
+                                    {{current_shop.phone}}<br/>
+                                    {{current_shop.email}}
+                                </span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="clearfix"></div>
+                    
+                    <h3>{{title}}</h3>
+                    {% if instances %}                      
+                        <div class="purchase_box">
+                            <table>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Product</th>
+                                    <th>Category</th>
+                                    <th>Qty</th>
+                                </tr>
+                                {% for k, v in instances.items %}
+                                    <tr>
+                                        <td>{{v.code}}</td>
+                                        <td>{{v.name}}</td>
+                                        <td>{{v.category|default:'-'}}</td>
+                                        <td>{{v.qty}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+
+                        <style>
+                            .purchase_box {
+                                display: block;
+                                width: 100%;
+                                margin-bottom: 20px;
+                            }
+                            .purchase_box table{
+                                width: 100%;
+                            }
+                            .purchase_box table td,.purchase_box table th{
+                                padding: 10px;
+
+                            }
+                            .purchase_box .top-section table tr:nth-child(2) td{
+                                border-bottom: none !important;
+                            }
+                    </style>
+                    {% endif %}
+                    
+                    
+                    <div class="clearfix"></div>
+                </div>
+                
+                <footer class="m-t-15 p-20">
+                    <ul class="list-inline text-center list-unstyled">
+                        <li class="m-l-5 m-r-5"><small>{{current_shop.email}}</small></li>
+                        <li class="m-l-5 m-r-5"><small>{{current_shop.phone}}</small></li>
+                        <li class="m-l-5 m-r-5"><small>{{current_shop.website}}</small></li>
+                    </ul>
+                </footer>
+            </div>
+            
+        </div>
+        <button class="btn btn-float bgm-red print-button m-btn" data-action="print"><i class="zmdi zmdi-print"></i></button>
+    </section>
+    <style>
+        .container{
+            width: 210mm;
+            margin: 0 auto;
+            background: #fff;
+            min-height: 100%
+        }
+        table tr td, table tr th {
+            border: 1px solid #ccc;
+            border-top: 1px solid #ccc ;
+            border-bottom: 1px solid #ccc ;
+        }
+        table tr:last-child td, table tr:last-child th {
+            border-bottom: 1px solid #555;
+        }
+        table tr:first-child td, table tr:first-child th {
+            border-top: 1px solid #555;
+        }
+        table tr td:first-child, table tr th:first-child {
+            border-left: 1px solid #555;
+        }
+        table tr td:last-child, table tr th:last-child {
+            border-right: 1px solid #555;
+        }
+        .top-section table tr:last-child td, table tr:last-child th {
+            border-bottom: 1px solid #ccc ;
+        }
+        .bottom-section table tr:first-child td, table tr:first-child th {
+            border-top: 1px solid #ccc ;
+        }
+        table { 
+            page-break-inside:always
+        }
+        tr { 
+            page-break-inside:always; page-break-after:always
+        }
+        table.tax-inner {
+            width:100%;
+        }
+        table td.p-0 {
+            padding: 0 !important;
+        }
+        table td table {
+            width: 100%;
+            height: 100%;
+        }
+        table td table td{
+            padding: 3px;
+            text-align: center;
+        }
+        table td table tr:first-child td{
+            border-top:none;
+        }
+        table td table tr:last-child td{
+            border-bottom:none;
+        }
+        table td table tr td:first-child{
+            border-left:none;
+        }
+        table td table tr td:last-child{
+            border-right:none;
+            border-top:none;
+        }
+    </style>
+{% endblock %}
+
+{% block static %}
+    {% load static %}
+    <script type="text/javascript">
+
+        function clicktoPrint() {
+            window.print();
+        }
+    </script>
+    
+{% endblock %}

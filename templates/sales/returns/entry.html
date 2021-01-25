@@ -1,0 +1,581 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load tz %}
+
+{% block content %}
+	<section id="content">
+        <div class="container">
+            <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>
+
+			<div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+
+                <div class="ah-search">
+	            	<form method="get" action="">
+	                    <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+
+	                    <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+	                    <input type="submit" class="hidden" />
+	                </form>
+	            </div>
+
+                <ul class="ah-actions actions a-alt">
+                    <li>
+                        <a title="Search" data-ma-action="ah-search-open" class="ah-search-trigger" href="">
+                            <i class="zmdi zmdi-search"></i>
+                        </a>
+                    </li>
+                    {% if instance %}
+                        {% if "is_superuser" or 'can_create_sale_return' in user_instance.permissionlist %}
+                        <li>
+                            <a title="Create Return" href="{% url 'sales:create_sale_return' %}">
+                                <i class="zmdi zmdi-plus"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% if "is_superuser" or 'can_view_sale_return' in user_instance.permissionlist %}
+                        <li>
+                            <a title="View return" href="{% url 'sales:sale_return' pk=instance.pk %}">
+                                <i class="zmdi zmdi-eye"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% if "is_superuser" or 'can_delete_sale_return' in user_instance.permissionlist %}
+                        <li>
+                            <a title="Delete Return" data-id="{{instance.pk}}" data-text="{{confirm_delete_message}}" data-title="Are you sure?" href="{% url 'sales:delete_sale_return' pk=instance.pk %}" class="action-button redirect">
+                                <i class="zmdi zmdi-delete"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                    {% endif %}
+                </ul>
+            </div>
+
+            <form class="ajax reset {% if redirect %}redirect{% endif %}" method="post" action="{{url}}">
+                {% csrf_token %}
+
+                <div class="row">
+                    <div class="col-md-3 col-lg-3 col-sm-6 p-l-5 p-r-5">
+                        <div class="card m-b-5">
+                            <div class="card-body p-10">
+                                <div class="form-group m-b-10 fg-line">
+                                    <label for="{{ form.sale.id_for_label }}">
+                                        {{ form.sale.label }}
+                                        {% if form.sale.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+
+                                        {% if form.sale.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.sale.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+                                        {% endif %}
+                                    </label>
+                                    {{ form.sale }}
+
+                                    {% if form.sale.errors %}
+                                        <label class="error">{{ form.sale.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2 col-lg-2 col-sm-6 p-l-5 p-r-5">
+                        <div class="card m-b-5">
+                            <div class="card-body p-10">
+                                <div class="form-group m-b-10 fg-line m-b-0">
+                                    <label>Balance</label>
+                                    <input id="balance" class="form-control" disabled type="text" value="0.00" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-lg-2 col-sm-6 p-l-5 p-r-5">
+                        <div class="card m-b-5">
+                            <div class="card-body p-10">
+                                <div class="form-group m-b-10 fg-line m-b-0">
+                                    <label>Returnable Amount</label>
+                                    <input id="sub_total_amount" name="sub_total_amount" class="form-control" disabled type="text" value="0.00" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-lg-2 col-sm-6 p-l-5 p-r-5">
+                        <div class="card m-b-5">
+                            <div class="card-body p-10">
+                                <div class="form-group m-b-10 fg-line m-b-0">
+                                    <label>Return Amount</label>
+                                    {{ form.returnable_amount }}
+
+                                    {% if form.returnable_amount.errors %}
+                                        <label class="error">{{ form.returnable_amount.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-lg-2 col-sm-6 p-l-5 p-r-5">
+                        <div class="card m-b-5">
+                            <div class="card-body p-10">
+                                <div class="form-group m-b-10 fg-line">
+                                    <label for="{{ form.time.id_for_label }}">
+                                        {{ form.time.label }}
+                                        {% if form.time.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+
+                                        {% if form.time.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.time.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+
+                                    {% if is_create_page %}
+                                        {% timezone user_time_zone %}
+                                            <input id="{{ form.time.id_for_label }}" type="text" class="required form-control date-time-picker"  name="{{form.time.html_name}}" placeholder="Enter time" value="{% now "m-d-Y H:i:s" %}">
+                                        {% endtimezone %}
+                                    {% else %}
+                                        <input id="{{ form.time.id_for_label }}" type="text" class="required form-control date-time-picker"  name="{{form.time.html_name}}" placeholder="Enter time" value="{{ form.time.value|date:'m-d-Y H:i:s' }}">
+                                    {% endif %}
+
+
+                                    {% if form.time.errors %}
+                                        <label class="error">{{ form.time.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="table-responsive  product_list_container">
+                        <p class="text-center p-30">No Products found</p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 col-lg-6 col-sm-6 p-l-5 p-r-5 ">
+                        <div class="card m-b-0">
+                            <div class="card-body p-10 transaction">
+                                <div class="form-group m-b-10 fg-line">
+                                    <label for="{{ transaction_form.transaction_mode.id_for_label }}">
+                                        {{ transaction_form.transaction_mode.label }}
+                                        {% if transaction_form.transaction_mode.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+
+                                        {% if transaction_form.transaction_mode.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.transaction_mode.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+                                    {{ transaction_form.transaction_mode }}
+
+                                    {% if transaction_form.transaction_mode.errors %}
+                                        <label class="error">{{ transaction_form.transaction_mode.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+
+                                 <div class="form-group m-b-10 fg-line">
+                                    <label for="{{ form.payment_mode.id_for_label }}">
+                                        {{ transaction_form.payment_mode.label }}
+                                        {% if transaction_form.payment_mode.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+
+                                        {% if transaction_form.payment_mode.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.payment_mode.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+                                    {{ transaction_form.payment_mode }}
+
+                                    {% if transaction_form.payment_mode.errors %}
+                                        <label class="error">{{ transaction_form.payment_mode.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+
+                                <div class="form-group m-b-10 fg-line m-b-0">
+                                    <label for="{{ form.cheque_details.id_for_label }}">
+                                        {{ transaction_form.cheque_details.label }}
+                                        {% if transaction_form.cheque_details.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+
+                                        {% if transaction_form.cheque_details.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.cheque_details.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+                                    {{ transaction_form.cheque_details }}
+
+                                    {% if transaction_form.cheque_details.errors %}
+                                        <label class="error">{{ transaction_form.cheque_details.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+                                <div class="form-group m-b-10 fg-line m-b-0">
+                                    <label for="{{ form.cheque_date.id_for_label }}">
+                                        {{ transaction_form.cheque_date.label }}
+                                        {% if transaction_form.cheque_date.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+
+                                        {% if transaction_form.cheque_date.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.cheque_date.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+                                    {{ transaction_form.cheque_date }}
+
+                                    {% if transaction_form.cheque_date.errors %}
+                                        <label class="error">{{ transaction_form.cheque_date.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+
+                               <!--  <div class="row">
+                                    <div class="form-group m-b-10 col-sm-5 m-b-20">
+                                        <div class="toggle-switch">
+                                            <label class="ts-label" for="{{ form.is_cheque_withdrawed.id_for_label }}">
+                                                {{ transaction_form.is_cheque_withdrawed.label }}
+                                                {% if transaction_form.is_cheque_withdrawed.field.required %}
+                                                    <small class="star">*</small>
+                                                {% endif %}
+
+                                                {% if transaction_form.is_cheque_withdrawed.help_text %}
+                                                    <span data-original-title="Field Info" title="" data-content="{{ form.is_cheque_withdrawed.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                                {% endif %}
+                                            </label>
+                                            {{ transaction_form.is_cheque_withdrawed }}
+                                            <label class="ts-helper" for="ts1"></label>
+                                        </div>
+
+                                        {% if transaction_form.is_cheque_withdrawed.errors %}
+                                            <label class="error">{{ transaction_form.is_cheque_withdrawed.errors.as_text }}</label>
+                                    {% endif %}
+                                    </div>
+                                </div> -->
+
+                                <div class="form-group m-b-10 fg-line m-b-0">
+                                    <label for="{{ form.card_details.id_for_label }}">
+                                        {{ transaction_form.card_details.label }}
+                                        {% if transaction_form.card_details.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+
+                                        {% if transaction_form.card_details.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.card_details.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+                                    {{ transaction_form.card_details }}
+
+                                    {% if transaction_form.card_details.errors %}
+                                        <label class="error">{{ transaction_form.card_details.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+
+                                <div class="form-group m-b-10 fg-line">
+                                    <label for="{{ form.payment_to.id_for_label }}">
+                                        {{ transaction_form.payment_to.label }}
+                                        {% if transaction_form.payment_to.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+
+                                        {% if transaction_form.payment_to.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.payment_to.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+                                    {{ transaction_form.payment_to }}
+
+                                    {% if transaction_form.payment_to.errors %}
+                                        <label class="error">{{ transaction_form.payment_to.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+
+                                <div class="form-group m-b-10 fg-line m-b-0">
+                                    <label for="{{ form.bank_account.id_for_label }}">
+                                        {{ transaction_form.bank_account.label }}
+                                        {% if transaction_form.bank_account.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+
+                                        {% if transaction_form.bank_account.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.bank_account.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+                                    {{ transaction_form.bank_account }}
+
+                                    {% if transaction_form.bank_account.errors %}
+                                        <label class="error">{{ form.bank_account.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+
+                                <div class="form-group m-b-10 fg-line">
+                                    <label for="{{ transaction_form.cash_account.id_for_label }}">
+                                        {{ transaction_form.cash_account.label }}
+                                        {% if transaction_form.cash_account.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+
+                                        {% if transaction_form.cash_account.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ transaction_form.cash_account.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+                                    {{ transaction_form.cash_account }}
+
+                                    {% if transaction_form.cash_account.errors %}
+                                        <label class="error">{{ transaction_form.cash_account.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+                              
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="m-t-20">
+                    <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                </div>
+            </form>
+         </div>
+    </section>
+{% endblock %}
+
+{% block static %}
+    {% load static %}
+    <style>
+        .row {
+             margin-left: -5px !important;
+             margin-right: -5px !important;
+        }
+        .return_product_check input {
+            width: 150px;
+        }
+        .sale_return_item_qty_td{
+            width: 120px !important;
+        }
+
+    </style>
+
+    <script>
+        function showHideCreditUser(){
+            var category = $('#id_transaction_category option:selected').text();
+            var $user_parent = $('#id_shop_credit_user').parents('div.form-group');
+            if(category == "debit"){
+                $user_parent.show();
+            }else{
+                $user_parent.hide();
+            }
+        }
+
+        function showHideCashBank(){
+            var mode = $('#id_transaction_mode').val();
+            var $bank_parents = $('.bank_item').parents('div.form-group');
+            if (mode == "cash"){
+                $bank_parents.hide();
+                $('#id_payment_to').val('cash_account').change();
+                $('#id_cash_account').parents('div.form-group').show();
+            }else{
+                $bank_parents.show();
+                showHidePaymentModeItems();
+            }
+        }
+
+        function showHidePaymentModeItems(){
+            var transaction_mode = $('#id_transaction_mode').val();
+            if(transaction_mode == "bank"){
+                var mode = $('#id_payment_mode').val();
+                var $cheque_parents = $('.cheque_item').parents('div.form-group');
+                var $card_parents = $('.card_item').parents('div.form-group');
+                if (mode == "cheque_payment"){
+                    $cheque_parents.show();
+                    $card_parents.hide();
+                    $('#id_payment_to').val('bank_account').change();
+                    $('#id_cash_account').parents('div.form-group').hide();
+
+                }else if(mode == "card_payment"){
+                    $cheque_parents.hide();
+                    $card_parents.show();
+                    $('#id_payment_to').val('bank_account').change();
+                    $('#id_payment_to').parents('div.form-group').hide();
+
+                }else if(mode == "internet_banking"){
+                    $card_parents.hide();
+                    $cheque_parents.hide();
+                    $('#id_payment_to').val('bank_account').change();
+                    $('#id_payment_to').parents('div.form-group').hide();
+                }
+
+                showHidePaymentToItems();
+            }
+        }
+
+        function showHidePaymentToItems(){
+            var transaction_mode = $('#id_transaction_mode').val();
+            if(transaction_mode == "bank"){
+                var to = $('#id_payment_to').val();
+                if(to == "bank_account"){
+                    $('#id_bank_account').parents('div.form-group').show();
+                    $('#id_cash_account').parents('div.form-group').hide();
+                }else{
+                    $('#id_cash_account').parents('div.form-group').show();
+                    $('#id_bank_account').parents('div.form-group').hide();
+                }
+            }
+        }
+
+        $(document).ready(function(){
+            showHideCreditUser();
+            showHideCashBank();
+            showHidePaymentModeItems();
+            showHidePaymentToItems();
+
+            $(document).on('change','#id_transaction_category',function(){
+                showHideCreditUser();
+            });
+
+            $(document).on('change','#id_transaction_mode',function(){
+                showHideCashBank();
+            });
+
+            $(document).on('change','#id_payment_mode',function(){
+                showHidePaymentModeItems();
+            });
+
+            $(document).on('change','#id_payment_to',function(){
+                showHidePaymentToItems();
+            });
+        });
+
+        function showCredit($selector){
+            var sale = $selector.val();
+            var url = "{% url 'sales:get_customer' %}";
+            if(sale != '' && sale != null){
+
+                $.ajax({
+                    type : "GET",
+                    url : url,
+                    data: {
+                        id : sale
+                    } ,
+                    dataType : 'json',
+                    success : function(data){
+                        var status = data['status'];
+                        var credit = data['credit'];
+                        var debit = data['debit'];
+						var balance = 0;
+						if (parseFloat(debit) > 0){
+							balance = parseFloat(debit)
+						} else if (credit > 0){
+							balance = 0 - parseFloat(credit)
+						}
+                        if(status == "true"){
+                            $('#balance').val(balance);
+                        }
+                    },
+                });
+            }
+        }
+
+        function getSaleItems($selector){
+
+            var id = $selector.val();
+            var url = "{% url 'sales:get_sale_items' %}";
+            if(id != '' && id != null){
+                $.ajax({
+                    type : "GET",
+                    url : url,
+                    dataType : 'json',
+                    data : {
+                        id : id
+                    },
+                    success : function(data) {
+                        var status = data['status'];
+                        var template = data['template'];
+                        if(status == "true"){
+                            $('.product_list_container').html(template);
+                            calculate();
+                        } else {
+                            var nothing_found = "class='text-center p-30'>No Products found</p>";
+                        }
+                    },
+                    error : function(data){
+                        remove_popup_box();
+                    }
+                });
+            }
+        }
+        $(document).on('change','#id_sale',function(){
+            var $this = $(this);
+            getSaleItems($this)
+            showCredit($this)
+        });
+
+        $(document).on('change','.return_product_check', function() {
+            var $this = $(this);
+            var $parent = $this.parents('tr');
+            var qty = $this.attr('data-qty');
+            var unit = $this.attr('data-unit');
+            if($this.is(":checked")) {
+
+                var input_el = '<input type="text" class="form-control" name="returned_qty" value="'+ qty+ '" />';
+                var unit_el = '<input type="hidden" name="returned_product_unit" value="'+unit+'">';
+                $parent.find('.sale_return_item_qty').html(input_el);
+                $parent.find('.product_datail').append(unit_el);
+                $('.selectpicker').selectpicker('refresh');
+                calculate();
+            } else {
+                $parent.find('.sale_return_item_qty').html(qty);
+                $parent.find('.sale_return_item_status').html('Select Status');
+                $parent.find('.product_datail input').remove();
+                calculate();
+            }
+        });
+
+        $(document).on('change, keyup','.sale_return_item_qty input',function(){
+            calculate();
+        });
+
+        function calculate(){
+            var return_item_total = 0;
+            var amount_returned = 0;
+            $('.product_list_container table tr.return_data').each(function(){
+                $this = $(this);
+                if ($this.find('.return_product_check').is(":checked")) {
+                    var qty = parseFloat($this.find('.sale_return_item_qty input').val());
+                    if(!qty){
+                        qty = 0;
+                    }
+                    var purchased_qty = $this.find('.return_product_check').attr('data-qty');
+                    if(!purchased_qty){
+                        purchased_qty = 0;
+                    }
+
+                    var price = parseFloat($this.find('.product_price').text());
+                    if(!price){
+                        price = 0;
+                    }
+
+                    var tax = parseFloat($this.find('.product_tax').val());
+                    if(!tax){
+                        tax = 0;
+                    }
+
+                    var tax_added_price = price + ( price * tax/100)
+
+
+                    var discount = parseFloat($this.find('.productsale_discount').text());
+                    if(!discount){
+                        discount = 0;
+                    }
+
+                    var subtotal = qty * tax_added_price -(qty*(discount/purchased_qty));
+                    subtotal = Math.round(subtotal)
+                    return_item_total += subtotal;                    
+                    $this.find('.sale_return_item_subtotal input').val(subtotal);
+                }
+
+            });
+            var balance = $('#balance').val();
+            return_item_total = return_item_total + parseFloat(balance)
+
+            $('#sub_total_amount').val(parseFloat(return_item_total));
+        }
+    </script>
+    {{form.media}}
+{% endblock %}

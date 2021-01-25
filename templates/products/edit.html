@@ -1,0 +1,539 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+{% block content %}
+    <section id="content">
+        <div class="container">
+            <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>
+            
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+
+                <div class="ah-search">
+                    <form method="get" action="{% url 'products:products' %}">
+                        <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+    
+                        <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+                        <input type="submit" class="hidden" />
+                    </form>
+                </div>
+
+                <ul class="ah-actions actions a-alt">
+                    <li>
+                        <a title="Search" data-ma-action="ah-search-open" class="ah-search-trigger" href="">
+                            <i class="zmdi zmdi-search"></i>
+                        </a>
+                    </li>
+                    {% if instance %}
+                    <li>
+                        <a title="Create Product" href="{% url 'products:create' %}">
+                            <i class="zmdi zmdi-plus"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a title="View Product" href="{% url 'products:product' pk=instance.pk %}">
+                            <i class="zmdi zmdi-eye"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a title="Delete Product" data-id="{{instance.pk}}" data-text="{{confirm_delete_message}}" data-title="Are you sure?" href="{% url 'products:delete' pk=instance.pk %}" class="action-button redirect">
+                            <i class="zmdi zmdi-delete"></i>
+                        </a>
+                    </li> 
+                    {% endif %}                               
+                </ul>
+            </div>
+            
+            <form class="ajax reset {% if redirect %}redirect{% endif %} skip_empty_row" method="post" action="{{url}}">
+                {% csrf_token %}
+                
+                <div id="c-grid" class="clearfix" data-columns="2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Basic Info <small></small></h2>
+                        </div>
+                        <div class="card-body card-padding">
+                                                        
+                            <div class="form-group fg-line">
+                                <label for="{{ form.name.id_for_label }}">
+                                    {{ form.name.label }}
+                                    {% if form.name.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.name.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.name.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                    {% endif %}
+                                    </span>
+                                </label>
+                                {{ form.name }}
+                                
+                                {% if form.name.errors %}
+                                    <label class="error">{{ form.name.errors.as_text }}</label>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group fg-line">
+                                <label for="{{ form.hsn.id_for_label }}">
+                                    {{ form.hsn.label }}
+                                    {% if form.hsn.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.hsn.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.hsn.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                    {% endif %}
+                                </label>
+                                {{ form.hsn }}
+                                
+                                {% if form.hsn.errors %}
+                                    <label class="error">{{ form.hsn.errors.as_text }}</label>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group fg-line">
+                                <label for="{{ form.category.id_for_label }}">
+                                    {{ form.category.label }}
+                                    {% if form.category.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.category.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.category.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                    {% endif %}
+                                </label>
+                                {{ form.category }}
+                                
+                                {% if form.category.errors %}
+                                    <label class="error">{{ form.category.errors.as_text }}</label>
+                                {% endif %}
+                            </div>
+
+
+                            <div class="form-group subcategory">
+                                <label for="{{ form.subcategory.id_for_label }}">
+                                    {{ form.subcategory.label }}
+                                    {% if form.subcategory.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    {% if form.subcategory.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.subcategory.help_text }}" aria-describedby="popover59326" data-placement="auto left" data-toggle="popover" data-trigger="hover" class="help-text-icon fa fa-info-circle" style="font-size:16px;">
+                                    {% endif %}
+                                </label>
+                                {{ form.subcategory }}
+                                
+                                {% if form.subcategory.errors %}
+                                    <label class="error">{{ form.subcategory.errors.as_text }}</label>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group fg-line">
+                                <label for="{{ form.brand.id_for_label }}">
+                                    {{ form.brand.label }}
+                                    {% if form.brand.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.brand.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.brand.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                    {% endif %}
+                                </label>
+                                {{ form.brand }}
+                                
+                                {% if form.brand.errors %}
+                                    <label class="error">{{ form.brand.errors.as_text }}</label>
+                                {% endif %}
+                            </div>
+                            
+                             <div class="form-group fg-line">
+                                <label for="{{ form.unit_type.id_for_label }}">
+                                    {{ form.unit_type.label }}
+                                    {% if form.unit_type.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.unit_type.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.unit_type.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                    {% endif %}
+                                </label>
+                                {{ form.unit_type }}
+                                
+                                {% if form.unit_type.errors %}
+                                    <label class="error">{{ form.unit_type.errors.as_text }}</label>
+                                {% endif %}
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group fg-line">
+                                        <label for="{{ form.stock.id_for_label }}">
+                                            {{ form.stock.label }}
+                                            {% if form.stock.field.required %}
+                                                <small class="star">*</small>
+                                            {% endif %}
+                                            
+                                            {% if form.stock.help_text %}
+                                                <span data-original-title="Field Info" title="" data-content="{{ form.stock.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                            {% endif %}
+                                        </label>
+                                        {{ form.stock }}
+                                        
+                                        {% if form.stock.errors %}
+                                            <label class="error">{{ form.stock.errors.as_text }}</label>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group fg-line">
+                                        <label for="{{ form.low_stock_limit.id_for_label }}">
+                                            {{ form.low_stock_limit.label }}
+                                            {% if form.low_stock_limit.field.required %}
+                                                <small class="star">*</small>
+                                            {% endif %}
+                                            
+                                            {% if form.low_stock_limit.help_text %}
+                                                <span data-original-title="Field Info" title="" data-content="{{ form.low_stock_limit.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                            {% endif %}
+                                        </label>
+                                        {{ form.low_stock_limit }}
+                                        
+                                        {% if form.low_stock_limit.errors %}
+                                            <label class="error">{{ form.low_stock_limit.errors.as_text }}</label>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {{ form.shop }}
+                        </div>
+
+                    </div>                  
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Cost &amp; Price <small></small></h2>
+                        </div>
+                        <div class="card-body card-padding">
+                             <div class="form-group fg-line">
+                                <label for="{{ price_form.cost.id_for_label }}">
+                                    {{ price_form.cost.label }}
+                                    {% if price_form.cost.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if price_form.cost.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ price_form.cost.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                    {% endif %}
+                                </label>
+                                {{ price_form.cost }}
+                                {% if price_form.cost.errors %}
+                                    <label class="error">{{ price_form.cost.errors.as_text }}</label>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group fg-line">
+                                <label for="{{ price_form.price.id_for_label }}">
+                                    {{ price_form.price.label }}
+                                    {% if price_form.price.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if price_form.price.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ price_form.price.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                    {% endif %}
+                                </label>
+                                {{ price_form.price }}
+                                
+                                {% if price_form.price.errors %}
+                                    <label class="error">{{ price_form.price.errors.as_text }}</label>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group fg-line">
+                                <label for="{{ price_form.mrp.id_for_label }}">
+                                    {{ price_form.mrp.label }}
+                                    {% if price_form.mrp.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if price_form.mrp.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ price_form.price.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                    {% endif %}
+                                </label>
+                                {{ price_form.mrp }}
+                                
+                                {% if price_form.price.errors %}
+                                    <label class="error">{{ price_form.mrp.errors.as_text }}</label>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group fg-line">
+                                <label for="{{ price_form.wholesale_price.id_for_label }}">
+                                    {{ price_form.wholesale_price.label }}
+                                    {% if price_form.wholesale_price.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if price_form.wholesale_price.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ price_form.wholesale_price.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                    {% endif %}
+                                </label>
+                                {{ price_form.wholesale_price }}
+                                
+                                {% if price_form.wholesale_price.errors %}
+                                    <label class="error">{{ price_form.wholesale_price.errors.as_text }}</label>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group fg-line">
+                                <label for="{{ form.tax_category.id_for_label }}">
+                                    {{ form.tax_category.label }}
+                                    {% if form.tax_category.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.tax_category.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.tax_category.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                    {% endif %}
+                                </label>
+                                {{ form.tax_category }}
+                                
+                                {% if form.tax_category.errors %}
+                                    <label class="error">{{ form.tax_category.errors.as_text }}</label>
+                                {% endif %}
+                            </div>
+                            <div class="row m-b-10">
+                                <div class="col-sm-6">
+                                    <div class="form-group fg-line">
+                                        <label for="{{ form.is_tax_included.id_for_label }}">
+                                            
+                                            {% if form.is_tax_included.field.required %}
+                                                <small class="star">*</small>
+                                            {% endif %}
+                                            
+                                            {% if form.is_tax_included.help_text %}
+                                                <span data-original-title="Field Info" title="" data-content="{{ form.title.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                            {% endif %}
+                                        </label>
+                                        <div class="checkbox m-b-5">
+                                            <label>
+                                                {{ form.is_tax_included }}
+                                                <i class="input-helper"></i>
+                                                Is tax included
+                                            </label>
+                                        </div>                                
+                                        {% if form.is_tax_included.errors %}
+                                            <label class="error">{{ form.is_tax_included.errors.as_text }}</label>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                               
+                            </div>
+                            
+                            <div class="form-group fg-line">
+                                <label for="{{ form.discount.id_for_label }}">
+                                    {{ form.discount.label }}
+                                    {% if form.discount.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.discount.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.discount.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                    {% endif %}
+                                </label>
+                                {{ form.discount }}
+                                
+                                {% if form.discount.errors %}
+                                    <label class="error">{{ form.discount.errors.as_text }}</label>
+                                {% endif %}
+                            </div>
+
+                        </div> 
+                    </div> 
+                </div>
+                <div class="m-t-20">
+                    <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                </div>
+            </form>  
+         </div> 
+    </section>
+{% endblock %}
+
+{% block static %}
+{{form.media}}
+    {% load static %}
+    <script type="text/javascript" src="{% static 'js/jquery.formset.js' %}"></script>
+    <script src="{% static 'vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script src="{% static 'js/jquery-ui.min.js' %}"></script>
+    <script src="{% static 'js/DateTimePicker.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/DateTimePicker.css' %}">
+    <script>
+        
+        $(document).ready(function(){
+            // ub category show hide
+            $('.form-group.subcategory').hide();
+            $(document).on('change','#id_category',function(){
+                var value = $(this).val();
+                if (value != '' && value != null){
+                    $('.form-group.subcategory').show();
+                }
+                else {
+                    $('.form-group.subcategory').hide();
+                }
+            });
+
+            $('.alternative_unit_formset table tr.form_set_row').formset({
+                prefix: '{{ alternative_unit_formset.prefix }}',
+                formCssClass: 'dynamic-formset1',
+                'added' : function (row) {
+                    row.find('.select2-selection').click();
+                    row.find('.product_unit select').selectpicker();
+                }
+            });
+
+            $('.product_expiry_formset table tr.form_set_row').formset({
+                prefix: '{{ product_expiry_formset.prefix }}',
+                formCssClass: 'dynamic-formset2',
+                'added' : function (row) {
+                    row.find('.select2-selection').click();
+                    row.find('.period select').selectpicker();
+                }
+            });
+            $('#id_is_expired').change(function() {
+               if($(this).is(":checked")) {
+                    $(".product_expiry").show();
+                    $(".expiry").show();
+                  return;
+               }
+               $(".product_expiry").hide();
+               $(".expiry").hide();
+            });
+
+            $('input[type=text]').focus(function () { 
+                $(this).select();
+            });
+            $('input[type=text]').mouseup(function (e) { // fix for chrome and safari
+                e.preventDefault();
+            });
+            $('input[type=text]').select(function () {
+                $('.log').append(' Handler for .select() called. ');
+            });
+            // $('#id_category').change(function(){
+            //     var category = $(this).val();
+            //     showSubCategories(category);
+            // });
+            
+            $('#id_unit_type').change(function(){
+                var unit_type = $(this).val();
+                showProductUnits(unit_type);
+            });
+
+            $('.add_item_container .icon_add_item').click(function(){
+                
+                var $unit_type = $('#id_unit_type').val();
+                if($unit_type == ""){
+                    $('.alternative_unit_formset table tr:nth-last-child(2) .product_unit select').html('<option value="">--Select unit type first--</option>');
+                    $(".alternative_unit_formset table tr:nth-last-child(2) .product_unit select").selectpicker('refresh');
+                }else{
+                    var url = "{% url 'products:get_product_units' %}?pk=" + $unit_type;
+                    
+                    $.getJSON(url, function(models) {
+                        var options = '<option value="">---------</option>';
+                        for (var i = 0; i < models.length; i++) {
+                            options += '<option value="' + models[i].pk + '">' + models[i].fields['unit_name'] + ' (' + models[i].fields['code'] + ')</option>';
+                        }
+                        $('.alternative_unit_formset table tr:nth-last-child(2) .product_unit select').html(options);
+                        $('.alternative_unit_formset table tr:nth-last-child(2) .product_unit select').selectpicker('refresh');
+                        
+                    }).error(function() {  
+                        alert("Product units not loaded. Please refresh page again.");                      
+                    });
+                }
+            });
+            
+        });
+
+        // function showSubCategories($category){              
+        //     if($category == null){
+        //         $('#id_subcategory').html('<option value="">--Select category first--</option>');
+        //         $("#id_subcategory").trigger("change");
+        //     }else{
+        //         var url = "{% url 'products:get_product_sub_categories' %}?pk=" + $category;
+                
+        //         $.getJSON(url, function(models) {
+        //             var options = '<option value="">--Select sub category--</option>';
+        //             for (var i = 0; i < models.length; i++) {
+        //                 options += '<option value="' + models[i].pk + '">' + models[i].fields['name'] + '</option>';
+        //             }
+        //             $('#id_subcategory').html(options);
+        //             $("#id_subcategory").selectpicker('refresh');
+                                    
+        //         }).error(function() { 
+                    
+        //             alert("Sub categories not loaded. Please refresh page again.");                         
+        //         });
+        //     }
+        // }
+
+        function showProductUnits($unit_type){              
+            if($unit_type == ""){
+                $('.alternative_unit_formset .product_unit select').html('<option value="">--Select unit type first--</option>');
+                $('.alternative_unit_formset .product_unit select').selectpicker('refresh');
+                $('.alternative_unit_formset .product_cost input').val('');
+                $('.alternative_unit_formset .product_price input').val('');
+            }else{
+                var url = "{% url 'products:get_product_units' %}?pk=" + $unit_type;
+                
+                $.getJSON(url, function(models) {
+                    var options = '<option value="">---------</option>';
+                    for (var i = 0; i < models.length; i++) {
+                        options += '<option value="' + models[i].pk + '">' + models[i].fields['unit_name'] + ' (' + models[i].fields['code'] + ')</option>';
+                    }
+                    $('.alternative_unit_formset .product_unit select').html(options);
+                    $('.alternative_unit_formset .product_unit select').selectpicker('refresh');
+                    $('.alternative_unit_formset .product_cost input').val('');
+                    $('.alternative_unit_formset .product_price input').val('');
+                    
+                }).error(function() {  
+                    alert("Product units not loaded. Please refresh page again.");                      
+                });
+            }
+        }
+        $(document).on('change','.period select',function(){
+            var $this = $(this);
+            var $parent = $this.parents('tr.form_set_row');
+            var period = $this.val();
+            var best_before = $parent.find('.best_before input').val();
+            var manufacture_date = $parent.find('.manufacture_date input').val();
+                
+            showExpiryDate(manufacture_date,period,best_before,$parent);
+        });
+        
+        function showExpiryDate(manufacture_date,period,best_before,$selector){
+            var url = "{% url 'products:get_expiry' %}";
+            
+            $.ajax({
+                type : "GET",
+                url : url,
+                dataType : 'json',
+                data : {
+                    manufacture_date : manufacture_date,
+                    period : period,
+                    best_before : best_before,
+                },
+                success : function(data) {
+                    var qty = 1;
+                    var status = data['status'];
+                    var expiry_date = data['expiry_date'];
+                    if(status == "true"){
+                        $selector.find('.expiry_date input').val(expiry_date);
+                    } 
+                },
+                error : function(data){
+                }
+            });
+        }
+
+</script>
+    
+{% endblock %}

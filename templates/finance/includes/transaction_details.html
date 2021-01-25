@@ -1,0 +1,238 @@
+			<section class="widget one_by_two right">
+				<div class="head">
+					<h4>
+						<span><small class="icon-plus icon"></small></span>
+						<b>Transaction Details </b>
+					</h4>							
+				</div>
+				<input type="hidden" id="id_transaction_type" value="{{transaction_type}}"/>
+				<div class="content formElements">
+					<div class="field">
+						<label for="{{ form.transaction_mode.id_for_label }}">
+							{{ form.transaction_mode.label }}
+							{% if form.transaction_mode.field.required %}
+					    		<small class="star">*</small>
+					    	{% endif %}
+							{% if form.transaction_mode.help_text %}
+								<span class="help"><span class="icon-help"></span></span>
+							{% endif %}
+						</label>
+						{{ form.transaction_mode }}
+						{% if form.transaction_mode.help_text %}
+					    	<span class="help_text">{{ form.transaction_mode.help_text }}</span>
+					    {% endif %}
+					</div>	
+					<div class="field">
+						<label for="{{ form.payment_mode.id_for_label }}">
+							{{ form.payment_mode.label }}
+							{% if form.payment_mode.field.required %}
+					    		<small class="star">*</small>
+					    	{% endif %}
+							{% if form.payment_mode.help_text %}
+								<span class="help"><span class="icon-help"></span></span>
+							{% endif %}
+						</label>
+						{{ form.payment_mode }}
+						{% if form.payment_mode.help_text %}
+					    	<span class="help_text">{{ form.payment_mode.help_text }}</span>
+					    {% endif %}
+					</div>	
+					<div class="field">
+						<label for="{{ form.cheque_no.id_for_label }}">
+							{{ form.cheque_no.label }}
+							{% if form.cheque_no.field.required %}
+					    		<small class="star">*</small>
+					    	{% endif %}
+							{% if form.cheque_no.help_text %}
+								<span class="help"><span class="icon-help"></span></span>
+							{% endif %}
+						</label>
+						{{ form.cheque_no }}
+						{% if form.cheque_no.help_text %}
+					    	<span class="help_text">{{ form.cheque_no.help_text }}</span>
+					    {% endif %}
+					</div>	
+					
+					{% if transaction_type == "income" %}
+					<div class="field">
+						<label for="{{ form.card_details.id_for_label }}">
+							{{ form.card_details.label }}
+							{% if form.card_details.field.required %}
+					    		<small class="star">*</small>
+					    	{% endif %}
+							{% if form.card_details.help_text %}
+								<span class="help"><span class="icon-help"></span></span>
+							{% endif %}
+						</label>
+						{{ form.card_details }}
+						{% if form.card_details.help_text %}
+					    	<span class="help_text">{{ form.card_details.help_text }}</span>
+					    {% endif %}
+					</div>	
+					{% endif %}
+					
+					{% if transaction_type == "income" %}
+					<div class="field">
+						<label for="{{ form.payment_to.id_for_label }}">
+							{{ form.payment_to.label }}
+							{% if form.payment_to.field.required %}
+					    		<small class="star">*</small>
+					    	{% endif %}
+							{% if form.payment_to.help_text %}
+								<span class="help"><span class="icon-help"></span></span>
+							{% endif %}
+						</label>
+						{{ form.payment_to }}
+						{% if form.payment_to.help_text %}
+					    	<span class="help_text">{{ form.payment_to.help_text }}</span>
+					    {% endif %}
+					</div>	
+					{% endif %}
+					
+					<div class="field">
+						<label for="{{ form.bank_account.id_for_label }}">
+							{{ form.bank_account.label }}
+							{% if form.bank_account.field.required %}
+					    		<small class="star">*</small>
+					    	{% endif %}
+							{% if form.bank_account.help_text %}
+								<span class="help"><span class="icon-help"></span></span>
+							{% endif %}
+						</label>
+						{{ form.bank_account }}
+						{% if form.bank_account.help_text %}
+					    	<span class="help_text">{{ form.bank_account.help_text }}</span>
+					    {% endif %}
+					</div>	
+					<div class="field">
+						<label for="{{ form.cash_account.id_for_label }}">
+							{{ form.cash_account.label }}
+							{% if form.cash_account.field.required %}
+					    		<small class="star">*</small>
+					    	{% endif %}
+							{% if form.cash_account.help_text %}
+								<span class="help"><span class="icon-help"></span></span>
+							{% endif %}
+						</label>
+						{{ form.cash_account }}
+						{% if form.cash_account.help_text %}
+					    	<span class="help_text">{{ form.cash_account.help_text }}</span>
+					    {% endif %}
+					</div>	
+					<div class="field">
+						<label for="{{ form.client_bank_account_details.id_for_label }}">
+							{{ form.client_bank_account_details.label }}
+							{% if form.client_bank_account_details.field.required %}
+					    		<small class="star">*</small>
+					    	{% endif %}
+							{% if form.client_bank_account_details.help_text %}
+								<span class="help"><span class="icon-help"></span></span>
+							{% endif %}
+						</label>
+						{{ form.client_bank_account_details }}
+						{% if form.client_bank_account_details.help_text %}
+					    	<span class="help_text">{{ form.client_bank_account_details.help_text }}</span>
+					    {% endif %}
+					</div>	
+				</div>
+			</section>	
+			
+			<script type="text/javascript">
+				$(document).ready(function(){
+					function show_hide_payment_mode(){
+						var value = $('#id_transaction_mode').val();
+						var type = $('#id_transaction_type').val();
+						var $parent = $('#id_payment_mode').parents('div.field');
+						var $payment_to_parent = $('#id_payment_to').parents('div.field');  
+						var $bank_parent = $('#id_bank_account').parents('div.field');
+						var $money_parent = $('#id_cash_account').parents('div.field');
+						var $client_bank_account = $('#id_client_bank_account_details').parents('div.field');
+						if (value == "bank"){
+							$parent.show();	
+							$client_bank_account.show();		
+							$bank_parent.show();	
+							if (type == "expense"){		
+								$money_parent.hide();			
+								$payment_to_parent.hide();
+							}else{
+								$payment_to_parent.show();
+							}
+							
+						}else{
+							$parent.hide();
+							$client_bank_account.hide();
+							$payment_to_parent.hide();
+							$bank_parent.hide();
+							$money_parent.show();
+							if (type == "expense"){
+								$payment_to_parent.hide();
+							}else{
+								$payment_to_parent.show();
+								
+							}
+						}
+					}
+					
+					function show_hide_cheque(){
+						var value = $('#id_payment_mode').val();
+						var transaction_mode = $('#id_transaction_mode').val();
+						var $parent = $('#id_cheque_no').parents('div.field'); 
+						if (value == "cheque_payment" && transaction_mode == "bank"){
+							$parent.show();
+						}else{
+							$parent.hide();
+						}
+					}
+					
+					function show_hide_card(){
+						var value = $('#id_payment_mode').val();
+						var transaction_mode = $('#id_transaction_mode').val();
+						var $parent = $('#id_card_details').parents('div.field'); 
+						if (value == "card_payment" && transaction_mode == "bank"){
+							$parent.show();
+						}else{
+							$parent.hide();
+						}
+					}
+					
+					function show_hide_bank_cash_account(){
+						var value = $('#id_payment_to').val();
+						var type = $('#id_transaction_type').val();
+						if (type == "income"){				
+							var $bank_parent = $('#id_bank_account').parents('div.field');
+							var $money_parent = $('#id_cash_account').parents('div.field');  
+							if (value == "bank_account"){
+								$bank_parent.show();
+								$money_parent.hide();
+							}else{
+								$bank_parent.hide();
+								$money_parent.show();
+							}
+						}
+					}
+					
+					function allfunction(){
+						show_hide_payment_mode();
+						show_hide_cheque();
+						show_hide_bank_cash_account();
+						show_hide_card();
+					}
+					
+					$('#id_transaction_mode').change(function(){
+						show_hide_payment_mode();
+						show_hide_cheque();
+						show_hide_bank_cash_account();
+					});
+					$('#id_payment_mode').change(function(){
+						show_hide_cheque();
+						show_hide_bank_cash_account();
+						show_hide_card();
+					});
+					$('#id_payment_to').change(function(){
+						show_hide_bank_cash_account();
+					});
+					
+					allfunction();
+					
+				});
+			</script>

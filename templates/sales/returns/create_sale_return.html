@@ -1,0 +1,342 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %} {{title}} {% endblock %}
+
+{% block content %}
+<section id="content">
+    <section class="head">
+        <h2>{{title}}</h2>
+    </section>
+    <section class="innerBox">
+         <form class="ajax reset {% if redirect %}redirect{% endif %}" method="post" action="{{url}}">
+            {% csrf_token %}
+
+            <section class="widget one_by_one">
+                <h3>Sale Items</h3>
+                <div class="content formElements add_item_container seven sale_item_formset">
+                    <table>
+                        <tr>
+                            <th>Product</th>
+                            <th>Unit</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Is Damaged</th>
+                            <th>Is Returnable</th>
+                            <th>Sub Total</th>
+                            <th></th>
+                        </tr>
+                        {% for f in sale_return_item_formset.forms %}
+                        <tr class="form_set_row">
+                            <td>
+                                {{ f.id }}
+                                <span class="sale_item_product">
+                                    {{ f.product }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="sale_item_unit">
+                                    {{ f.unit }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="sale_item_qty">
+                                    {{ f.qty }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="sale_item_price">
+                                    {{ f.price }}
+                                </span>
+                                <span class="hidden sale_item_cost">
+                                    {{ f.cost }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="content sale_return_is_damaged">
+                                    {{ f.is_damaged }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="content sale_return_is_returnable">
+                                    {{ f.is_returnable }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="sale_item_subtotal">
+                                    <input type="text" placeholder="Subtotal" value="0" />
+                                </span>
+                            </td>
+                            <td></td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                    {{ sale_return_item_formset.management_form }}
+                </div>
+            </section>
+
+            <section class="widget one_by_two left">
+                <div class="head">
+                    <h4>
+                        <span><small class="icon-plus icon"></small></span>
+                        <b>Basic Details</b>
+                    </h4>
+                </div>
+                <div class="content formElements">
+                    <div class="field">
+                        <label for="{{ sale_return_form.sale_id.id_for_label }}">
+                            {{ sale_return_form.sale_id.label }}
+                            {% if sale_return_form.sale_id.field.required %}
+                                <small class="star">*</small>
+                            {% endif %}
+                            {% if sale_return_form.sale_id.help_text %}
+                                <span class="help"><span class="icon-help"></span></span>
+                            {% endif %}
+                        </label>
+                        <input id="{{ sale_return_form.sale_id.id_for_label }}" type="text" class="required number"  name="{{sale_return_form.sale_id.html_name}}" placeholder="Enter ID" value="{{sale_id}}">
+                        {% if sale_return_form.sale_id.help_text %}
+                            <span class="help_text">{{ sale_return_form.sale_id.help_text }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="field">
+                        <label for="{{ sale_return_form.time.id_for_label }}">
+                            {{ sale_return_form.time.label }}
+                            {% if sale_return_form.time.field.required %}
+                                <small class="star">*</small>
+                            {% endif %}
+                            {% if sale_return_form.time.help_text %}
+                                <span class="help"><span class="icon-help"></span></span>
+                            {% endif %}
+                        </label>
+                        {% if user_time_zone %}
+                            <input id="{{ sale_return_form.time.id_for_label }}" type="text" class="required datetimepicker"  name="{{sale_return_form.time.html_name}}" placeholder="Enter time" value="{% now "Y-m-d H:i" %}">
+                        {% endif %}
+                        {% if sale_return_form.time.help_text %}
+                            <span class="help_text">{{ sale_return_form.time.help_text }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </section>
+            <section class="widget one_by_two right">
+                <div class="content formElements">
+                    <div class="field">
+                        <label for="total_amount">
+                            Total
+                            <small class="star">*</small>
+                        </label>
+                        <input type="text" name="total_amount" id="total_amount" disabled="disabled"/>
+                    </div>
+                    <div class="field">
+                        <label for="{{ sale_return_form.amount_returned.id_for_label }}">
+                            {{ sale_return_form.amount_returned.label }}
+                            {% if sale_return_form.amount_returned.field.required %}
+                                <small class="star">*</small>
+                            {% endif %}
+                            {% if sale_return_form.amount_returned.help_text %}
+                                <span class="help"><span class="icon-help"></span></span>
+                            {% endif %}
+                        </label>
+                        {{ sale_return_form.amount_returned }}
+                        {% if sale_return_form.amount_returned.help_text %}
+                            <span class="help_text">{{ sale_return_form.amount_returned.help_text }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </section>
+
+            <br class="clear" />
+            <section class="submit_container">
+                <input type="submit" class="submit button" value="Okay, Let's Go" />
+            </section>
+        </form>
+    </section><!--(.innerBox)-->
+</section>
+{% endblock %}
+
+{% block right_menu %}
+    <span id="rightMenuArrow"><small class="icon icon-left-open"></small></span>
+    <section id="rightMenuArea" class="full hidden">
+        <section id="rightMenu" class="mainMenu">
+            <section id="rightMenuContainer">
+                <span class="arrow"><small class="icon icon-left-open"></small></span>
+
+                <br class="clear" />
+                <div class="menuBox">
+                    <h4>View</h4>
+                    {% include 'product_return/includes/view_menu.html' %}
+                </div>
+                <div class="menuBox">
+                    <h4>Create</h4>
+                    {% include 'product_return/includes/create_menu.html' %}
+                </div>
+            </section>
+        </section>
+        <br class="clear" />
+    </section>
+{% endblock %}
+
+{% block static %}
+    {% load static %}
+    <script src="{% static 'vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.formset.js' %}"></script>
+    <script>
+        $(document).ready(function(){
+            $('.sale_return_item_formset table tr.form_set_row').formset({
+                prefix: '{{ sale_return_item_formset.prefix }}',
+                formCssClass: 'dynamic-formset1',
+            });
+        });
+
+            function calculate(){
+                var sale_item_total = 0;
+
+                $('.sale_item_formset table tr.form_set_row').each(function(){
+                    $this = $(this);
+                    var qty = parseFloat($this.find('.sale_item_qty input').val());
+                    if(!qty){
+                        qty = 0;
+                    }
+                    var price = parseFloat($this.find('.sale_item_price input').val());
+                    if(!price){
+                        price = 0;
+                    }
+                    var tax = parseFloat($this.find('.sale_item_tax input').val());
+                    if(!tax){
+                        tax = 0;
+                    }
+                    var discount = parseFloat($this.find('.sale_item_discount input').val());
+                    if(!discount){
+                        discount = 0;
+                    }
+                    var subtotal = qty * price + tax - discount;
+                    $this.find('.sale_item_subtotal input').val(subtotal);
+                    sale_item_total += subtotal;
+                });
+
+                var total = sale_item_total;
+
+                $('#total_amount').val(total);
+            }
+
+            calculate();
+
+            function showHideIsReturnable(){
+                $('.sale_item_formset table tr.form_set_row').each(function(){
+                    $this = $(this);
+                    var is_damaged = $this.find('.sale_return_is_damaged select').val();
+                    if (is_damaged == 0){
+                        $this.find('.sale_return_is_returnable').attr('disabled','disabled');
+                    } else {
+                        $this.find('.sale_return_is_returnable').removeAttr('disabled');
+                    }
+                });
+            }
+
+            showHideIsReturnable();
+
+            $(document).on(".sale_return_is_damaged change keyup",'.sale_return_is_damaged',function(){
+                showHideIsReturnable();
+            });
+
+            $(document).on("input change keyup",'.sale_item_qty input,.sale_item_price input,#id_special_discount',function(){
+                calculate();
+            });
+
+            $(document).on('change','span.sale_item_product select',function(){
+                $selector = $(this);
+                getProductInfo($selector,false);
+            });
+
+            $(document).on('change','.sale_item_unit select',function(){
+                unit = $(this).val();
+                product = $(this).find('option:selected').attr('data-product');
+                var $parent = $(this).parents('tr.form_set_row');
+                getUnitPrice(unit,product,$parent);
+            });
+
+
+
+            function getProductInfo($selector,barcode){
+                var $this = $selector;
+                var url = "{% url 'products:get_product' %}";
+                var id = $this.val();
+                var code = "no";
+                if(barcode){
+                    code = "yes";
+                }
+                var $parent = $this.parents('tr.form_set_row');
+                if(id != '' && id != null){
+                    show_loader();
+                    $.ajax({
+                        type : "GET",
+                        url : url,
+                        dataType : 'json',
+                        data : {
+                            id : id,
+                            barcode : code,
+                        },
+                        success : function(data) {
+                            var qty = 1;
+                            var status = data['status'];
+                            var pk = data['pk'];
+                            var name = data['name'];
+                            var code = data['code'];
+                            var unit = data['unit'];
+                            var price = data['price'];
+                            var cost = data['cost'];
+                            var tax = data['tax'];
+                            var discount = data['discount'];
+                            var units = data['units'];
+
+                            if (status == "true"){
+                                $parent.find('.sale_item_qty input').val(qty);
+                                $parent.find('.sale_item_price input').val(price);
+                                $parent.find('.sale_item_cost input').val(cost);
+                                $parent.find('.sale_item_tax input').val(tax);
+                                $parent.find('.sale_item_discount input').val(discount);
+
+                                var options = '';
+                                for (var i = 0; i < units.length; i++) {
+                                    options += '<option data-product="' + pk + '" value="' + units[i].pk + '">' + units[i].name + ' (' + units[i].code + ')</option>';
+                                }
+                                $parent.find('.sale_item_unit select').html(options).change().selectOrDie("update");
+
+                                unit = $parent.find('.sale_item_unit select').val();
+                                getUnitPrice(unit,pk,$parent);
+
+                                calculate();
+
+                                $('.add_item_container.sale_item_formset .icon_add_item').click();
+                                $('.add_item_container.sale_item_formset table tr:nth-last-child(2) span.sale_item_barcode input').focus();
+                            }else{
+                                if(barcode){
+                                    $selector.val('').focus();
+                                }
+                            }
+                            remove_popup_box();
+                        },
+                        error : function(data){
+                            remove_popup_box();
+                        }
+                    });
+                }else{
+                    $parent.find('input').val('');
+                    $parent.find('span.sale_item_unit select').html('<option selected="selected" value="">---------</option>').selectOrDie("update");
+                }
+            }
+        });
+        $(document).keydown(function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                if (e.keyCode == 40) {
+                    $('.add_item_container.sale_item_formset .icon_add_item').click();
+                    return false;
+                }
+                if (e.keyCode == 38) {
+                    $('.add_item_container.sale_item_formset table tr:nth-last-child(2) td:last-child .icon.icon-trash').click();
+                    return false;
+                }
+            }
+        });
+    </script>
+     {{form.media}}
+{% endblock %}

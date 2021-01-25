@@ -1,0 +1,22 @@
+<div class="shortcuts">
+	<button class="btn palette-Light-Blue btn-icon bg waves-effect waves-circle waves-float">
+		<i class="zmdi zmdi-plus"></i>
+	</button>
+	{% if current_role == "distributor" %}
+		<div class="icons icons text-right">
+			<a href="{% url 'customers:create' %}" class="btn btn-warning bg btn-icon-text waves-effect">Customer <i class="zmdi m-l-10 zmdi-accounts-alt"></i></a>
+			<br />
+			<a target="_blank" href="{% url 'sales:create' %}" class="btn btn-info bg btn-icon-text waves-effect">Sale <i class="zmdi m-l-10 zmdi-view-list"></i></a>
+		</div>
+	{% 	else %}
+		<div class="icons icons text-right">
+			
+			<a href="{% url 'customers:create' %}" class="btn btn-warning bg btn-icon-text waves-effect">Customer <i class="zmdi m-l-10 zmdi-accounts-alt"></i></a>
+			<br />
+			<a href="{% url 'products:create' %}" class="btn palette-Teal bg btn-icon-text waves-effect">Product <i class="zmdi m-l-10 zmdi-view-comfy"></i></a>
+			<br />
+			<a href="{% url 'purchases:create_purchase' %}" class="btn palette-Red bg btn-icon-text waves-effect">Purchase <i class="zmdi m-l-10 zmdi-shopping-cart"></i></a>
+			
+		</div>
+	{% endif %}
+</div>

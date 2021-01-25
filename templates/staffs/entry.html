@@ -1,0 +1,317 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load tz %}
+
+{% block content %}
+	<section id="content">
+        <div class="container">
+            <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>
+            
+			<div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+
+                <div class="ah-search">
+	            	<form method="get" action="">
+	                    <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+	
+	                    <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+	                    <input type="submit" class="hidden" />
+	                </form>
+	            </div>
+            </div>
+            {% if message %}
+            <div class="alert alert-danger" role="alert">{{message}}</div>
+            {% endif %}
+            <form class="" enctype="multipart/form-data" method="post" action="{{url}}">
+                {% csrf_token %}
+                <div id="c-grid" class="clearfix" data-columns="2">
+				<div class="card">
+					<div class="card-header">
+				        <h2>Basic Info<small></small></h2>
+				    </div>
+					<div class="card-body card-padding">
+                        <div class="form-group fg-line">
+                            <label for="{{ form.distributor.id_for_label }}">
+                                {{ form.distributor.label }}
+                                {% if form.distributor.field.required %}
+                                    <small class="star">*</small>
+                                {% endif %}
+                                
+                                {% if form.distributor.help_text %}
+                                    <span data-original-title="Field Info" title="" data-content="{{ form.distributor.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                {% endif %}
+                            </label>
+                            {{ form.distributor }}
+                            
+                            {% if form.distributor.errors %}
+                                <label class="error">{{ form.distributor.errors.as_text }}</label>
+                            {% endif %}
+                        </div>
+
+					    <div class="form-group fg-line">
+                            <label for="{{ form.first_name.id_for_label }}">
+                            	{{ form.first_name.label }}
+                            	{% if form.first_name.field.required %}
+					        		<small class="star">*</small>
+					        	{% endif %}
+					        	
+					        	{% if form.first_name.help_text %}
+					        		<span data-original-title="Field Info" title="" data-content="{{ form.first_name.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                {% endif %}
+                            </label>
+                            {{ form.first_name }}
+                            
+                            {% if form.first_name.errors %}
+                            	<label class="error">{{ form.first_name.errors.as_text }}</label>
+                            {% endif %}
+                        </div>
+
+                         <div class="form-group fg-line">
+                            <label for="{{ form.last_name.id_for_label }}">
+                                {{ form.last_name.label }}
+                                {% if form.last_name.field.required %}
+                                    <small class="star">*</small>
+                                {% endif %}
+                                
+                                {% if form.last_name.help_text %}
+                                    <span data-original-title="Field Info" title="" data-content="{{ form.last_name.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                {% endif %}
+                            </label>
+                            {{ form.last_name }}
+                            
+                            {% if form.last_name.errors %}
+                                <label class="error">{{ form.last_name.errors.as_text }}</label>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group fg-line">
+                            <label for="{{ form.gender.id_for_label }}">
+                            	{{ form.gender.label }}
+                            	{% if form.gender.field.required %}
+					        		<small class="star">*</small>
+					        	{% endif %}
+					        	
+					        	{% if form.gender.help_text %}
+					        		<span data-original-title="Field Info" title="" data-content="{{ form.gender.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                {% endif %}
+                            </label>
+                            {{ form.gender }}
+                            
+                            {% if form.gender.errors %}
+                            	<label class="error">{{ form.gender.errors.as_text }}</label>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group fg-line dtp-container">
+                            <label for="{{ form.dob.id_for_label }}">
+                                {{ form.dob.label }}
+                                {% if form.dob.field.required %}
+                                    <small class="star">*</small>
+                                {% endif %}
+                                
+                                {% if form.dob.help_text %}
+                                    <span data-original-title="Field Info" title="" data-content="{{ form.dob.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                {% endif %}
+                            </label>
+                            {% if is_create_page %}
+                                {% timezone user_time_zone %}
+                                    <input id="{{ form.dob.id_for_label }}" type="text" class="required form-control date-picker"  name="{{form.dob.html_name}}" placeholder="Enter dob" value="{% now "m-d-Y" %}">
+                                {% endtimezone %}
+                            {% else %}
+                                <input id="{{ form.dob.id_for_label }}" type="text" class="required form-control date-picker"  name="{{form.dob.html_name}}" placeholder="Enter dob" value="{{ form.dob.value|date:'m-d-Y' }}">
+                            {% endif %}                                 
+                            {% if form.dob.errors %}
+                                <label class="error">{{ form.dob.errors.as_text }}</label>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group fg-line dtp-container">
+                            <label for="{{ form.joined_date.id_for_label }}">
+                                {{ form.joined_date.label }}
+                                {% if form.joined_date.field.required %}
+                                    <small class="star">*</small>
+                                {% endif %}
+                                
+                                {% if form.joined_date.help_text %}
+                                    <span data-original-title="Field Info" title="" data-content="{{ form.joined_date.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                {% endif %}
+                            </label>
+                            {% if is_create_page %}
+                                {% timezone user_time_zone %}
+                                    <input id="{{ form.joined_date.id_for_label }}" type="text" class="required form-control date-picker"  name="{{form.joined_date.html_name}}" placeholder="Enter joined_date" value="{% now "m-d-Y" %}">
+                                {% endtimezone %}
+                            {% else %}
+                                <input id="{{ form.joined_date.id_for_label }}" type="text" class="required form-control date-picker"  name="{{form.joined_date.html_name}}" placeholder="Enter joined_date" value="{{ form.joined_date.value|date:'m-d-Y' }}">
+                            {% endif %}                                 
+                            {% if form.joined_date.errors %}
+                                <label class="error">{{ form.joined_date.errors.as_text }}</label>
+                            {% endif %}
+                        </div>
+					</div> 
+				</div>
+
+				<div class="card">
+					<div class="card-header">
+				        <h2>Contact and Other<small></small></h2>
+				    </div>
+					<div class="card-body card-padding">
+					    <div class="form-group fg-line">
+                            <label for="{{ form.phone.id_for_label }}">
+                                {{ form.phone.label }}
+                                {% if form.phone.field.required %}
+                                    <small class="star">*</small>
+                                {% endif %}
+                                
+                                {% if form.phone.help_text %}
+                                    <span data-original-title="Field Info" title="" data-content="{{ form.phone.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                {% endif %}
+                            </label>
+                            {{ form.phone }}
+                            
+                            {% if form.phone.errors %}
+                                <label class="error">{{ form.phone.errors.as_text }}</label>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group fg-line">
+                            <label for="{{ form.designation.id_for_label }}">
+                                {{ form.designation.label }}
+                                {% if form.designation.field.required %}
+                                    <small class="star">*</small>
+                                {% endif %}
+                                
+                                {% if form.designation.help_text %}
+                                    <span data-original-title="Field Info" title="" data-content="{{ form.designation.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                {% endif %}
+                            </label>
+                            {{ form.designation }}
+                            
+                            {% if form.designation.errors %}
+                                <label class="error">{{ form.designation.errors.as_text }}</label>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group fg-line">
+                            <label for="{{ form.salary_type.id_for_label }}">
+                                {{ form.salary_type.label }}
+                                {% if form.salary_type.field.required %}
+                                    <small class="star">*</small>
+                                {% endif %}
+                                
+                                {% if form.salary_type.help_text %}
+                                    <span data-original-title="Field Info" title="" data-content="{{ form.salary_type.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                {% endif %}
+                            </label>
+                            {{ form.salary_type }}
+                            
+                            {% if form.salary_type.errors %}
+                                <label class="error">{{ form.salary_type.errors.as_text }}</label>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group fg-line">
+                            <label for="{{ form.salary.id_for_label }}">
+                                {{ form.salary.label }}
+                                {% if form.salary.field.required %}
+                                    <small class="star">*</small>
+                                {% endif %}
+                                
+                                {% if form.salary.help_text %}
+                                    <span data-original-title="Field Info" title="" data-content="{{ form.salary.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                {% endif %}
+                            </label>
+                            {{ form.salary }}
+                            
+                            {% if form.salary.errors %}
+                                <label class="error">{{ form.salary.errors.as_text }}</label>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group fg-line m-b-15">
+                            <label for="{{ form.photo.id_for_label }}">
+                                {{ form.photo.label }}
+                                {% if form.photo.field.required %}
+                                    <small class="star">*</small>
+                                {% endif %}
+                                
+                                {% if form.photo.help_text %}
+                                    <span data-original-title="Field Info" title="" data-content="{{ form.photo.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                {% endif %}
+                            </label>
+                            <br />
+                            <div class="fileinput fileinput-new" data-provides="fileinput">
+                                <span class="btn btn-primary btn-file m-r-10">
+                                    <span class="fileinput-new">Select file</span>
+                                    <span class="fileinput-exists">Change</span>
+                                    <input type="file" name="photo">
+                                </span>
+                                <span class="fileinput-filename"></span>
+                                <a href="#" class="close fileinput-exists" data-dismiss="fileinput">&times;</a>
+                            </div>
+                            
+                            {% if form.photo.errors %}
+                                <label class="error">{{ form.photo.errors.as_text }}</label>
+                            {% endif %}
+                        </div>
+					</div> 
+				</div> 
+
+            </div>        
+            <div class="m-t-20">
+                <button type="submit" class="btn btn-info waves-effect">Submit</button>
+            </div> 
+        </form>  
+     
+    </section>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+    <script src="{% static 'vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('input[type=text]').focus(function () { 
+                $(this).select();
+            });
+
+            var url =  "{% url 'distributors:get_distributor' %}";
+            $(document).on('change','#id_distributor', function(){
+                getDistributorInfo()
+            });
+
+            function getDistributorInfo(){
+                id = $("#id_distributor").val();
+                if (id !== null && id !== ''){
+                    $.ajax({
+                        type : "GET",
+                        url : url,
+                        dataType : 'json',
+                        data : {
+                            id : id,
+                        },
+                        success : function(data) {
+                            var status = data['status'];
+                            var pk = data['pk'];
+                            var name = data['name'];
+                            var phone = data['phone'];
+
+                            if (status == "true"){
+
+                                $('#id_first_name').val(name);
+                                $('#id_phone').val(phone);
+                            }
+                        },
+                        error : function(data){
+                            var title = "An error occurred";
+                            var message = "An error occurred. Please try again later.";
+                            swal(title, message, "error");
+                        }
+                    });
+                }
+            }
+    });
+    </script>
+    {{form.media}}
+{% endblock %}

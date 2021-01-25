@@ -1,0 +1,283 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load tz %}
+
+{% block content %}
+    <section id="content">
+        <div class="container">
+           <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>           
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+
+                <div class="ah-search">
+                    <form method="get" action="">
+                        <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+    
+                        <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+                        <input type="submit" class="hidden" />
+                    </form>
+                </div>
+            </div>
+            <form class="ajax reset {% if redirect %}redirect{% endif %} skip_empty_row" method="post" action="{{url}}">
+                {% csrf_token %}
+                    
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Basic Info <small></small></h2>
+                    </div>
+                    <div class="card-body card-padding">
+                        <div class="row">
+                            <div class="col-md-3">
+                                 <div class="form-group fg-line">
+                                    <label for="{{ form.time.id_for_label }}">
+                                        {{ form.time.label }}
+                                        {% if form.time.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+                                        
+                                        {% if form.time.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.time.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+                                    
+                                    {% timezone user_time_zone %}
+                                        <input id="{{ form.time.id_for_label }}" type="text" class="required form-control date-time-picker"  name="{{form.time.html_name}}" placeholder="Enter time" value="{% now "m-d-Y H:i:s" %}">
+                                    {% endtimezone %}
+                                    
+                                    
+                                    {% if form.time.errors %}
+                                        <label class="error">{{ form.time.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group fg-line">
+                                    <label for="{{ form.product.id_for_label }}">
+                                        {{ form.product.label }}
+                                        {% if form.product.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+                                        
+                                        {% if form.product.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.product.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                        {% endif %}
+                                    </label>
+                                    {{ form.product }}
+                                    
+                                    {% if form.product.errors %}
+                                        <label class="error">{{ form.product.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>  
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group fg-line">
+                                    <label for="{{ form.qty.id_for_label }}">
+                                        {{ form.qty.label }}
+                                        {% if form.qty.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+                                        
+                                        {% if form.qty.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.qty.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+                                        {% endif %}
+                                    </label>
+                                    {{ form.qty }}
+                                    
+                                    {% if form.qty.errors %}
+                                        <label class="error">{{ form.qty.errors.as_text }}</label>
+                                    {% endif %}
+                                </div> 
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group fg-line">
+                                    <label for="{{ form.staff.id_for_label }}">
+                                        {{ form.staff.label }}
+                                        {% if form.staff.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+                                        
+                                        {% if form.staff.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.staff.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+                                        {% endif %}
+                                    </label>
+                                    {{ form.staff }}
+                                    
+                                    {% if form.staff.errors %}
+                                        <label class="error">{{ form.staff.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group fg-line">
+                                    <label>Packing Charge</label>
+                                    <input class="form-control" value="0.00" type="text" disabled="disabled" id="id_packing_charge_total">
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group fg-line">
+                                    <label>Label Charge</label>
+                                    <input class="form-control" value="0.00" type="text" disabled="disabled" id="id_label_charge_total">
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group fg-line">
+                                    <label>Making Charge</label>
+                                    <input class="form-control" value="0.00" type="text" disabled="disabled" id="id_making_charge_total">
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group fg-line">
+                                    <label for="{{ form.staff.id_for_label }}">Total</label>
+                                    <input type="text" disabled="disabled" id="id_total" class="form-control" value="0.00">
+                                </div>
+                            </div>
+
+                            <input class="form-control" value="0.00" type="hidden" disabled="disabled" id="id_packing_charge">
+                            <input class="form-control" value="0.00" type="hidden" disabled="disabled" id="id_label_charge">
+                            <input class="form-control" value="0.00" type="hidden" disabled="disabled" id="id_making_charge">
+                        </div>
+                    </div>  
+                </div> 
+
+                <div class="card">
+                    <div class="table-responsive  product_list_container">
+                        <p class="text-center p-30">No Ingredients found</p>
+                    </div>
+                </div>
+                
+                <div class="m-t-20">
+                    <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                </div>
+            </form>  
+         </div>
+    </section>
+{% endblock %}
+
+{% block static %}
+    {% load static %}
+    
+    <script>
+
+        $(document).on('change keyup','#id_qty',function(){
+            calculate();
+        });
+
+        function getIngredients($selector){
+
+            var id = $selector.val();
+            var url = "{% url 'manufacturing:get_ingredients' %}";
+            if(id != '' && id != null){
+                $.ajax({
+                    type : "GET",
+                    url : url,
+                    dataType : 'json',
+                    data : {
+                        id : id
+                    },
+                    success : function(data) {
+                        var status = data['status'];
+                        var template = data['template'];
+                        var packing_charge = data['packing_charge'];
+                        var label_charge = data['label_charge'];
+                        var making_charge = data['making_charge'];
+                        if(status == "true"){
+                            $('.product_list_container').html(template);
+                            $('#id_making_charge').val(making_charge);
+                            $('#id_label_charge').val(label_charge);
+                            $('#id_packing_charge').val(packing_charge);
+                            calculate();
+                        } else {
+                            var nothing_found = "class='text-center p-30'>No Products found</p>";
+                        }
+                    },
+                    error : function(data){
+                        remove_popup_box();
+                    }
+                });
+            }
+        }
+
+        $(document).on('change','#id_product',function(){
+            var $this = $(this);
+            getIngredients($this)
+        });
+        
+        function calculate(){
+            var work_order_total = 0; 
+            var main_qty = parseFloat($('#id_qty').val());
+            if(!main_qty){
+                main_qty = 0;
+            }
+            
+            $('.product_list_container table tr.return_data').each(function(){
+                $this = $(this);
+                var qty = parseFloat($this.find('.ingredient_qty input').attr('data-value'));
+                if(!qty){
+                    qty = 0;
+                }
+                var price = parseFloat($this.find('.ingredient_price input').val());
+                if(!price){
+                    price = 0;
+                }
+                
+                var subtotal = main_qty * (qty * price);
+                $this.find('.ingredient_subtotal input').val(subtotal.toFixed(2));
+                $this.find('.ingredient_qty input').val(qty * main_qty);
+
+                work_order_total += subtotal;
+
+            });
+
+            var making_charge = parseFloat($('#id_making_charge').val());
+            if(!making_charge){
+                making_charge = 0;
+            }
+
+            var label_charge = parseFloat($('#id_label_charge').val());
+            if(!label_charge){
+                label_charge = 0;
+            }
+
+            var packing_charge = parseFloat($('#id_packing_charge').val());
+            if(!packing_charge){
+                packing_charge = 0;
+            }
+
+            var making_charge_total = making_charge * main_qty;
+            var label_charge_total = label_charge * main_qty;
+            var packing_charge_total = packing_charge * main_qty;
+
+            $('#id_making_charge_total').val(making_charge_total.toFixed(2)); 
+            $('#id_label_charge_total').val(label_charge_total.toFixed(2)); 
+            $('#id_packing_charge_total').val(packing_charge_total.toFixed(2)); 
+
+            var total_additional_charge = main_qty * (packing_charge + making_charge + label_charge);
+            work_order_total += total_additional_charge
+
+            $('#id_total').val(work_order_total.toFixed(2)); 
+
+        }
+        $(document).ready(function(){
+            $.fn.modal.Constructor.prototype.enforceFocus=function(){};
+             
+            $('input[type=text]').focus(function () { 
+                $(this).select();
+            }); 
+        });
+        calculate();
+
+    </script>
+
+    <style>
+        .select2-dropdown {
+          z-index: 999999;
+        }
+    </style>
+    {{form.media}}
+{% endblock %}

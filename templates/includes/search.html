@@ -1,0 +1,37 @@
+{% load static %}
+<div class="media-body h-search">
+	{% if current_role == "distributor" %}
+    	<form class="p-relative" action="{% url 'distributors:distributor_stocks' %}" method="get">
+    {% else %}
+    	<form class="p-relative" action="{% url 'products:products' %}" method="get">
+    {% endif %}
+        <input name="q" type="text" class="hs-input" placeholder="Search for products">
+        <i class="zmdi zmdi-search hs-reset" data-ma-action="search-clear"></i>
+    </form>
+</div>
+<ul id="webTicker">
+	<li><a href='javascript:;'><img class ='warning-thumb' src="{% static 'img/warning.png' %}" alt=""></a></li>
+</ul>
+<style>
+	#webTicker li {
+		font-size: 14px !important;
+		line-height: 45px !important;
+		font-family: 'product_sans' !important;
+	}
+	#webTicker li a {
+		color:#fff !important;
+		font-size: 18px;
+	}
+	.tickercontainer {
+	    margin-left: 220px;
+	    margin-right: 200px;
+	}
+	#header {
+		margin-bottom: 0 !important;
+	}
+	.warning-thumb {
+		width:20px;
+		height:20px;
+		margin-right:10px;
+	}
+</style>

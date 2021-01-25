@@ -1,0 +1,289 @@
+{% extends "invoice_base.html" %}
+{% load i18n %}
+{% load static %}
+{% load users_template_tags %}
+{% block content %}
+{% load main_template_tags %}
+
+    <section id="content">
+        <div class="container">            
+            <div class="card">                
+                <div class="card-body card-padding">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="text-center">
+                                <div class="row">
+                                    <div class="logo">
+                                        {% if current_shop.logo %}
+                                            <img class="i-logo" src="{{current_shop.logo.url}}" alt="{{current_shop.name}}">
+                                        {% else %}
+                                            <img src="{% static 'img/logo-print.png' %}" alt="{{current_shop.name}}" />
+                                        {% endif %}
+                                    </div>
+                                    <div class="address">
+                                        <h4>{{current_shop.name|upper}}</h4>
+                                        <span class="text-muted">
+                                            <address>
+                                                {{current_shop.address}}
+                                            </address>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="clearfix"></div>
+                    
+                    <h3 style="margin-top: 0">{{title}}</h3>
+                    {% if instances %}
+                        <div class="sale_box">                                
+                            <div class="bottom-section">
+                                <table>
+                                    <tr>
+                                        <th>Sale Id</th>
+                                        <th>Time</th>
+                                        <th>Total</th>
+                                        <th>Sp.Discount</th>
+                                        <th>Return Total</th>
+                                    </tr>
+                                    {% for instance in  instances %}
+                                        <tr>
+                                            <td>{{instance.invoice_id}}</td>
+                                            <td>{{instance.time}}</td>
+                                            <td>{{instance.total}}</td>
+                                            <td>{{instance.special_discount}}</td>
+                                            <td>{{instance.return_item_total}}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                            
+                        </div>
+
+                        <style>
+                            .sale_box {
+                                display: block;
+                                width: 100%;
+                                margin-bottom: 20px;
+                            }
+                            .sale_box table{
+                                width: 100%;
+                            }
+                            .sale_box table td,.sale_box table th{
+                                padding: 10px;
+
+                            }
+                            .sale_box .top-section table tr:nth-child(2) td{
+                                border-bottom: none !important;
+                            }
+                    </style>
+                    {% endif %}
+                    {% if collect_amount_instances %} 
+                    <h3>Collect Amount</h3>                     
+                    <div class="purchase_box">
+                        <table>
+                            <tr>
+                                <th>Date</th>
+                                <th>Balance</th>
+                                <th>Collect Amount</th>
+                                <th>Remaining Balance</th>
+                                <th>Status</th>
+                            </tr>
+                            {% for instance in  collect_amount_instances %}
+                                <tr>
+                                    <td>{{instance.date}}</td>
+                                    <td>{{instance.balance}}</td>
+                                    <td>{{instance.collect_amount}}</td>
+                                    <td>{{instance.remaining_balance}}</td>
+                                    <td>{{instance.get_status}}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                    {% endif %}
+                    {% if sale_return_instances %}
+                        <h3>Sale Return</h3>  
+                             <div class="sale_box">
+                                <div class="bottom-section">
+                                    <table>
+                                        <tr>
+                                            <th>Sale Id</th>
+                                            <th>Time</th>
+                                            <th>Returnable Amount</th>
+                                        </tr>
+                                        {% for instance in  sale_return_instances %}
+                                            <tr>
+                                                <td>{{instance.sale.invoice_id}}</td>
+                                                <td>{{instance.time}}</td>
+                                                <td>{{instance.returnable_amount}}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </table>
+                                </div>
+                            </div>
+
+                        <style>
+                            .sale_box {
+                                display: block;
+                                width: 100%;
+                                margin-bottom: 20px;
+                            }
+                            .sale_box table{
+                                width: 100%;
+                            }
+                            .sale_box table td,.sale_box table th{
+                                padding: 10px;
+
+                            }
+                            .sale_box .top-section table tr:nth-child(2) td{
+                                border-bottom: none !important;
+                            }
+                    </style>
+                    {% endif %}
+                     <style>
+                        .purchase_box {
+                            display: block;
+                            width: 100%;
+                            margin-bottom: 20px;
+                        }
+                        .purchase_box table{
+                            width: 100%;
+                        }
+                        .purchase_box table td,.purchase_box table th{
+                            padding: 10px;
+
+                        }
+                        .purchase_box .top-section table tr:nth-child(2) td{
+                            border-bottom: none !important;
+                        }
+                    </style>
+                    <table class="table m-t-25 m-b-25">
+                        
+                        <tbody>
+                            <thead>
+                                <tr>
+                                    <th class="text-uppercase f-400 b-black" colspan="4">Description</th>
+                                    <th>Amount</th>
+                                </tr>
+                                <tr>
+                                    <td class="text-uppercase f-400 b-black" colspan="4">Total Sales</td>
+                                    <td class="f-700">{{sales_count|default:"0.00"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-uppercase f-400 b-black" colspan="4">Total Sales Amount</td>
+                                    <td class="f-700">{{sales_total|default:"0.00"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-uppercase f-400 b-black" colspan="4">Payment Recieved</td>
+                                    <td class="f-700">{{payment_received_total|default:"0.00"}}</td>
+                                </tr>
+                                 <tr>
+                                    <td class="text-uppercase f-400 b-black" colspan="4">Total collect amount</td>
+                                    <td class="f-700">{{collect_amount_total|sub:return_total|default:"0.00"}}</td>
+                                </tr>                                                              
+                                <tr>
+                                    <td class="text-uppercase f-400 b-black" colspan="4">Total Balance</td>
+                                    <td class="f-700">{{balance_total|sub:collect_amount_total|add:return_total|default:"0.00"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-uppercase f-400 b-black" colspan="3">Cheque Return</td>
+                                    <td class = "p-0 tax-inner">
+                                        <table class = "tax-inner">
+                                            <tr>
+                                                <td style="height: 50px; padding-left: 10px; border: none;">{{return_transaction_count}}</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td class="f-700" style="padding: 0;">
+                                        <table class = "tax-inner">                                            
+                                            <tr>
+                                                <td style="height: 50px; padding-left: 10px; border: none;">{{return_transaction_total|default:0.00|to_fixed_two}}</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-uppercase f-400 b-black" colspan="4">Total Credit</td>
+                                    <td class="f-700">{{balance_total|sub:collect_amount_total|add:return_total|add:return_transaction_total|default:"0.00"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-uppercase f-400 b-black" colspan="4">Total Return Amount</td>
+                                    <td class="f-700">{{total_return_amount_total|default:"0.00"}}</td>
+                                </tr>                               
+                            </thead> 
+                        </tbody>
+                    </table>
+                    
+                    <div class="clearfix"></div>
+                </div>
+                
+                <footer class="m-t-15 p-20">
+                    <ul class="list-inline text-center list-unstyled">
+                        <li class="m-l-5 m-r-5"><small>{{current_shop.email}}</small></li>
+                        <li class="m-l-5 m-r-5"><small>{{current_shop.phone}}</small></li>
+                        <li class="m-l-5 m-r-5"><small>{{current_shop.website}}</small></li>
+                    </ul>
+                </footer>
+            </div>
+            
+        </div>
+        <button class="btn btn-float bgm-red print-button m-btn" data-action="print"><i class="zmdi zmdi-print"></i></button>
+    </section>
+    <style>
+        .container{
+            width: 210mm;
+            margin: 0 auto;
+            background: #fff;
+            min-height: 100%
+        }        
+        table tr td, table tr th {
+            border: 1px solid #ccc;
+            border-top: 1px solid #ccc ;
+            border-bottom: 1px solid #ccc ;
+        }
+        table tr:last-child td, table tr:last-child th {
+            border-bottom: 1px solid #555;
+        }
+        table tr:first-child td, table tr:first-child th {
+            border-top: 1px solid #555;
+        }
+        table tr td:first-child, table tr th:first-child {
+            border-left: 1px solid #555;
+        }
+        table tr td:last-child, table tr th:last-child {
+            border-right: 1px solid #555;
+        }
+        .top-section table tr:last-child td, table tr:last-child th {
+            border-bottom: 1px solid #ccc ;
+        }
+        .bottom-section table tr:first-child td, table tr:first-child th {
+            border-top: 1px solid #ccc ;
+        }
+        table { 
+            page-break-inside:always
+        }
+        tr { 
+            page-break-inside:always; page-break-after:always
+        }
+        table.tax-inner {
+            width:100%;
+        }
+    </style>
+{% endblock %}
+
+{% block static %}
+    {% load static %}
+    <script type="text/javascript">
+
+        function clicktoPrint() {
+            window.print();
+        }
+        window.onload = function(){
+            var button = document.querySelector('.print-button');
+            button.click();
+        }
+    </script>
+    
+{% endblock %}

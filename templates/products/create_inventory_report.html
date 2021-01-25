@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load tz %}
+
+
+{% block content %}
+    <section id="content">
+        <div class="container">
+            <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>
+            
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+
+                <ul class="ah-actions actions a-alt">
+                    <li>
+                        <a title="Search" data-ma-action="ah-search-open" class="ah-search-trigger" href="">
+                            <i class="zmdi zmdi-search"></i>
+                        </a>
+                    </li>                              
+                </ul>
+            </div>
+            <form target='_blank' action="{% url 'products:inventory' %}" method="get">
+                
+                <div id="c-grid" class="clearfix" data-columns="2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Basic Info <small></small></h2>
+                        </div>
+                        <div class="card-body card-padding">                                                 
+                            <div class="form-group fg-line">
+                                <label for="{{ form.selection_type.id_for_label }}">
+                                    Select Type
+                                    {% if form.selection_type.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.selection_type.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.selection_type.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+                                    {% endif %}
+                                    </span>
+                                </label>
+                                {{ form.selection_type }}
+                                
+                                {% if form.selection_type.errors %}
+                                    <label class="error">{{ form.selection_type.errors.as_text }}</label>
+                                {% endif %}
+                            </div>  
+                            <div class="form-group fg-line category">
+                                <label for="{{ form.category.id_for_label }}">
+                                    {{ form.category.label }}
+                                    {% if form.category.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.category.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.category.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+                                    {% endif %}
+                                    </span>
+                                </label>
+                                {{ form.category }}
+                                
+                                {% if form.category.errors %}
+                                    <label class="error">{{ form.category.errors.as_text }}</label>
+                                {% endif %}
+                            </div> 
+                            <div class="form-group fg-line subcategory m-b-0">
+                                <label for="{{ form.subcategory.id_for_label }}">
+                                    {{ form.subcategory.label }}
+                                    {% if form.subcategory.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.subcategory.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.subcategory.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+                                    {% endif %}
+                                    </span>
+                                </label>
+                                {{ form.subcategory }}
+                                
+                                {% if form.subcategory.errors %}
+                                    <label class="error">{{ form.subcategory.errors.as_text }}</label>
+                                {% endif %}
+                            </div> 
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <div class="form-group fg-line">
+                                        <label for="{{ form.cost.id_for_label }}">
+                                            
+                                            {% if form.cost.field.required %}
+                                                <small class="star">*</small>
+                                            {% endif %}
+                                            
+                                            {% if form.cost.help_text %}
+                                                <span data-original-title="Field Info" title="" data-content="{{ form.title.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                            {% endif %}
+                                        </label>
+                                        <div class="checkbox m-b-5">
+                                            <label>
+                                                <input type="radio" name="radio" value="cost" checked="checked">
+                                                <i class="input-helper"></i>
+                                                Cost
+                                            </label>
+                                        </div>                                
+                                        {% if form.cost.errors %}
+                                            <label class="error">{{ form.cost.errors.as_text }}</label>
+                                        {% endif %}
+                                    </div>  
+                                </div>
+                                <div class="col-sm-3">  
+                                    <div class="form-group fg-line">
+                                        <label for="{{ form.price_type.id_for_label }}">
+                                            
+                                            {% if form.price_type.field.required %}
+                                                <small class="star">*</small>
+                                            {% endif %}
+                                            
+                                            {% if form.price_type.help_text %}
+                                                <span data-original-title="Field Info" title="" data-content="{{ form.title.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                            {% endif %}
+                                        </label>
+                                        <div class="checkbox m-b-5">
+                                            <label>
+                                                <input type="radio" name="radio" value="price">
+                                                <i class="input-helper"></i>
+                                                Price
+                                            </label>
+                                        </div>                                
+                                        {% if form.price_type.errors %}
+                                            <label class="error">{{ form.price_type.errors.as_text }}</label>
+                                        {% endif %}
+                                    </div> 
+                                </div> 
+                                <div class="col-sm-3">  
+                                    <div class="form-group fg-line">
+                                        <label for="{{ form.price_type.id_for_label }}">
+                                            
+                                            {% if form.price_type.field.required %}
+                                                <small class="star">*</small>
+                                            {% endif %}
+                                            
+                                            {% if form.price_type.help_text %}
+                                                <span data-original-title="Field Info" title="" data-content="{{ form.title.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                            {% endif %}
+                                        </label>
+                                        <div class="checkbox m-b-5">
+                                            <label>
+                                                <input type="radio" name="radio" value="cash_price">
+                                                <i class="input-helper"></i>
+                                                Cash
+                                            </label>
+                                        </div>                                
+                                        {% if form.price_type.errors %}
+                                            <label class="error">{{ form.price_type.errors.as_text }}</label>
+                                        {% endif %}
+                                    </div> 
+                                </div> 
+                                <div class="col-sm-3">  
+                                    <div class="form-group fg-line">
+                                        <label for="{{ form.price_type.id_for_label }}">
+                                            
+                                            {% if form.price_type.field.required %}
+                                                <small class="star">*</small>
+                                            {% endif %}
+                                            
+                                            {% if form.price_type.help_text %}
+                                                <span data-original-title="Field Info" title="" data-content="{{ form.title.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                            {% endif %}
+                                        </label>
+                                        <div class="checkbox m-b-5">
+                                            <label>
+                                                <input type="radio" name="radio" value="wholesale">
+                                                <i class="input-helper"></i>
+                                                Wholesale
+                                            </label>
+                                        </div>                                
+                                        {% if form.price_type.errors %}
+                                            <label class="error">{{ form.price_type.errors.as_text }}</label>
+                                        {% endif %}
+                                    </div> 
+                                </div> 
+                            </div>
+                            
+                        </div> 
+                    </div>     
+                   
+               </div>
+                    <div>
+                        <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                    </div>
+                
+                </div>
+            </form>  
+         </div> 
+    </section>
+{% endblock %}
+
+{% block static %}
+    {% load static %}
+    <style>
+        input[type=radio]{
+            display: none;
+        }
+    </style>
+    <script>
+       $(document).ready(function(){
+
+            $('input[type=text]').focus(function () { 
+                $(this).select();
+            });
+            $('input[type=text]').mouseup(function (e) { // fix for chrome and safari
+                e.preventDefault();
+            });
+            $('input[type=text]').select(function () {
+                $('.log').append(' Handler for .select() called. ');
+            });
+            $('.category').hide();
+            $('.subcategory').hide();
+            $(document).on('change','#id_selection_type',function(){
+                var value = $(this).val();
+                if (value == 'category'){
+                    $('.category').show();
+                    $('.subcategory').show();
+                }
+                else {
+                    $('.category').hide();
+                    $('.subcategory').hide();
+                }
+            });
+        });
+    </script>
+    {{form.media}}
+{% endblock %}

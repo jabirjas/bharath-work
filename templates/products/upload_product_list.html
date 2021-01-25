@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+{% block content %}
+	<section id="content">
+        <div class="container">
+            <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>
+
+            <form class="" enctype="multipart/form-data" method="post" action="{{url}}">
+            	{% csrf_token %}
+
+                <div id="c-grid" class="clearfix" data-columns="2">
+					<div class="card">
+						<div class="card-header">
+					        <h2>Basic Info <small></small></h2>
+					    </div>
+						<div class="card-body card-padding">
+						     <div class="input-group">
+						        <div class="form-group m-b-0">
+	                                <label for="{{ form.file.id_for_label }}">
+	                                	{{ form.file.label }}
+	                                	{% if form.file.field.required %}
+							        		<small class="star">*</small>
+							        	{% endif %}
+							        	
+							        	{% if form.file.help_text %}
+							        		<span data-original-title="Field Info" title="" data-content="{{ form.file.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+	                                    {% endif %}
+	                                </label>
+	                                <br />
+	                                <div class="fileinput fileinput-new" data-provides="fileinput">
+	                                    <span class="btn btn-primary btn-file m-r-10">
+	                                        <span class="fileinput-new">Select file</span>
+	                                        <span class="fileinput-exists">Change</span>
+	                                        <input type="file" name="file">
+	                                    </span>
+	                                    <span class="fileinput-filename"></span>
+	                                    <a href="#" class="close fileinput-exists" data-dismiss="fileinput">&times;</a>
+	                                </div>
+	                                
+	                                {% if form.file.errors %}
+	                                	<label class="error">{{ form.file.errors.as_text }}</label>
+	                                {% endif %}
+	                            </div>
+						    </div>
+						</div> 
+					</div>                
+	            </div>
+					<div>
+					    <button type="submit" class="btn btn-info waves-effect">Submit</button>
+					</div>       	
+            </form>   
+            
+        </div>
+    </section>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+	<script src="{% static 'vendors/fileinput/fileinput.min.js' %}"></script>
+{% endblock %}

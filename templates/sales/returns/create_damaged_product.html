@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load tz %}
+
+
+{% block content %}
+	<section id="content">
+        <div class="container">
+            <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>
+            
+			<div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+
+                <div class="ah-search">
+	            	<form method="get" action="">
+	                    <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+	
+	                    <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+	                    <input type="submit" class="hidden" />
+	                </form>
+	            </div>
+
+                <ul class="ah-actions actions a-alt">
+                    <li>
+                        <a title="Search" data-ma-action="ah-search-open" class="ah-search-trigger" href="">
+                            <i class="zmdi zmdi-search"></i>
+                        </a>
+                    </li>
+                    {% if instance %}
+                        {% if "is_superuser" or 'can_create_damaged_product' in user_instance.permissionlist %}
+                        <li>
+                            <a title="Create Return" href="{% url 'sales:create_damaged_product' %}">
+                                <i class="zmdi zmdi-plus"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% if "is_superuser" or 'can_view_damaged_product' in user_instance.permissionlist %}
+                        <li>
+                            <a title="View return" href="{% url 'sales:damaged_product' pk=instance.pk %}">
+                                <i class="zmdi zmdi-eye"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% if "is_superuser" or 'can_delete_damaged_product' in user_instance.permissionlist %}
+                        <li>
+                            <a title="Delete Return" data-id="{{instance.pk}}" data-text="{{confirm_delete_message}}" data-title="Are you sure?" href="{% url 'sales:delete_damaged_product' pk=instance.pk %}" class="action-button redirect">
+                                <i class="zmdi zmdi-delete"></i>
+                            </a>
+                        </li> 
+                        {% endif %} 
+                    {% endif %}                              
+                </ul>
+            </div>
+            
+            <form class="ajax reset {% if redirect %}redirect{% endif %} skip_empty_row" enctype="multipart/form-data" method="post" action="{{url}}">
+                {% csrf_token %}
+
+                <div class="card">
+                    <div class="table-responsive card-body card-padding add_item_container damaged_product_formset">
+                        <table id="data-table-basic" class="table table-striped table-vmiddle">
+                            <thead>
+                                <tr>
+                                    <th data-column-id="product">Product</th>
+                                    <th data-column-id="qty">Qty</th>
+                                    <th data-column-id="unit">Unit</th>
+                                    <th data-column-id="image">Image</th>                                                
+                                    <th class="one"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for f in damaged_product_formset.forms %}               
+                                <tr class="form_set_row">
+                                    
+                                    <td>
+                                        {{ f.id }}
+                                        <span class="damaged_product p-relative">                                 
+                                            {{ f.product }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="damaged_product_qty check_empty p-relative">
+                                            {{ f.qty }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="damaged_product_unit p-relative">
+                                            {{ f.unit }}
+                                        </span>
+                                    </td>   
+                                    <td>
+                                        <span class="damaged_product_image p-relative">
+                                            {{ f.image }}
+                                        </span>
+                                    </td>                            
+                                    <td class="one">{% if f.instance.pk %}{{ f.DELETE }}{% endif %}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {{ damaged_product_formset.management_form }}
+                    </div> 
+                </div>
+                </div>
+                <div class="m-t-20">
+                    <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                </div>
+            </form>  
+         </div> 
+    </section>
+{% endblock %}
+{% block static %}
+    {% load static %}
+    <script>
+        $(document).ready(function(){
+            $('.damaged_product_formset table tr.form_set_row').formset({
+                prefix: '{{ damaged_product_formset.prefix }}',
+                formCssClass: 'dynamic-formset1',
+                'added' : function (row) {
+                    row.find('.damaged_product_unit select').selectpicker();
+            }
+
+            });
+             
+        });        
+      
+        function getProductInfo($selector){
+            var url = "{% url 'products:get_product' %}";
+            var id = $selector.val();
+            var $parent = $selector.parents('tr.form_set_row');
+            if(id != '' && id != null){
+                show_loader();
+                $.ajax({
+                    type : "GET",
+                    url : url,
+                    dataType : 'json',
+                    data : {
+                        id : id,
+                    },
+                    success : function(data) {
+                        var qty = 1;
+                        var status = data['status'];
+                        var pk = data['pk'];
+                        var name = data['name'];
+                        var stock = data['stock'];
+                        var price = data['price'];
+                        var cost = data['cost'];
+                        var tax = data['tax'];
+                        var units = data['units']; 
+                        var unit = data['unit'];          
+                        
+                        if (status == "true"){
+                            
+                            var options = '';
+                            for (var i = 0; i < units.length; i++) {
+                                options += '<option data-product="' + pk + '" value="' + units[i].pk + '">' + units[i].name + ' (' + units[i].code + ')</option>';
+                            }
+                            $parent.find('.damaged_product_unit select').html(options).trigger("change").selectpicker('refresh');
+                            
+                            unit = $parent.find('.damaged_product_unit select').val();
+                            $parent.find('.damaged_product select.select2-hidden-accessible').html('<option value=' + pk + '>' +  name + '</option>');
+                            var title = {{name}}
+                            $parent.find('.damaged_product .select2.select2-container').addClass();
+                            $parent.find('.damaged_product select2 .select2-selection__rendered').attr('title',title);
+                            
+                            $('.add_item_container.damaged_product_formset .icon_add_item').click();  
+                            $('.add_item_container.damaged_product_formset table tbody tr:nth-last-child(2) span.damaged_producttable .select2-container .select2-selection--single .select2-selection__rendered').click();
+                            $('.add_item_container.damaged_product_formset table tbody tr:nth-last-child(2) span.damaged_product .select2-search--dropdown .select2-search__field').focus();
+                        }   
+                        remove_popup();                     
+                    },
+                    error : function(data){
+                        remove_popup(); 
+                        var title = "An error occurred";
+                        var message = "An error occurred. Please try again later."; 
+                        swal(title, message, "error");
+                    }
+                });                 
+            }else{
+                    $parent.find('input').val('');
+                    $parent.find('span.damaged_product_unit select').html('<option selected="selected" value="">---------</option>').trigger("change").selectpicker('refresh');
+                }
+       }
+
+       $(document).on('change','tr.form_set_row .damaged_product select',function(){
+            $selector = $(this);
+            getProductInfo($selector);
+       });
+       
+     
+    </script>
+
+ {{damaged_product_formset.media}}   
+{% endblock %}

@@ -1,0 +1,274 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% load users_template_tags %}
+{% load tz %}
+{% block content %}
+	<section id="content">
+        <div class="container">
+            <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>
+            
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label palette-White text">{{title}}</div>
+                
+                <ul class="ah-actions actions a-alt">
+                    
+                    <li>
+                        <a title="Filter" class="filter_button" href="">
+                            <i class="zmdi zmdi-filter-list"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a title="Export Report" href="javascript:void(0);" class="export_to_excel">
+                            <i class="zmdi zmdi-collection-text"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a target=_blank title="Print Report" href="{% url 'sales:print_report' %}?period={{period|default:''}}&year={{year|default:''}}&month={{month|default:''}}&from_date={{filter_from_date|default:''}}&to_date={{filter_to_date|default:''}}&date={{filter_date|default:''}}">
+                            <i class="zmdi zmdi-print"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <a href="{% url 'sales:sales' %}?period={{period|default:''}}&year={{year|default:''}}&month={{month|default:''}}&from_date={{filter_from_date|default:''}}&to_date={{filter_to_date|default:''}}&date={{filter_date|default:''}}">
+                        <div class="card">
+                            <div class="card-header p-b-0">
+                                <h2 class="f-14">Sales Count<small></small></h2>
+                            </div>
+
+                            <div class="card-body card-padding">
+                                <h3>{{sales_count|default:"0.00"}}</h3>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="{% url 'sales:sales' %}?period={{period|default:''}}&year={{year|default:''}}&month={{month|default:''}}&from_date={{filter_from_date|default:''}}&to_date={{filter_to_date|default:''}}&date={{filter_date|default:''}}">
+                        <div class="card">
+                            <div class="card-header p-b-0">
+                                <h2 class="f-14">Total Sales <small></small></h2>
+                            </div>
+
+                            <div class="card-body card-padding">
+                                <h3>{{sales_total|default:"0.00"}}</h3>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="{% url 'sales:sales' %}?period={{period|default:''}}&year={{year|default:''}}&month={{month|default:''}}&from_date={{filter_from_date|default:''}}&to_date={{filter_to_date|default:''}}&date={{filter_date|default:''}}">
+                        <div class="card">
+                            <div class="card-header p-b-0">
+                                <h2 class="f-14"> Payment Recieved <small></small></h2>
+                            </div>
+
+                            <div class="card-body card-padding">
+                                <h3>{{payment_received_total|default:"0.00"}}</h3>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="{% url 'sales:sales' %}?period={{period|default:''}}&year={{year|default:''}}&month={{month|default:''}}&from_date={{filter_from_date|default:''}}&to_date={{filter_to_date|default:''}}&date={{filter_date|default:''}}">
+                        <div class="card">
+                            <div class="card-header p-b-0">
+                                <h2 class="f-14">Credit <small></small></h2>
+                            </div>
+
+                            <div class="card-body card-padding">
+                                <h3>{{balance_total|default:"0.00"}}</h3>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="{% url 'sales:sales' %}?period={{period|default:''}}&year={{year|default:''}}&month={{month|default:''}}&from_date={{filter_from_date|default:''}}&to_date={{filter_to_date|default:''}}&date={{filter_date|default:''}}">
+                        <div class="card">
+                            <div class="card-header p-b-0">
+                                <h2 class="f-14"> Special Discounts <small></small></h2>
+                            </div>
+
+                            <div class="card-body card-padding">
+                                <h3>{{special_discount_total|default:"0.00"}}</h3>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="{% url 'sales:sales' %}?period={{period|default:''}}&year={{year|default:''}}&month={{month|default:''}}&from_date={{filter_from_date|default:''}}&to_date={{filter_to_date|default:''}}&date={{filter_date|default:''}}">
+                        <div class="card">
+                            <div class="card-header p-b-0">
+                                <h2 class="f-14"> Total Discount <small></small></h2>
+                            </div>
+
+                            <div class="card-body card-padding">
+                                <h3>{{total_discount|default:"0.00"}}</h3>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <div class="col-md-3">
+                    <a href="{% url 'sales:sales' %}?period={{period|default:''}}&year={{year|default:''}}&month={{month|default:''}}&from_date={{filter_from_date|default:''}}&to_date={{filter_to_date|default:''}}&date={{filter_date|default:''}}">
+                        <div class="card">
+                            <div class="card-header p-b-0">
+                                <h2 class="f-14">Return Amount<small></small></h2>
+                            </div>
+
+                            <div class="card-body card-padding">
+                                <h3>{{sale_return_returnable_amount|default:"0.00"}}</h3>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="{% url 'sales:sales' %}?period={{period|default:''}}&year={{year|default:''}}&month={{month|default:''}}&from_date={{filter_from_date|default:''}}&to_date={{filter_to_date|default:''}}&date={{filter_date|default:''}}">
+                        <div class="card">
+                            <div class="card-header p-b-0">
+                                <h2 class="f-14" class="f-14">Commission Deducted<small></small></h2>
+                            </div>
+
+                            <div class="card-body card-padding">
+                                <h3>{{sale_return_commission_deducted|default:"0.00"}}</h3>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {% for key, values in tax_percentage_dict.items %}
+                    <div class="col-md-3">
+                        <a href="{% url 'sales:taxed_sale_items' %}?period={{period|default:''}}&year={{year|default:''}}&month={{month|default:''}}&from_date={{filter_from_date|default:''}}&to_date={{filter_to_date|default:''}}&date={{filter_date|default:''}}&tax_category={{key|default:''}}">
+                            <div class="card">
+                                <div class="card-header p-b-0">
+                                    <h2 class="f-14">Tax Amount {{key}}% <small></small></h2>
+                                </div>
+
+                                <div class="card-body card-padding">
+                                    <h3>{{values|default:"0.00"}}</h3>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+                {% if is_superuser %}
+                
+                <div class="col-md-3">
+                    <a href="{% url 'sales:sales' %}?period={{period|default:''}}&year={{year|default:''}}&month={{month|default:''}}&from_date={{filter_from_date|default:''}}&to_date={{filter_to_date|default:''}}&date={{filter_date|default:''}}">
+                        <div class="card">
+                            <div class="card-header p-b-0">
+                                <h2 class="f-14">Profit Amount <small></small></h2>
+                            </div>
+
+                            <div class="card-body card-padding">
+                                <h3>{{profit_amount|default:"0.00"}}</h3>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+            </div>                    
+        </div>
+    </section>
+{% endblock %}
+
+{% block filter_box %}
+<div class="filter-box">
+     <form method="get" action="{% url 'sales:dashboard' %}">
+        <div class="card">
+            <div class="card-header">
+                <h2>Filter <small></small></h2>
+                <span class="back-button-poupup palette-Cyan bg white btn btn-default btn-icon-text waves-effect"><i class="zmdi zmdi-arrow-back"></i> Back</span>
+            </div>
+            
+            <div class="card-body card-padding">
+                <div class="form-group fg-line">
+                    <label>Year</label>
+                    <input name="year" type="text" class="form-control" placeholder="yyyy" />
+                </div>
+                <div class="form-group fg-line">
+                    <label>Month</label>
+                    <select name="month" id="id_month" class="selectpicker">
+                        <option value="">All</option>
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+
+                    </select>
+                </div>
+                <div class="form-group fg-line">
+                    <label>Period</label>
+                    <select name="period" id="id_period" class="selectpicker">
+                        <option value="">All</option>
+                        <option value="today">Today</option>
+                        <option value="month">Month</option>
+                        <option value="year">Year</option>
+                    </select>
+                </div>
+                <div class="form-group fg-line">
+                    <label>Date</label>
+                    <input name="date" type="text" class="form-control date-picker" placeholder="Date" />
+                </div>
+                <div class="form-group fg-line">
+                    <label>Date Period</label>
+                    <div class="row">
+                        <div class="col-md-6 m-b-20">
+                            <input name="from_date" type="text" class="form-control date-picker" placeholder="From Date" />
+                        </div>
+                        <div class="col-md-6">
+                            <input name="to_date" type="text" class="form-control date-picker" placeholder=" To Date" />
+                        </div>
+                    </div>    
+                </div>
+                
+                <div class="m-t-20">
+                    <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                </div>
+            </div>
+         </div>
+     </form>
+</div>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+    <script>
+        $(document).ready(function(){
+            $(".export_to_excel").click(function(){
+                excelExport();
+            });
+            function excelExport() {
+                var url = "{% url 'sales:export_report' %}";
+                $.ajax({
+                    type : "GET",
+                    url : url,
+                    dataType : 'json',
+                    data : {
+                    },
+                    success : function(data) {
+                        var status = data['status'];
+                        var file_url = data['file_url'];
+
+                        if (status == "true"){
+                            window.location.href = file_url;
+                        }
+                    },
+                    error : function(data){
+                    }
+                });
+            }
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tax Invoice | Arkboss</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}" />
+    
+</head>
+<body>
+    {% load i18n %}
+    {% load static %}
+    {% load users_template_tags %}
+    {% load main_template_tags %}
+    <div class="print_container">
+        <table class="header top">
+            <tr>
+                <td colspan="10">TAX INVOICE</td>
+                <td class="small">{{instance.invoice_id}}</td>
+                <td class="small">{{instance.time.date|date:'d/m/Y'}}</td>
+                <td class="small">₹:{{final_total}}</td>
+            </tr>
+        </table>
+        <table class="address">
+            <tr>
+                <td class="logo">
+                {% if current_shop.logo %}
+                    <img src="{{current_shop.logo.crop.75x75}}" alt="{{current_shop.name}}">
+                {% else %}
+                    <img src="{% static 'img/logo-print.png' %}" alt="Arkboss"></td>
+                {% endif %}
+                <td>
+                    <h2>{{current_shop.name|upper}}</h2>
+                    <h3>GSTIN : {{current_shop.gstin}}</h3>
+                </td>
+                <td>
+                    <p>{{current_shop.address}}</p>
+                    <p>{{current_shop.email}}</p>
+                    <p>{{current_shop.phone}}</p>
+                </td>
+            </tr>
+        </table>
+        <table class="user_details">
+            <tr class="user_details">
+                <td>
+                    <h2>Billing Details</h2>
+                    <p><strong>{{instance.customer.name|check_default}}</strong><br /> {{instance.customer.address|check_default|default:"-"}}</p>
+                </td>
+                <td>
+                    <h2>Shipping Details</h2>
+                    <p><strong>{{instance.customer.name|check_default}}</strong><br /> {{instance.customer.address|check_default|default:"-"}}</p>
+                </td>
+            </tr>
+        </table>
+        <table class="spotlight">
+            <tr>
+                <td>
+                    <h5>Return Date</h5>
+                    <h6>{{instance.time.date|date:'d/m/Y'}}</h6>
+                </td>
+            </tr>
+        </table>
+
+        <table class="content">
+            <tr>
+                <th>Sl<br>No</th>
+                <th>Item Description</th>
+                <th>HSN</th>
+                <th>Qty</th>
+                <th>Unit</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+            {% for item in sale_return_items %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{item.product.name}}</td>
+                <td>{{item.product.hsn|default:'-'}}</td>
+                <td>{{item.qty}}</td>
+                <td>{{item.product.unit.code}}</td>
+                <td>{{item.price}}</td>
+                <td>{{item.sub_total|to_fixed_two}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <table class="bottom">
+           
+            <tr>
+                <td>
+                    <h4>Total Invoice value (In fugure)</h4>
+                </td>
+                <td>
+                    <h4 class="total">₹: {{instance.t.subtotal|to_fixed_two}}</h4>
+                </td>
+            </tr>
+            
+        </table>
+
+        <table class="footer">
+            <tr>
+                
+                <td valign="bottom">
+                    <h3>Authorised Signatory</h3>
+                </td>
+            </tr>
+        </table>
+        <p class="last">This is a computer generated invoice.</p>
+    </div>
+    <a class='back' href="{% url "sales:create" %}">Back to Sale</a>
+    <a class='view_sale' href="{% url "sales:sale" pk=instance.pk %}">View Sale</a>
+    <button class="btn btn-float bgm-red m-btn print-button" onclick = "clicktoPrint()"<i class="zmdi zmdi-print">PRINT</i></button>
+  
+    <input type="hidden" value="{{auto_redirect|yesno:'yes,no'}}" id="auto_redirect"/>
+    
+    <script type="text/javascript">
+        function clicktoPrint() {
+            window.print();
+        }
+        window.onload = function(){
+            var button = document.querySelector('.print-button');
+            button.click();
+        }
+        
+    </script>
+    <style>
+        body {
+            margin: 0;
+            font-family: TimesNewRoman,Ubuntu,"Courier New",Courier, Arial, Helvetica, sans-serif;
+            background: #fff;
+            margin-top: 15px;
+        }
+        .print_container {
+            width: 210mm;
+            margin: 0 auto;
+            background: #fff;
+            min-height: 100%;
+        }
+        table {  
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 0;
+        }
+        table {
+            width: 100%;
+        }
+        h5, h6, h4 {
+            margin: 0;
+        }
+        .header.top {
+            background: #4E342E;
+            font-size: 13pt;
+            text-transform: uppercase;
+            color: #fff;
+            font-weight: bold;
+        }
+        .header.top td:nth-child(1){
+            text-align: left;
+        }
+        .header.top td {
+            text-align: center;
+            padding: 10px;
+        }
+        .header.top td.small {
+            width: 120px;
+        }
+        .header.top td:nth-child(3) {
+            border-left: 2px solid rgba(255,255,255,.5);
+            border-right: 2px solid rgba(255,255,255,.5);
+            width: 
+        }
+        .header.top td:last-child{
+            text-align: right;
+        }
+        .user_details {
+            table-layout: fixed;
+            width: 100%;
+        }
+        .user_details tr td {
+            border-bottom: 1px solid #0A0A3C;
+        }
+        .user_details tr td.logo {
+            width: 100px;
+            padding: 10px 0;
+        }
+        .user_details h2 {
+            font-size: 13pt;
+            margin: 0;
+            margin-bottom: 10px;
+            margin-top: 20px;
+        }
+        .user_details h3 {
+            font-size: 12pt;
+            color: #9E9E9E;
+            font-weight: normal;
+            margin-top: 0;
+        }
+        .user_details p{
+            font-size: 11pt;
+        }
+        .user_details p strong {
+            font-family: Arial;
+            font-weight: 400;
+        }
+        .address tr td {
+            border-bottom: 1px solid #0A0A3C;
+        }
+        .address tr td.logo {
+            width: 100px;
+            padding: 10px 0;
+            margin-right: 20px;
+        }
+        .address h2 {
+            font-size: 13pt;
+            margin: 0;
+            margin-bottom: 10px;
+            margin-top: 20px;
+        }
+        .address h3 {
+            font-size: 12pt;
+            color: #9E9E9E;
+            font-weight: normal;
+            margin-top: 0;
+        }
+        .address .user_details td {
+            border-bottom: none;
+        }
+        .address .user_details td:first-child p {
+            max-width: 250px;
+        }
+        .address p {
+            font-size: 11pt;
+            margin: 5px 0;
+        }
+        .address td:nth-child(2) {
+            width: 250px;
+        }
+        .spotlight td {
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+        .spotlight td:first-child {
+            text-align: right;
+            padding-right: 20px;
+        }
+        .spotlight td:nth-child(2) {
+            width: 150px;
+            border-left: 2px solid #9E9E9E;
+            border-right: 2px solid #9E9E9E;
+            text-align: center;
+        }
+        .spotlight td:last-child {
+            text-align: left;
+            padding-left: 20px;
+        }
+        .spotlight {
+            table-layout: fixed;
+        }
+        .spotlight td:first-child, .spotlight td:last-child {
+            width: 40%;
+        }
+        .spotlight h5 {
+            margin-bottom: 5px;
+        }
+        .spotlight h6 {
+            font-weight: normal;
+            font-size: 9pt;
+        }
+        .content {
+            margin-top: 20px;
+        }
+        .content td, .content th{
+            border: 1px solid #f2eaea;
+            border-left: 1px solid #555;
+            border-right: 1px solid #555;
+            font-size: 9pt;
+            font-weight: normal;
+            text-align: center;
+            padding: 5px 0;
+            font-family: Arial;
+        }
+        .content tr:last-child td{
+            border-bottom: 1px solid #555;
+        }
+        .content th{
+            border: 1px solid #555;
+            background: #eae5e5;
+        }
+        .content .last, .content .last{
+            padding:0;
+            width: 250px;
+            margin: 0;
+        }
+        .content .text-top{
+            vertical-align: top;
+        }
+        .content .last td, .content .last td{
+            border-top:none;
+            border-bottom: none;
+        }
+        .content .last table, .content .last table{
+            table-layout: fixed;
+        }
+        .bottom {
+            margin-top: 20px;
+        }
+        .bottom tr:first-child table{
+            margin-bottom: 10px;
+        }
+        .bottom td:nth-child(2) {
+            width: 325px;
+        }
+        .bottom h4 {
+            font-weight: normal;
+            font-size: 11pt;
+            margin-bottom: 6px;            
+        }
+        .bottom h4.total{
+           font-weight: bold; 
+           font-size: 13pt;         
+        }
+        .bottom h5.total{
+           font-weight: bold; 
+           text-transform: capitalize;        
+        }
+        .bottom h5 {
+            font-weight: normal;
+            font-size: 10pt;
+            margin-bottom: 10px;
+        }
+        .bottom table.value {
+            table-layout: fixed;
+        }
+        .bottom table.value th {
+            font-size: 10pt;
+        }
+        .bottom table.value td, .bottom table.value th {
+            border: 1px solid #9E9E9E;
+            text-align: center;
+            padding : 5px 0;
+            font-weight: normal;
+        }
+        .bottom table.value td:nth-child(2) {
+            width: auto;
+        }
+        .footer {
+            table-layout: fixed;
+            border-top: 1px solid #9E9E9E;
+            border-bottom: 1px solid #9E9E9E;
+            margin-top: 20px;
+        }
+        .footer td {
+            width: 35%;
+        }
+        .footer td:nth-child(2) {
+            text-align: center;
+        }
+        .footer td:last-child {
+            width: 30%;
+        }
+        .footer h3{
+            margin-top: 20px;
+            font-weight: 500;
+            font-size: 12pt;
+        }
+        .footer .declaration h3 {
+            font-size: 11pt;
+            margin-top: 15px;
+        }
+        .footer .declaration p {
+            font-size: 8pt;
+            text-align: justify;
+        }
+        .footer p {
+            font-size: 10pt;
+        }
+        p.last {
+            text-align: center;
+            font-size: 9pt;
+            margin: 10px 0;
+        }
+
+        .btn-float {
+            bottom: 30px;
+            right: 30px;
+            box-shadow: 2px 2px 2px 0px rgba(5, 40, 70, 0.34);
+            outline: none;
+            border: none;
+            color: #fff;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            line-height: 45px !important;
+            cursor: pointer;
+            right: 25px;
+            bottom: -23px;
+            z-index: 1;
+        }
+
+        .btn-float:not(.m-btn) {
+          position: absolute !important;
+        }
+
+        .m-btn {
+            bottom: 20px;
+            position: fixed !important;
+            right: 85px;
+            z-index: 1;
+        }
+        .bgm-red {
+          background-color: #f44336 !important;
+        }
+        .back{
+            top: 0;
+            position: fixed !important;
+            right: 85px;
+            z-index: 1;
+            padding:10px 20px;
+            background-color: #03A9F4;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #fff;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .view_sale{
+            top: 50px;
+            position: fixed !important;
+            right: 85px;
+            z-index: 1;
+            padding:10px 20px;
+            background-color: #03A9F4;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #fff;
+            text-decoration: none;
+            display: inline-block;
+        }
+        @media print {
+          .btn,.btn-float,.view_sale, .bgm-red,.back-button,.back,.m-btn.print-button * {
+            visibility: hidden;
+          }
+        }
+
+
+    </style>
+</body>
+</html>

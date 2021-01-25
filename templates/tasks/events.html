@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+	<section id="content">
+        <div class="container">
+             <div class="c-header">
+            	<h2>{{title}}</h2>
+            </div>
+            
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+	            <div class="ah-label hidden-xs palette-White text"></div>
+	
+	            <div class="ah-search">
+	            	<form method="get" action="{% url 'tasks:anniversaries' %}">
+	                    <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+	
+	                    <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+	                    <input type="submit" class="hidden" />
+	                </form>
+	            </div>
+	
+	            <ul class="ah-actions actions a-alt">
+	                <li>
+	                    <a href="" class="ah-search-trigger" data-ma-action="ah-search-open">
+	                        <i class="zmdi zmdi-search"></i>
+	                    </a>
+	                </li>
+	                
+	                <li>
+	                    <a title="Filter" class="filter_button" href="">
+	                        <i class="zmdi zmdi-filter-list"></i>
+	                    </a>
+	                </li>
+	                {% if is_superuser or 'can_create_anniversary' in user_instance.permissionlist %}
+	                <li>
+                        <a title="Create anniversary" href="{% url 'tasks:create_anniversary' %}">
+                            <i class="zmdi zmdi-plus"></i>
+                        </a>
+                    </li>
+	                {% endif %}
+	                {% if instances %}
+	
+    	                <li>
+    	                    <a title="Select All" class="check_all" href="">
+    	                        <i class="zmdi zmdi-select-all"></i>
+    	                    </a>
+    	                </li>
+
+    	                {% if is_superuser or 'can_delete_anniversary' in user_instance.permissionlist %}
+    	                <li>
+    	                    <a title="Delete selected items" data-id="" href="" data-text="{{confirm_delete_selected_message}}" data-title="Are you sure?" class="action-button reload selected-items-button">
+    	                        <i class="zmdi zmdi-delete"></i>
+    	                    </a>
+    	                </li> 
+                        {% endif %}
+	                {% endif %}
+	            </ul>
+	            
+	        </div>
+
+            <div id="calendar" class="card"></div>
+
+    </section>
+{% endblock %}
+
+{% block filter_box %}
+<div class="filter-box">
+	 <form method="get" action="{% url 'tasks:anniversaries' %}">
+	 	<div class="card">
+			<div class="card-header">
+		        <h2>Filter <small></small></h2>
+		        <span class="back-button-poupup palette-Cyan bg white btn btn-default btn-icon-text waves-effect"><i class="zmdi zmdi-arrow-back"></i> Back</span>
+		    </div>
+		    
+			<div class="card-body card-padding">
+			 	<div class="form-group fg-line">
+		            <label>Query</label>
+		            <input name="q" type="text" class="form-control" placeholder="Enter your query..." />
+		        </div>         
+                
+                
+		         <div class="m-t-20">
+                    <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                </div>
+		    </div>
+		 </div>
+	 </form>
+</div>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+    <script>
+        $(document).ready(function(){
+            var cId = $('#calendar'); //Change the name if you want. I'm also using thsi add button for more actions
+
+            var date = new Date();
+            var d = date.getDate();
+            var m = date.getMonth();
+            var y = date.getFullYear();
+
+            //Generate the Calendar
+            cId.fullCalendar({
+                header: {
+                    right: '',
+                    center: 'prev, title, next',
+                    left: ''
+                },
+
+                theme: true, //Do not remove this as it ruin the design
+                selectable: true,
+                selectHelper: true,
+
+                //Add Events
+                events: [
+                    {% for instance in instances %}
+                        {
+                            title: '{{instance.title}}',
+                            start: new Date({{instance.date.year}}, {{instance.date.month}} - 1, {{instance.date.day}}),
+                            allDay: true,
+                            className: '{% if instance.event_category == "holiday" %} palette-Red bg {% elif instance.event_category == "leave" %} palette-Green bg  {% elif instance.event_category == "anniversary" %} palette-Amber bg{% endif %}'
+                        },
+                    {% endfor %}
+                ],
+            });
+        });
+    </script>
+    
+{% endblock %}
+
+
+

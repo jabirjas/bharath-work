@@ -1,0 +1,80 @@
+{% extends "pdf_base.html" %}
+{% load i18n %}
+{% load static %}
+{% load tz %}
+
+{% block content %} 
+	<table>
+		<tr>
+			<td><b>Date :</b> {{instance.time.date }}</td>
+			<td><b>Sale # :</b> {{instance.auto_id}}</td>
+			<td><b>Customer :</b> {{instance.customer}}</td>
+		</tr>
+		<tr>
+			<td><b>Phone :</b> {{instance.customer.phone|default:"-"}}</td>
+			<td><b>Email :</b> {{instance.customer.email|default:"-"}}</td>
+		</tr>
+	</table>	
+		
+	<h4><b>Sale Items</b></h4>
+	
+	<table class="tdb">						
+		<tr>
+			<th>Product</th>
+			<th>Quantity</th>
+			<th>Price</th>
+			<th>Tax</th>
+			<th>Discount</th>
+			<th>Sub Total</th>
+		</tr>		
+		{% for item in sale_items %}			    
+		<tr class="form_set_row">
+			<td>
+				<span>
+					{{item.product.name}}
+				</span>
+			</td>
+			<td>
+				<span class="sale_item_qty">
+					{{item.qty}}
+				</span>
+			</td>
+			<td>
+				<span class="sale_item_price">
+					{{item.price}}
+				</span>
+			</td>
+			<td>
+				<span class="sale_item_tax">
+					{{item.tax}}
+				</span>
+			</td>
+			<td>
+				<span class="sale_item_discount">
+					{{item.discount}}
+				</span>
+			</td>
+			<td>
+				<span class="sale_item_sub_total">
+					{{item.subtotal}}
+				</span>
+			</td>
+		</tr>
+		{% endfor %}						
+	</table>
+	
+	<br />
+
+	<table class="tdb">
+		<tr>
+			<td><b>Subtotal(Rs) : </b>{{instance.subtotal}}</td>
+			<td><b>Discount(Rs) : </b>{{instance.special_discount}}</td>
+			<td><b>Total(Rs) : </b>{{instance.total}}</td>
+		</tr>
+		<tr>
+			<td><b>Payment Recieved(Rs) : </b>{{instance.payment_received}}</td>
+			<td><b>Balance(Rs) : </b>{{instance.balance}}</td>
+			<td>&nbsp;</td>
+		</tr>
+	</table>
+{% endblock %}

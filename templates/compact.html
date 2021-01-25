@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+
+{% load main_template_tags %}
+{% load static %}
+    <head>
+        
+    </head>
+    <body>
+        <section id="canvas">
+            <section id="container">
+                <section id="print">
+                    <div class="head">
+                        <div class="top img_container">
+                            <p class='bill-no'>{{instance.bill_no}}</p>
+                            <img class='barcode' id="{{instance.code}}">
+                        </div>
+                        <divv class="bottom">
+                            <div class="customer">
+                                <p class='customer-name'>{{instance.customer.name}}, {{instance.customer.first_phone}}</p>
+                            </div>
+                            <div class="date">
+                                <p class='sale-date'>{{instance.time|date:'d/m/Y h:i'}}</p>
+                                <p class='deliver-date'>{{instance.expected_time|date:'d/m/Y h:i'}}</p>
+                            </div>
+                        </divv>            
+                    </div>
+                    <div class="content">
+                        {% if instance.cash_type == 'ro' %}
+                        <div class='currency-code-oman'>
+                            <p class='currency-code-left' style='padding-right:25px'><span style='padding-right:8px'>RO</span><span>BZ</span></p>
+                            <p class='currency-code-right'><span style='padding-right:8px'>RO</span><span>BZ</span></p>
+                        </div>
+                        <div class='currency-arabic-oman'>
+                            <p class='currency-left'><span>بيسه</span><span style='padding-right:8px'>ريال</span></p>
+                            <p class='currency-right'><span>بيسه</span><span style='padding-right:8px'>ريال</span></p>
+                        </div>
+                        {% else %}
+                        <div class='currency-code-aed'>
+                            <p><span class='left'>AED</span><span>AED</span></p>
+                            <p><span>درهم</span><span class='left'>درهم</span></p>
+                        </div>
+                        {% endif %}
+                        <table class='bill-content '>
+                            {% for item in sale_items %}
+                            <tr>
+                                {% if item.model %}
+                                <td class="particular">
+                                    <table>
+                                        <tr>
+                                            <td style='border:none;text-align: left;'>{{item.model.name}}</td>
+                                            <td style='border:none;text-align: right;'>{{item.model.arabic_name}}</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td class='size'>{{item.size}}</td>
+                                <td class='qty'>{{item.qty|to_split}}</td>
+                                <td class='del-qty'>{{item.del_qty|to_split}}</td>
+                                <td class='bal-qty'>{{item.balance_qty|to_split}}</td>
+                                {% else %}
+                                <td class='particular product'>{{item.product}}</td>
+                                <td class='size'>{{item.unit.code}}</td>
+                                <td class='qty'>{{item.total_length|to_fixed_two}}</td>
+                                <td class='del-qty'>{{item.del_qty|to_fixed_two}}</td>
+                                <td class='bal-qty'>{{item.balance_qty|to_fixed_two}}</td>
+                                {% endif %}
+                                {% if instance.print_rate %}
+                                    {% if instance.cash_type == 'ro' %}
+                                        <td class='rate'>{{item.total_price}}</td>
+                                    {% else %}
+                                        <td class='rate'>{{item.total_price|to_fixed_two}}</td>
+                                    {% endif %}
+
+                                {% else %}
+                                    <td class='rate'></td>
+                                {% endif %}
+                                {% if instance.cash_type == 'ro' %}
+                                    <td class='amount'>{{item.subtotal}}</td>
+                                {% else %}
+                                    <td class='amount'>{{item.subtotal|to_fixed_two}}</td>
+                                {% endif %}
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                    <div class="footer">
+                        {% if instance.cash_type == 'ro' %}
+                            <p><b>{{instance.subtotal}}</b></p>
+                            <p>{{instance.special_discount}}</p>
+                            <p>{{instance.total}}</p>
+                            <p>{{instance.collected_amount}}</p>
+                            <p><b>{{instance.balance}}</b></p>
+                        {% else %}
+                            <p><b>{{instance.subtotal|to_fixed_two}}</b></p>
+                            <p>{{instance.special_discount|to_fixed_two}}</p>
+                            <p>{{instance.total|to_fixed_two}}</p>
+                            <p>{{instance.collected_amount|to_fixed_two}}</p>
+                            <p><b>{{instance.balance|to_fixed_two}}</b></p>
+                        {% endif %}
+                        
+                    </div>
+                    {% if instance.print_balance and instance.old_credit > 0 %}
+                        <div class="previous">
+                            <p class="balance">Previous Balance </p>
+                            <p class="previous-bill">Bll-No : {{instance.previous_bill}}</p>
+                            <p class="balance-arabic">الرصيد السابق</p>
+                            <p class="amount">{{instance.old_credit}}</p>
+                        </div>
+                    {% endif %}
+                </section>
+            </section>
+           
+        </section>
+    </body>
+    <style>
+        body {
+            margin: 0;
+            font-family: sans-serif;
+        }
+        #container{
+            height: 210mm;
+            width: 149mm;
+            padding: 5mm 6.5mm;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+
+        }
+        .clear {
+            clear:both;
+        }
+        #print {
+            width: 136mm;
+            height: 190mm;
+            background:url({{static_url}}img/bg.png) no-repeat;
+            background-size: cover;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+        .bill-no {
+            font-size: 27px;
+            font-weight: 500;
+            position:absolute;
+            left:20mm;
+            top:38mm;
+        }
+        .barcode {
+            position:absolute;
+            height:10.2mm;
+            width:32mm;
+            left:109mm;
+            top:43mm;
+        }
+        .customer {
+            position: absolute;
+            left:20mm;
+            top:57mm;
+            font-size: 9pt;
+        }
+        .date {
+            position:absolute;
+            left:116mm;
+            top:54mm;
+            font-size: 9pt;
+        }
+        .date p {
+            margin:0;
+        }
+        .currency-code-left {
+            position: absolute;
+            top:72mm;
+            left:112mm;
+            font-weight: bold
+        }
+        .currency-code-right {
+            position: absolute;
+            top:72mm;
+            left:129mm;
+            font-weight: bold
+        }
+        .currency-arabic-oman p.currency-left{
+            position: absolute;
+            top:78.5mm;
+            left:112mm;
+            font-size: 6pt;
+            font-weight: bold
+        }
+        .currency-arabic-oman p.currency-right{
+            position: absolute;
+            top:77.5mm;
+            left:129mm;
+            font-size: 7pt;
+            font-weight: bold
+        }
+        .currency-code-oman p {
+            font-size: 9pt;
+            display:inline-block;
+        }
+        .currency-code-aed {
+            position: absolute;
+            top:76mm;
+            left:115mm;
+            font-weight: bold;
+        }
+        .currency-code-aed p{
+            font-size: 9pt;
+            margin: 0;
+        }
+        .currency-code-aed p span.left{
+            padding-right: 11mm;
+        }
+        .content table.bill-content {
+            border:none;
+            position: absolute;
+            left:7mm;
+            top:84.5mm;
+        }
+        .content table.bill-content tr {
+            height:6mm;
+        }
+        .content table.bill-content tr td{
+            padding-bottom: 1px;
+            font-size: 9pt;
+            text-align: center;
+        }
+        td.particular {
+            width:60mm;
+        }
+        td.product {
+            text-align: left !important;
+        }
+        td.particular p {
+            display:inline-block;
+            margin:0;
+        }
+
+        td.particular p.english {
+            text-align: left;
+            width:29.1mm;
+        }
+        td.particular p.arabic {
+            text-align: right;
+            width:29mm;
+            padding-right: 1mm;
+        }
+        td.size {
+            width:8mm;
+        }
+        td.qty {
+            width:9mm;
+        }
+        td.del-qty {
+            width:9.5mm;
+        }
+        td.bal-qty {
+            width:9.5mm;
+        }
+        td.rate {
+            width:13mm;
+        }
+        td.amount {
+            width:16mm;
+            text-align: right !important;
+        }
+        .footer {
+            position:absolute;
+            left:126mm;
+            top:149.5mm;
+            font-size: 9pt;
+            width:15.5mm;
+            text-align:right;
+        }
+        .footer p {
+            margin-bottom: 4mm;
+        }
+        div.previous .balance{
+            font-size: 9pt;
+            position:absolute;
+            left:11mm;
+            top:187mm;
+        }
+        div.previous .balance-arabic{
+            font-size: 9pt;
+            position:absolute;
+            left:98mm;
+            top:187mm;
+        }
+        div.previous .amount {
+            font-size: 9pt;
+            position: absolute;
+            left: 126mm;
+            top: 187mm;
+            width: 15.5mm;
+            text-align: right;
+        }
+        div.previous .previous-bill {
+            font-size: 9pt;
+            position:absolute;
+            left:41mm;
+            top:187mm;
+        }
+        div.previous p {
+            display:inline-block;
+        }
+        .btn {
+            padding:25px;
+            border-radius:50%;
+            background-color:#2196F3;
+            position:absolute;
+            left:182mm;
+            top:187mm;
+            color:#fff;
+            font-size: 12px;
+        }
+        @media print {
+          .btn,.btn-float, .bgm-red,.back-button,.back,.m-btn.print-button * {
+            visibility: hidden;
+          }
+        }
+    </style>
+    <script src="{% static 'vendors/bower_components/jquery/dist/jquery.min.js' %}"></script>
+    <script src="{% static 'js/jsbarcode.min.js' %}"></script>
+    <script type="text/javascript">
+        
+        window.onload = function(){
+             window.print();
+        }
+        $("#{{instance.code}}").JsBarcode(
+          "{{instance.code}}",
+          {
+            format: "CODE128",
+            width: 2,
+            height: 40,
+            margin:0,
+            marginLeft: 10,
+            marginRight: 10,
+            marginTop: 5,
+            marginBottom:0,
+            displayValue : false
+          }
+        );      
+    </script>
+    
+</html>

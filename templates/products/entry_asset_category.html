@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+{% block content %}
+	<section id="content">
+        <div class="container">
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+
+                <div class="ah-search">
+                    <form method="get" action="{% url 'products:asset_categories' %}">
+                        <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+    
+                        <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+                        <input type="submit" class="hidden" />
+                    </form>
+                </div>
+
+                <ul class="ah-actions actions a-alt">
+                    <li>
+                        <a title="Search" data-ma-action="ah-search-open" class="ah-search-trigger" href="">
+                            <i class="zmdi zmdi-search"></i>
+                        </a>
+                    </li>
+                    {% if instance %}
+                        {% if user in super_users or 'can_create_asset_category' in user_instance.permissionlist %}
+                            <li>
+                                <a title="Create asset Category" href="{% url 'products:create_asset_category' %}">
+                                    <i class="zmdi zmdi-plus"></i>
+                                </a>
+                            </li>
+                        {% endif %} 
+                        {% if user in super_users or 'can_view_asset_category' in user_instance.permissionlist %}
+                            <li>
+                                <a title="View asset Category" href="{% url 'products:asset_category' pk=instance.pk %}">
+                                    <i class="zmdi zmdi-eye"></i>
+                                </a>
+                            </li>
+                        {% endif %} 
+                        {% if user in super_users or 'can_delete_asset_category' in user_instance.permissionlist %}
+                            <li>
+                                <a title="Delete asset Category" data-id="{{instance.pk}}" data-text="{{confirm_delete_message}}" data-title="Are you sure?" href="{% url 'products:delete_asset_category' pk=instance.pk %}" class="action-button redirect">
+                                    <i class="zmdi zmdi-delete"></i>
+                                </a>
+                            </li>
+                        {% endif %} 
+                    {% endif %}                               
+                </ul>
+            </div>
+
+            <div class="card">
+                <form class="ajax reset {% if redirect %}redirect{% endif %}" method="post" action="{{url}}">
+                	{% csrf_token %}
+                    <div class="card-body card-padding">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group fg-line">
+	                                <label for="{{ form.asset_category.id_for_label }}">
+	                                	{{ form.asset_category.label }}
+	                                	{% if form.asset_category.field.required %}
+							        		<small class="star">*</small>
+							        	{% endif %}
+							        	
+							        	{% if form.asset_category.help_text %}
+							        		<span data-original-title="Field Info" title="" data-content="{{ form.asset_category.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+	                                    {% endif %}
+	                                </label>
+	                                {{ form.asset_category }}
+	                                
+	                                {% if form.asset_category.errors %}
+	                                	<label class="error">{{ form.asset_category.errors.as_text }}</label>
+	                                {% endif %}
+	                            </div>
+                                <br>	
+                            </div>
+                         </div>
+                         
+                         <div class="m-t-20">
+                            <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                        </div>
+                     </div>  
+                 </form>                    
+            </div>
+            
+        </div>
+    </section>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+{% endblock %}

@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load users_template_tags %}
+
+{% load tz %}
+{% block content %}
+	<section id="content">
+        <div class="container">
+            <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>
+            
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{instance.name}} - {{instance.phone}}</div>
+
+                <ul class="ah-actions actions a-alt">
+                    {% if is_superuser or 'can_create_task' in user_instance.permissionlist %}
+                    <li>
+                        <a title="Create Task" href="{% url 'tasks:create_task' %}">
+                            <i class="zmdi zmdi-plus"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if is_superuser or 'can_modify_task' in user_instance.permissionlist %}
+                    <li>
+                        <a title="Edit Task" href="{% url 'tasks:edit_task' pk=instance.pk %}">
+                            <i class="zmdi zmdi-edit"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if is_superuser or 'can_delete_task' in user_instance.permissionlist %}
+                    <li>
+                        <a title="Delete Task" data-id="{{instance.pk}}" data-text="{{confirm_delete_message}}" data-title="Are you sure?" href="{% url 'tasks:delete_task' pk=instance.pk %}" class="action-button redirect">
+                            <i class="zmdi zmdi-delete"></i>
+                        </a>
+                    </li>  
+                    {% endif %}                              
+                </ul>
+            </div>
+
+            <div id="c-grid" class="clearfix" data-columns="2">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Basic Info <small></small></h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="list-group lg-alt c-overflow">
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Assignee</div>
+                                    <small class="lgi-text">{{instance.assignee}}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Staff</div>
+                                    <small class="lgi-text">{{instance.staff}}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Time</div>
+                                    <small class="lgi-text">{{instance.time}}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">From_time</div>
+                                    <small class="lgi-text">{{instance.from_time}}</small>
+                                </div>
+                            </div>
+
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">To_time</div>
+                                    <small class="lgi-text">{{instance.to_time}}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Title</div>
+                                    <small class="lgi-text">{{instance.title}}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Description</div>
+                                    <small class="lgi-text">{{instance.description}}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Created &amp; Updated <small></small></h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="list-group lg-alt c-overflow">
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Date Added</div>
+                                    <small class="lgi-text">{{instance.date_added}}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Date Updated</div>
+                                    <small class="lgi-text">{{instance.date_updated}}</small>
+                                </div>
+                            </div>
+
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Created User</div>
+                                    <small class="lgi-text"><a href="{% url 'users:view' pk=instance.creator.username %}">{{instance.creator.username}}</a></small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Last Updated User</div>
+                                    <small class="lgi-text"><a href="{% url 'users:view' pk=instance.updator.username %}">{{instance.updator.username}}</a></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+             </div>  
+        </div>
+    </section>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+{% endblock %}

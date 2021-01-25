@@ -1,0 +1,134 @@
+{% extends "invoice_base.html" %}
+{% load i18n %}
+{% load static %}
+{% load users_template_tags %}
+{% block content %}
+{% load main_template_tags %}
+
+    <section id="content">
+        <div class="container invoice">
+            <div class="c-header">
+                <h2 class="m-t-20 pull-left">{{title}}</h2>
+                <br class="clear">
+            </div>
+            
+            <div class="card">
+            	
+                <div class="card-header ch-alt text-center">
+                	{% if current_shop.logo %}
+                    <img class="i-logo" src="{{current_shop.logo.url}}" alt="{{current_shop.name}}">
+                    {% else %}
+                    <img src="{% static 'img/logo.png' %}" alt="{{current_shop.name}}" />
+                    {% endif %}
+                </div>
+                
+                <div class="card-body card-padding">
+                    <div class="row m-b-25">
+                        <div class="text-center">
+                            
+                            <h4>{{current_shop.name|upper}}</h4>
+
+                            <span class="text-muted">
+                                <address>
+                                    {{current_shop.address}}
+                                </address>
+    
+                                {{current_shop.phone}}<br/>
+                                {{current_shop.email}} <br />
+                                {{current_shop.tin_number}}
+                            </span>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="clearfix"></div>
+                    
+                    <div class="row m-t-25 p-0 m-b-25">
+                        <div class="col-xs-3 m-b-25">
+                            <div class="bgm-amber brd-2 p-15">
+                                <div class="c-white m-b-5">Total Sale Amount</div>
+                                <h2 class="m-0 c-white f-300">{{total_sale_amount | default:"0"}}</h2>
+                            </div>
+                        </div>
+                        
+                        <div class="col-xs-3 m-b-25">
+                            <div class="bgm-blue brd-2 p-15">
+                                <div class="c-white m-b-5">Total Payment Received</div>
+                                <h2 class="m-0 c-white f-300">{{total_payment_received | default:"0"}}</h2>
+                            </div>
+                        </div>
+                        
+                        <div class="col-xs-3 m-b-25">
+                            <div class="bgm-green brd-2 p-15">
+                                <div class="c-white m-b-5">Balance</div>
+                                <h2 class="m-0 c-white f-300">{{total_balance | default:"0"}}</h2>
+                            </div>
+                        </div>
+                        
+                        <div class="col-xs-3 m-b-25">
+                            <div class="bgm-red brd-2 p-15">
+                                <div class="c-white m-b-5">New Customers</div>
+                                <h2 class="m-0 c-white f-300">{{total_customers_created | default:"0"}}</h2>
+                            </div>
+                        </div>
+                        <div class="col-xs-3 m-b-25">
+                            <div class="bgm-teal brd-2 p-15">
+                                <div class="c-white m-b-5">Sales Count</div>
+                                <h2 class="m-0 c-white f-300">{{total_sales_created | default:"0"}}</h2>
+                            </div>
+                        </div>
+                        <div class="col-xs-3 m-b-25">
+                            <div class="bgm-orange brd-2 p-15">
+                                <div class="c-white m-b-5">Total Profit</div>
+                                <h2 class="m-0 c-white f-300">{{total_profit_amount | default:"0"}}</h2>
+                            </div>
+                        </div>
+                        <div class="col-xs-3 m-b-25">
+                            <div class="bgm-purple brd-2 p-15">
+                                <div class="c-white m-b-5">Total VAT Amount</div>
+                                <h2 class="m-0 c-white f-300">{{total_vat_amount | default:"0"}}</h2>
+                            </div>
+                        </div>
+                        <div class="col-xs-3 m-b-25">
+                            <div class="bgm-blue brd-2 p-15">
+                                <div class="c-white m-b-5">Total Discount</div>
+                                <h2 class="m-0 c-white f-300">{{total_discount_amount | default:"0"}}</h2>
+                            </div>
+                        </div>
+                        <div class="col-xs-3">
+                            <div class="bgm-pink brd-2 p-15">
+                                <div class="c-white m-b-5">Total Special Discount</div>
+                                <h2 class="m-0 c-white f-300">{{total_special_discount | default:"0"}}</h2>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="clearfix"></div>
+                    
+                </div>
+                
+                <footer class="m-t-15 p-20">
+                    <ul class="list-inline text-center list-unstyled">
+                        <li class="m-l-5 m-r-5"><small>{{current_shop.email}}</small></li>
+                        <li class="m-l-5 m-r-5"><small>{{current_shop.phone}}</small></li>
+                        <li class="m-l-5 m-r-5"><small>{{current_shop.website}}</small></li>
+                    </ul>
+                </footer>
+            </div>
+            
+        </div>
+        <button class="btn btn-float bgm-red m-btn" data-action="print"><i class="zmdi zmdi-print"></i></button>
+    </section>
+{% endblock %}
+
+{% block static %}
+    {% load static %}
+    <script type="text/javascript">
+        $(document).keydown(function(e) { 
+            e.preventDefault();                  
+            if(e.keyCode == 123){
+                window.print();
+            }
+        });
+    </script>
+{% endblock %}

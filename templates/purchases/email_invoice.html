@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% load tz %}
+{% block content %}
+	<section id="content">
+        <div class="container">
+            <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>
+
+            <form class="ajax reset redirect" method="post" action="{{url}}">
+            	{% csrf_token %}
+            	
+            	<div class="card">				    
+					<div class="card-body card-padding">
+						<div class="form-group fg-line">
+                            <label for="{{ form.name.id_for_label }}">
+                            	{{ form.name.label }}
+                            	{% if form.name.field.required %}
+					        		<small class="star">*</small>
+					        	{% endif %}
+					        	
+					        	{% if form.name.help_text %}
+					        		<span data-original-title="Field Info" title="" data-content="{{ form.name.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                {% endif %}
+                            	</span>
+                            </label>
+                            {{ form.name }}
+                            
+                            {% if form.name.errors %}
+                            	<label class="error">{{ form.name.errors.as_text }}</label>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group fg-line">
+                            <label for="{{ form.email.id_for_label }}">
+                            	{{ form.email.label }}
+                            	{% if form.email.field.required %}
+					        		<small class="star">*</small>
+					        	{% endif %}
+					        	
+					        	{% if form.email.help_text %}
+					        		<span data-original-title="Field Info" title="" data-content="{{ form.email.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                {% endif %}
+                            	</span>
+                            </label>
+                            {{ form.email }}
+                            
+                            {% if form.email.errors %}
+                            	<label class="error">{{ form.email.errors.as_text }}</label>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group fg-line">
+                            <label for="{{ form.content.id_for_label }}">
+                            	{{ form.content.label }}
+                            	{% if form.content.field.required %}
+					        		<small class="star">*</small>
+					        	{% endif %}
+					        	
+					        	{% if form.content.help_text %}
+					        		<span data-original-title="Field Info" title="" data-content="{{ form.content.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                {% endif %}
+                            	</span>
+                            </label>
+                            {{ form.content }}
+                            
+                            {% if form.content.errors %}
+                            	<label class="error">{{ form.content.errors.as_text }}</label>
+                            {% endif %}
+                        </div>
+					</div> 
+				</div>
+				
+             	<div class="m-t-20">
+				    <button type="submit" class="btn btn-info waves-effect">Submit</button>
+				</div>
+         	</form>  
+         </div> 
+    </section>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+	<link href="{% static 'vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet">
+	<script src="{% static 'vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/jquery.formset.js' %}"></script>
+	
+	<script>
+	$(document).ready(function(){
+		$('.sale_item_formset table tr.form_set_row').formset({
+		    prefix: '{{ sale_item_formset.prefix }}',
+		    formCssClass: 'dynamic-formset1',
+		    'added' : function (row) {
+		        row.find('.sale_item select').val(null).trigger('change');
+		        row.find('.select2-selection').click();
+		    }
+		});	
+      
+        
+        function calculate(){
+			var sale_item_total = 0;      		
+			
+			$('.sale_item_formset table tr.form_set_row').each(function(){
+				$this = $(this);
+				var qty = parseFloat($this.find('.sale_item_qty input').val());
+				if(!qty){
+					qty = 0;
+				}
+				var price = parseFloat($this.find('.sale_item_price input').val());
+				if(!price){
+					price = 0;
+				}
+				var tax = parseFloat($this.find('.sale_item_tax input').val());
+				if(!tax){
+					tax = 0;
+				}
+				var discount = parseFloat($this.find('.sale_item_discount input').val());
+				if(!discount){
+					discount = 0;
+				}
+				var subtotal = qty * price;
+				$this.find('.sale_item_subtotal input').val(subtotal);
+				sale_item_total += subtotal;
+			});
+			
+			var special_discount = parseFloat($('#id_special_discount').val());
+			if(!special_discount){
+				special_discount = 0;
+			}
+			var total = sale_item_total - special_discount;
+			$('#sub_total_amount').val(sale_item_total); 
+			$('#total_amount').val(total);
+			
+			var payment_received = parseFloat($('#id_payment_received').val());
+			if(!payment_received){
+				payment_received = 0;
+			}
+			
+			var balance = total - payment_received;
+			$('#balance').val(balance);
+		}
+		
+		calculate();
+		
+		$(document).on('change keyup','#id_special_discount,#id_payment_received,.sale_item_qty input,.sale_item_price input',function(){
+			calculate();
+		});
+        
+        function getProductInfo($selector){
+        	var url = "{% url 'products:get_product' %}";
+        	var id = $selector.val();
+        	var $parent = $selector.parents('tr.form_set_row');
+        	if(id != '' && id != null){
+        		show_loader();
+	        	$.ajax({
+	        		type : "GET",
+					url : url,
+					dataType : 'json',
+					data : {
+						id : id
+					},
+					success : function(data) {
+						var qty = 1;
+						var status = data['status'];
+						var pk = data['pk'];
+						var name = data['name'];
+						var code = data['code'];
+						var stock = data['stock'];
+						var price = data['price'];
+						var cost = data['cost'];
+						var tax = data['tax'];						
+						var discount = data['discount'];
+						
+						if (status == "true"){
+							$parent.find('.sale_item_qty input').val(qty);
+							$parent.find('.sale_item_price input').val(price);
+							$parent.find('.sale_item_cost input').val(cost);
+							$parent.find('.sale_item_tax input').val(tax);
+							$parent.find('.sale_item_discount input').val(discount);
+							$parent.find('.sale_item_stock input').val(stock);
+							
+							calculate();
+							
+							$('.add_item_container.sale_item_formset .icon_add_item').click();	
+							$('.add_item_container.sale_item_formset table tbody tr:nth-last-child(2) span.sale_itemtable .select2-container .select2-selection--single .select2-selection__rendered').click();
+							$('.add_item_container.sale_item_formset table tbody tr:nth-last-child(2) span.sale_item .select2-search--dropdown .select2-search__field').focus();
+							
+						}	
+						remove_popup();						
+					},
+					error : function(data){
+						remove_popup();	
+						var title = "An error occurred";
+						var message = "An error occurred. Please try again later."; 
+						swal(title, message, "error");
+					}
+	        	});	        		
+        	}
+       }
+       
+       $(document).on('change','tr.form_set_row .sale_item select',function(){
+       		$selector = $(this);
+       		getProductInfo($selector);
+       });
+       
+       $(document).keydown(function(e) {
+			if (e.altKey) {
+				if (e.keyCode == 40) {
+					$('.add_item_container .icon_add_item').click();	
+					return false;
+				}
+				if (e.keyCode == 38) {
+					$('.add_item_container table tr:nth-last-child(2) td:last-child .icon.icon-trash').click();
+					return false;
+				}
+			}
+		});
+       
+       
+   	});
+    </script>	
+    {{form.media}}
+{% endblock %}

@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+{% block content %}
+	<section id="content">
+        <div class="container">
+            <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>
+			
+			<div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+
+                <div class="ah-search">
+	            	<form method="get" action="{% url 'web:categories' %}">
+	                    <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+	
+	                    <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+	                    <input type="submit" class="hidden" />
+	                </form>
+	            </div>
+
+                <ul class="ah-actions actions a-alt">
+                    <li>
+                        <a title="Search" data-ma-action="ah-search-open" class="ah-search-trigger" href="">
+                            <i class="zmdi zmdi-search"></i>
+                        </a>
+                    </li>
+                    {% if instance %}
+                    <li>
+                        <a title="Create Category" href="{% url 'web:create_product' %}">
+                            <i class="zmdi zmdi-plus"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a title="View Category" href="{% url 'web:product' pk=instance.pk %}">
+                            <i class="zmdi zmdi-eye"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a title="Delete Category" data-id="{{instance.pk}}" data-text="{{confirm_delete_message}}" data-title="Are you sure?" href="{% url 'web:delete_product' pk=instance.pk %}" class="action-button redirect">
+                            <i class="zmdi zmdi-delete"></i>
+                        </a>
+                    </li> 
+                    {% endif %}                               
+                </ul>
+            </div>
+            
+            <form class="" enctype="multipart/form-data" method="post" action="{{url}}">
+            	{% csrf_token %}
+            	
+            	<div id="c-grid" class="clearfix" data-columns="2">
+					<div class="card">
+						<div class="card-header">
+					        <h2>Basic Info <small></small></h2>
+					    </div>
+						<div class="card-body card-padding">
+                             {{ form.shop }}
+                            <div class="form-group fg-line">
+                                <label for="{{ form.product.id_for_label }}">
+                                    {{ form.product.label }}
+                                    {% if form.product.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.product.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.product.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                    {% endif %}
+                                    </span>
+                                </label>
+                                {{ form.product }}
+                                
+                                {% if form.product.errors %}
+                                    <label class="error">{{ form.product.errors.as_text }}</label>
+                                {% endif %}
+                            </div> 
+                            <div class="form-group fg-line">
+                                <label for="{{ form.category.id_for_label }}">
+                                    {{ form.category.label }}
+                                    {% if form.category.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.category.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.category.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                    {% endif %}
+                                    </span>
+                                </label>
+                                {{ form.category }}
+                                
+                                {% if form.category.errors %}
+                                    <label class="error">{{ form.category.errors.as_text }}</label>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group fg-line">
+                                <label for="{{ form.price.id_for_label }}">
+                                    {{ form.price.label }}
+                                    {% if form.price.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.price.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.price.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                    {% endif %}
+                                </label>
+                                {{ form.price }}
+                                
+                                {% if form.price.errors %}
+                                    <label class="error">{{ form.price.errors.as_text }}</label>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group fg-line">
+                                <label for="{{ form.image.id_for_label }}">
+                                    {{ form.image.label }}
+                                    {% if form.image.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.image.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.image.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                    {% endif %}
+                                </label>
+                                {{ form.image }}
+                                
+                                {% if form.image.errors %}
+                                    <label class="error">{{ form.image.errors.as_text }}</label>
+                                {% endif %}
+                                </div>               
+                        </div> 
+					</div> 
+                </div>
+				<div>
+				    <button type="submit" class="btn btn-info waves-effect">Submit</button>
+				</div>
+             	
+         	</form>  
+         </div> 
+    </section>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+	{{form.media}}
+{% endblock %}

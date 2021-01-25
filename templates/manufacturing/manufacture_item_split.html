@@ -1,0 +1,298 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load tz %}
+
+{% block content %}
+    <section id="content">
+        <div class="container">
+           <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>           
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+
+                <div class="ah-search">
+                    <form method="get" action="">
+                        <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+    
+                        <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+                        <input type="submit" class="hidden" />
+                    </form>
+                </div>
+
+                
+            </div>
+            <form class="ajax reset {% if redirect %}redirect{% endif %} skip_empty_row not_allowed_without_formset" method="post" action="{{url}}">
+                {% csrf_token %}
+
+                <div class="row m-b-20">
+                    <div class="col-md-3 col-lg-3 col-sm-6">
+                        <div class="card m-b-0">
+                            <div class="card-body p-10">
+                                <div class="form-group m-b-10 fg-line">
+                                    <label>Product</label>
+                                    <input id="id_product" class="form-control" disabled type="text" value="{{instance.product.product.name}}" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-lg-2 col-sm-6">
+                        <div class="card m-b-0">
+                            <div class="card-body p-10">
+                                <div class="form-group m-b-10 fg-line">
+                                    <label>Quantity</label>
+                                    <input id="id_qty" class="form-control" disabled type="text" value="{{instance.qty}}" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-lg-3 col-sm-6">
+                        <div class="card m-b-0">
+                            <div class="card-body p-10">
+                                <div class="form-group m-b-10 fg-line">
+                                    <label>Unit</label>
+                                    <input id="id_unit" class="form-control" disabled type="text" value="{{instance.product.product.unit}}" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-lg-2 col-sm-6">
+                        <div class="card m-b-0">
+                            <div class="card-body p-10">
+                                <div class="form-group m-b-10 fg-line">
+                                    <label>Balance Qty</label>
+                                    <input id="id_new_balance_qty" class="form-control" disabled type="text" value="{{instance.qty_to_split}}" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-lg-2 col-sm-6 hidden">
+                        <div class="card m-b-0">
+                            <div class="card-body p-10">
+                                <div class="form-group m-b-10 fg-line">
+                                    <label>Balance Qty</label>
+                                    <input id="id_balance_qty" class="form-control" disabled type="text" value="{{instance.qty_to_split}}" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-lg-2 col-sm-6">
+                        <div class="card m-b-0">
+                            <div class="card-body p-10">
+                                <div class="form-group m-b-10 fg-line">
+                                    <label>Packing Charge</label>
+                                    <input id="id_packing_total" class="form-control" disabled type="text" value="{{instance.packing_charge}}" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                    </div>
+                    
+                    <div class="table-responsive card-body card-padding add_item_container purchase_item_split_formset">
+                        <table id="data-table-basic" class="table table-striped table-vmiddle">
+                            <thead>
+                                <tr>
+                                    <th data-column-id="product">Product</th>
+                                    <th data-column-id="qty">Conversion</th>
+                                    <th data-column-id="packing_charge">Packing Charge</th>
+                                    <th data-column-id="qty">Qty</th>
+                                    <th data-column-id="packing_charge_total">Packing Charge Total</th>
+                                    <th data-column-id="subtotal">Total Qty</th>
+                                    <th class="one"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for form in purchase_item_split_formset.forms %}               
+                                <tr class="form_set_row">
+                                    <td>
+                                        {{ form.id }}
+                                        <span class="purchase_item_split p-relative">                                 
+                                            {{ form.product }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="purchase_item_split_conversion check_empty p-relative">
+                                            {{ form.conversion }}
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <span class="purchase_item_split_packing_charge p-relative">
+                                            <input type="text" disabled class="form-control" />
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <span class="purchase_item_split_qty check_empty p-relative">
+                                            {{ form.qty }}
+                                        </span>
+                                    </td>
+                                    
+                                    <td>
+                                        <span class="purchase_item_split_total_packing_charge p-relative">
+                                            <input type="text" disabled class="form-control" />
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <span class="purchase_item_split_total_qty p-relative">
+                                            <input type="text" disabled class="form-control" />
+                                        </span>
+                                    </td>
+                                    <td class="one">{% if form.instance.pk %}{{ form.DELETE }}{% endif %}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {{ purchase_item_split_formset.management_form }}
+                    </div> 
+                </div>
+                
+                <div class="m-t-20">
+                    <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                </div>
+            </form>  
+         </div>
+    </section>
+{% endblock %}
+
+{% block filter_box %}
+    {% include 'products/create_product_popup.html' %}
+{% endblock %}
+
+{% block static %}
+    {% load static %}
+    <script type="text/javascript" src="{% static 'js/jquery.formset.js' %}"></script>
+    
+    <script>
+
+        function calculate(){
+            var purchase_item_split_total_qty = 0;
+            var grand_packing_charge = 0;
+            
+            $('.purchase_item_split_formset table tr.form_set_row').each(function(){
+                $this = $(this);
+                var qty = parseFloat($this.find('.purchase_item_split_qty input').val());
+                if(!qty){
+                    qty = 0;
+                }
+                var conversion = parseFloat($this.find('.purchase_item_split_conversion input').val());
+                if(!conversion){
+                    conversion = 0;
+                }
+
+                var packing_charge = parseFloat($this.find('.purchase_item_split_packing_charge input').val());
+                if(!packing_charge){
+                    packing_charge = 0;
+                }
+
+                var total_packing_charge = qty * packing_charge;
+
+                var subtotal = (qty * conversion);
+                $this.find('.purchase_item_split_total_qty input').val(subtotal.toFixed(2));
+                $this.find('.purchase_item_split_total_packing_charge input').val(total_packing_charge.toFixed(2));
+                grand_packing_charge += total_packing_charge
+
+                purchase_item_split_total_qty += subtotal;
+
+            });
+
+            var product_qty = parseFloat($('#id_balance_qty').val());
+            if(!product_qty){
+                product_qty = 0;
+            }
+
+            balance_qty = product_qty - purchase_item_split_total_qty
+
+            if(parseFloat(balance_qty)<0) {
+                var title = "Check Balance Qty";
+                var message = "Split qty greater than actual qty.";
+                swal(title, message, "error");
+                $(':input[type="submit"]').prop('disabled', true);
+            }
+            else{
+                $(':input[type="submit"]').prop('disabled', false);
+            }
+
+            $('#id_new_balance_qty').val(balance_qty.toFixed(2));
+            $('#id_packing_total').val(grand_packing_charge.toFixed(2));
+
+        }
+
+        function getProductInfo($selector){
+            var url = "{% url 'products:get_product' %}";
+            var id = $selector.val();
+            var $parent = $selector.parents('tr.form_set_row');
+            if(id != '' && id != null){
+                var code = "no";
+                $.ajax({
+                    type : "GET",
+                    url : url,
+                    dataType : 'json',
+                    data : {
+                        id : id,
+                        code : code
+                    },
+                    success : function(data) {
+                        var status = data['status'];
+                        var packing_charge = data['packing_charge'];
+                        
+                        if (status == "true"){
+                            packing_charge = parseFloat(packing_charge)
+                            $parent.find('.purchase_item_split_packing_charge input').val(packing_charge);
+                            calculate();
+                        }   
+                        remove_popup();                     
+                    },
+                    error : function(data){
+                        remove_popup(); 
+                        var title = "An error occurred";
+                        var message = "An error occurred. Please try again later."; 
+                        swal(title, message, "error");
+                    }
+                });                 
+            }else{}
+           
+        }
+
+        $(document).on('change','tr.form_set_row .purchase_item_split select',function(){
+            $selector = $(this);
+            getProductInfo($selector,false);
+       });
+        
+        $(document).ready(function(){
+            $.fn.modal.Constructor.prototype.enforceFocus=function(){};
+
+            $('.purchase_item_split_formset table tr.form_set_row').formset({
+                prefix: '{{ purchase_item_split_formset.prefix }}',
+                formCssClass: 'dynamic-formset1',
+                'added' : function (row) {
+                    row.find('.purchase_item_split select').val(null).trigger('change');
+                    row.find('.select2-selection').click();
+                }
+            });
+             
+            $('input[type=text]').focus(function () { 
+                $(this).select();
+            });
+
+            $(document).on('change','.purchase_item_split_qty input, .purchase_item_split_conversion input',function(){
+                calculate();
+            });
+        });
+    </script>
+
+    <style>
+        .select2-dropdown {
+          z-index: 999999;
+        }
+    </style>
+    {{purchase_item_split_formset.media}}
+{% endblock %}

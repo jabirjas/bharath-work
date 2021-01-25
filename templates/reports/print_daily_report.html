@@ -1,0 +1,287 @@
+{% extends "invoice_base.html" %}
+{% load i18n %}
+{% load static %}
+{% load users_template_tags %}
+{% block content %}
+{% load main_template_tags %}
+
+    <section id="content">
+        <div class="container">            
+            <div class="card">                
+                <div class="card-body card-padding">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="text-center">
+                                {% if current_shop.logo %}
+                                    <img class="i-logo" src="{{current_shop.logo.url}}" alt="{{current_shop.name}}">
+                                {% else %}
+                                    <img src="{% static 'img/logo-print.png' %}" alt="{{current_shop.name}}" />
+                                {% endif %}
+                                
+                                <h4>{{current_shop.name|upper}}</h4>                                
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="clearfix"></div>
+                    
+                    <h3>{{title}}-{{date}}</h3>
+
+                    {% if instances %}
+                        <div class="sale_box">                                
+                            <div class="bottom-section">
+                                <table>
+                                    <tr>
+                                        <th>Sl No</th>
+                                        <th>Sale Id</th>
+                                        <th>Customer</th>
+                                        <th>Total</th>
+                                        <th>Sp.Discount</th>
+                                        <th>Paid</th>
+                                        <th>Return Amount</th>
+                                    </tr>
+                                    {% for item in instances %}
+                                        <tr>
+                                            <td>{{forloop.counter}}</td>
+                                            <td>{{item.invoice_id}}</td>
+                                            <td>{{item.customer.name}}</td>
+                                            <td>{{item.total}}</td>
+                                            <td>{{item.special_discount}}</td>
+                                            <td>{{item.payment_received}}</td>
+                                            <td>{{item.return_item_total}}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                        </div>
+                        <style>
+                            .sale_box {
+                                display: block;
+                                width: 100%;
+                                margin-bottom: 20px;
+                            }
+                            .sale_box table{
+                                width: 100%;
+                            }
+                            .sale_box table td,.sale_box table th{
+                                padding: 10px;
+
+                            }
+                            .sale_box .top-section table tr:nth-child(2) td{
+                                border-bottom: none !important;
+                            }
+                    </style>
+                    {% endif %}
+                    {% if collect_amounts %} 
+                    <h3>Collect Amount</h3>                     
+                    <div class="sale_box">
+                        <table>
+                            <tr>
+                                <th>Date</th>
+                                <th>Customer</th>
+                                <th>Balance</th>
+                                <th>Collect Amount</th>
+                                <th>Remaining Balance</th>
+                            </tr>
+                            {% for instance in  collect_amounts %}
+                                <tr>
+                                    <td>{{instance.date}}</td>
+                                    <th>{{instance.customer}}</th>
+                                    <td>{{instance.balance}}</td>
+                                    <td>{{instance.collect_amount}}</td>
+                                    <td>{{instance.remaining_balance}}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                    {% endif %}  
+                    {% if expenses %}
+                    <table class="table m-t-25 m-b-25">                        
+                        <tbody>
+                            <thead>
+                                <tr>
+                                    <th class="text-uppercase f-400 b-black" colspan="4">Expenses</th>
+                                    <th>Amount</th>
+                                </tr>
+                                {% for key, values in expense_dict.items %}
+                                <tr>
+                                    <td class="text-uppercase f-400 b-black" colspan="4">{{values.name}}</td>
+                                    <td class="f-700">{{values.amount|default:"0.00"}}</td>
+                                </tr> 
+                                {% endfor %}                              
+                            </thead> 
+                        </tbody>
+                    </table>
+                    {% endif %}
+                        
+                    <table class="table m-t-25 m-b-25 description">                        
+                        <tbody>
+                            <thead>
+                                <!-- <tr>
+                                    <th class="text-uppercase f-400 b-black" colspan="4">Description</th>
+                                    <th>Amount</th>
+                                </tr>
+                                <tr>
+                                    <td class="text-uppercase f-400 b-black" colspan="4">Total Sales</td>
+                                    <td class="f-700">{{sales_count|default:"0.00"}}</td>
+                                </tr> -->
+                                <tr>
+                                    <td class="text-uppercase f-400 b-black" colspan="4">Total Sales Amount</td>
+                                    <td class="f-700">{{sales_total|default:0.00|to_fixed_two}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-uppercase f-400 b-black" colspan="3">Payment Recieved</td>
+                                    <td class = "p-0 tax-inner">
+                                        <table class = "tax-inner">
+                                            <tr>
+                                                <td>Cheque Payment</td>
+                                                <td>{{cheque_payment_total|default:0.00|to_fixed_two}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Cash Collection</td>                                                
+                                                <td>{{payment_received_total|default:0.00|sub:cheque_payment_total|to_fixed_two}}</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td class="f-700">{{payment_received_total|default:0.00|to_fixed_two}}</td>
+                                </tr>
+                                 <tr>
+                                    <td class="text-uppercase f-400 b-black" colspan="3">Collected Amount</td>
+                                    <td class = "p-0 tax-inner">
+                                        <table class = "tax-inner">
+                                            <tr>
+                                                <td>Cheque Payment</td>
+                                                <td>{{collected_cheque_payment_total|default:0.00|to_fixed_two}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Cash Collection</td>                                                
+                                                <td>{{total_collected_amount|default:0.00|sub:collected_cheque_payment_total|to_fixed_two}}</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td class="f-700">{{total_collected_amount|default:"0.00"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-uppercase f-400 b-black" colspan="4">Other Income</td>
+                                    <td class="f-700">{{total_other_income|default:"0.00"}}</td>
+                                </tr> 
+                                <tr>
+                                    <td class="text-uppercase f-400 b-black" colspan="4">Total Income</td>
+                                    <td class="f-700">{{income_amount|default:"0.00"}}</td>
+                                </tr> 
+                                <tr>
+                                    <td class="text-uppercase f-400 b-black" colspan="4">Total Expense</td>
+                                    <td class="f-700">{{expense_amount|default:"0.00"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-uppercase f-400 b-black" colspan="4">Total Commission</td>
+                                    <td class="f-700">{{total_commission_amount|default:"0.00"}}</td>
+                                </tr> 
+                                 <tr>
+                                    <td class="text-uppercase f-400 b-black" colspan="4">Total Return Amount</td>
+                                    <td class="f-700">{{total_return_amount|default:"0.00"}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-uppercase f-400 b-black" colspan="4">Total Balance</td>
+                                    <td class="f-700">{{total_distributor_balance_amount|default:"0.00"}}</td>
+                                </tr> 
+                                <tr>
+                                    <td class="text-uppercase f-400 b-black" colspan="4">Total Credit</td>
+                                    <td class="f-700">{{balance_total|default:"0.00"}}</td>
+                                </tr> 
+                            </thead> 
+                        </tbody>
+                    </table>                   
+                    
+                    <div class="clearfix"></div>
+                </div>
+                
+                <footer class="m-t-15 p-20">
+                    <ul class="list-inline text-center list-unstyled">
+                        <li class="m-l-5 m-r-5"><small>{{current_shop.email}}</small></li>
+                        <li class="m-l-5 m-r-5"><small>{{current_shop.phone}}</small></li>
+                        <li class="m-l-5 m-r-5"><small>{{current_shop.website}}</small></li>
+                    </ul>
+                </footer>
+            </div>
+            
+        </div>
+        <button class="btn btn-float bgm-red print-button m-btn" data-action="print"><i class="zmdi zmdi-print"></i></button> 
+    </section>
+    <style>
+        .container{
+            width: 210mm;
+            margin: 0 auto;
+            background: #fff;
+            min-height: 100%
+        }
+        table tr td, table tr th {
+            border: 1px solid #ccc;
+            border-top: 1px solid #ccc ;
+            border-bottom: 1px solid #ccc ;
+        }
+        table tr:last-child td, table tr:last-child th {
+            border-bottom: 1px solid #555;
+        }
+        table tr:first-child td, table tr:first-child th {
+            border-top: 1px solid #555;
+        }
+        table tr td:first-child, table tr th:first-child {
+            border-left: 1px solid #555;
+        }
+        table tr td:last-child, table tr th:last-child {
+            border-right: 1px solid #555;
+        }
+        .top-section table tr:last-child td, table tr:last-child th {
+            border-bottom: 1px solid #ccc ;
+        }
+        .bottom-section table tr:first-child td, table tr:first-child th {
+            border-top: 1px solid #ccc ;
+        }
+        table { 
+            page-break-inside:always
+        }
+        tr { 
+            page-break-inside:always; page-break-after:always
+        }
+        table.tax-inner {
+            width:100%;
+        }
+        table td.p-0 {
+            padding: 0 !important;
+        }
+        table td table {
+            width: 100%;
+            height: 100%;
+        }
+        table td table td{
+            padding: 3px;
+            text-align: center;
+        }
+        table td table tr:first-child td{
+            border-top:none;
+        }
+        table td table tr:last-child td{
+            border-bottom:none;
+        }
+        table td table tr td:first-child{
+            border-left:none;
+        }
+        table td table tr td:last-child{
+            border-right:none;
+            border-top:none;
+        }
+        .description tr td{
+            padding: 8px 10px !important;
+        }
+        .description tr td.tax-inner {
+            padding: 0 !important;
+        }
+    </style>
+{% endblock %}
+
+{% block static %}
+    {% load static %}  
+    
+{% endblock %}

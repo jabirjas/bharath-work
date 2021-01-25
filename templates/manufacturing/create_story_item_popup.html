@@ -1,0 +1,389 @@
+
+<div class="modal product_new" id="modalNewProduct" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+        	<div class="modal-header">
+                <h4 class="modal-title f-700 m-l-20 m-t-15">Create New Product</h4>
+            </div>
+            <div class="modal-body">
+			<form class="ajax reset skip_empty_row run-function-after" method="post" action="{% url 'products:create_new_product' %}" data-after-function-selector-parent-class="purchase_item" data-function="remove_new_product_popup">
+				{% csrf_token %}
+			 	<div class="row m-l-0 m-r-0">
+			 		<div class="col-md-6 col-lg-4 padding-15">
+			 			{{ product_form.shop }}
+						<div class="form-group fg-line">
+			                <label for="{{ product_form.name.id_for_label }}">
+			                	{{ product_form.name.label }}
+			                	{% if product_form.name.field.required %}
+					        		<small class="star">*</small>
+					        	{% endif %}
+					        	
+					        	{% if product_form.name.help_text %}
+					        		<span data-original-title="Field Info" title="" data-content="{{ product_form.name.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+			                    {% endif %}
+			                	</span>
+			                </label>
+			                {{ product_form.name }}
+			                
+			                {% if product_form.name.errors %}
+			                	<label class="error">{{ product_form.name.errors.as_text }}</label>
+			                {% endif %}
+			            </div>
+			            
+			            <div class="form-group fg-line">
+			                <label for="{{ product_form.code.id_for_label }}">
+			                	{{ product_form.code.label }}
+			                	{% if product_form.code.field.required %}
+					        		<small class="star">*</small>
+					        	{% endif %}
+					        	
+					        	{% if product_form.code.help_text %}
+					        		<span data-original-title="Field Info" title="" data-content="{{ product_form.code.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+			                    {% endif %}
+			                </label>
+			                {{ product_form.code }}
+			                
+			                {% if product_form.code.errors %}
+			                	<label class="error">{{ product_form.code.errors.as_text }}</label>
+			                {% endif %}
+			            </div>
+
+			            <div class="form-group fg-line">
+			                <label for="{{ product_form.category.id_for_label }}">
+			                    {{ product_form.category.label }}
+			                    {% if product_form.category.field.required %}
+			                        <small class="star">*</small>
+			                    {% endif %}
+			                    
+			                    {% if product_form.category.help_text %}
+			                        <span data-original-title="Field Info" title="" data-content="{{ product_form.category.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+			                    {% endif %}
+			                </label>
+			                {{ product_form.category }}
+			                
+			                {% if product_form.category.errors %}
+			                    <label class="error">{{ product_form.category.errors.as_text }}</label>
+			                {% endif %}
+			            </div>
+
+
+			            <div class="form-group subcategory">
+			                <label for="{{ product_form.subcategory.id_for_label }}">
+			                    {{ product_form.subcategory.label }}
+			                    {% if product_form.subcategory.field.required %}
+			                        <small class="star">*</small>
+			                    {% endif %}
+			                    {% if product_form.subcategory.help_text %}
+			                        <span data-original-title="Field Info" title="" data-content="{{ product_form.subcategory.help_text }}" aria-describedby="popover59326" data-placement="auto left" data-toggle="popover" data-trigger="hover" class="help-text-icon fa fa-info-circle" style="font-size:16px;"></span>
+			                    {% endif %}
+			                </label>
+			                {{ product_form.subcategory }}
+			                
+			                {% if product_form.subcategory.errors %}
+			                    <label class="error">{{ product_form.subcategory.errors.as_text }}</label>
+			                {% endif %}
+			            </div>
+
+			            <div class="form-group fg-line">
+			                <label for="{{ product_form.brand.id_for_label }}">
+			                    {{ product_form.brand.label }}
+			                    {% if product_form.brand.field.required %}
+			                        <small class="star">*</small>
+			                    {% endif %}
+			                    
+			                    {% if product_form.brand.help_text %}
+			                        <span data-original-title="Field Info" title="" data-content="{{ product_form.brand.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+			                    {% endif %}
+			                </label>
+			                {{ product_form.brand }}
+			                
+			                {% if product_form.brand.errors %}
+			                    <label class="error">{{ product_form.brand.errors.as_text }}</label>
+			                {% endif %}
+			            </div>
+			             <div class="form-group fg-line">
+			                <label for="{{ product_form.unit_type.id_for_label }}">
+			                    {{ product_form.unit_type.label }}
+			                    {% if product_form.unit_type.field.required %}
+			                        <small class="star">*</small>
+			                    {% endif %}
+			                    
+			                    {% if product_form.unit_type.help_text %}
+			                        <span data-original-title="Field Info" title="" data-content="{{ product_form.unit_type.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+			                    {% endif %}
+			                </label>
+			                {{ product_form.unit_type }}
+			                
+			                {% if product_form.unit_type.errors %}
+			                    <label class="error">{{ product_form.unit_type.errors.as_text }}</label>
+			                {% endif %}
+			            </div>
+			            
+	                    <div class="form-group fg-line">
+	                        <label for="{{ product_form.low_stock_limit.id_for_label }}">
+	                            {{ product_form.low_stock_limit.label }}
+	                            {% if product_form.low_stock_limit.field.required %}
+	                                <small class="star">*</small>
+	                            {% endif %}
+	                            
+	                            {% if product_form.low_stock_limit.help_text %}
+	                                <span data-original-title="Field Info" title="" data-content="{{ product_form.low_stock_limit.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+	                            {% endif %}
+	                        </label>
+	                        {{ product_form.low_stock_limit }}
+	                        
+	                        {% if product_form.low_stock_limit.errors %}
+	                            <label class="error">{{ product_form.low_stock_limit.errors.as_text }}</label>
+	                        {% endif %}
+	                    </div>			            
+					</div> 
+					<div class="col-md-6 col-lg-4 padding-15">			
+					    <div class="form-group fg-line">
+			                <label for="{{ product_form.cost.id_for_label }}">
+			                	{{ product_form.cost.label }}
+			                	{% if product_form.cost.field.required %}
+					        		<small class="star">*</small>
+					        	{% endif %}
+					        	
+					        	{% if product_form.cost.help_text %}
+					        		<span data-original-title="Field Info" title="" data-content="{{ product_form.cost.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+			                    {% endif %}
+			                </label>
+			                {{ product_form.cost }}
+			                
+			                {% if product_form.cost.errors %}
+			                	<label class="error">{{ product_form.cost.errors.as_text }}</label>
+			                {% endif %}
+			            </div>
+
+			            <div class="form-group fg-line">
+			                <label for="{{ product_form.price.id_for_label }}">
+			                	{{ product_form.price.label }}
+			                	{% if product_form.price.field.required %}
+					        		<small class="star">*</small>
+					        	{% endif %}
+					        	
+					        	{% if product_form.price.help_text %}
+					        		<span data-original-title="Field Info" title="" data-content="{{ product_form.price.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+			                    {% endif %}
+			                </label>
+			                {{ product_form.price }}
+			                
+			                {% if product_form.price.errors %}
+			                	<label class="error">{{ product_form.price.errors.as_text }}</label>
+			                {% endif %}
+			            </div>
+
+			            <div class="form-group fg-line">
+			                <label for="{{ product_form.mrp.id_for_label }}">
+			                	{{ product_form.mrp.label }}
+			                	{% if product_form.mrp.field.required %}
+					        		<small class="star">*</small>
+					        	{% endif %}
+					        	
+					        	{% if product_form.mrp.help_text %}
+					        		<span data-original-title="Field Info" title="" data-content="{{ product_form.mrp.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+			                    {% endif %}
+			                </label>
+			                {{ product_form.mrp }}
+			                
+			                {% if product_form.mrp.errors %}
+			                	<label class="error">{{ product_form.mrp.errors.as_text }}</label>
+			                {% endif %}
+			            </div>
+
+			            <div class="form-group fg-line">
+			                <label for="{{ product_form.wholesale_price.id_for_label }}">
+			                    {{ product_form.wholesale_price.label }}
+			                    {% if product_form.wholesale_price.field.required %}
+			                        <small class="star">*</small>
+			                    {% endif %}
+			                    
+			                    {% if product_form.wholesale_price.help_text %}
+			                        <span data-original-title="Field Info" title="" data-content="{{ product_form.wholesale_price.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+			                    {% endif %}
+			                </label>
+			                {{ product_form.wholesale_price }}
+			                
+			                {% if product_form.wholesale_price.errors %}
+			                    <label class="error">{{ product_form.wholesale_price.errors.as_text }}</label>
+			                {% endif %}
+			            </div>
+			            
+			            <div class="form-group fg-line">
+			                <label for="{{ product_form.tax_category.id_for_label }}">
+			                	{{ product_form.tax_category.label }}
+			                	{% if product_form.tax_category.field.required %}
+					        		<small class="star">*</small>
+					        	{% endif %}
+					        	
+					        	{% if product_form.tax_category.help_text %}
+					        		<span data-original-title="Field Info" title="" data-content="{{ product_form.tax_category.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+			                    {% endif %}
+			                </label>
+			                {{ product_form.tax_category }}
+			                
+			                {% if product_form.tax_category.errors %}
+			                	<label class="error">{{ product_form.tax_category.errors.as_text }}</label>
+			                {% endif %}
+			            </div>
+			            <div class="row m-b-10">
+			                <div class="col-sm-6">
+			                    <div class="form-group fg-line">
+			                        <label for="{{ product_form.is_tax_included.id_for_label }}">
+			                            
+			                            {% if product_form.is_tax_included.field.required %}
+			                                <small class="star">*</small>
+			                            {% endif %}
+			                            
+			                            {% if product_form.is_tax_included.help_text %}
+			                                <span data-original-title="Field Info" title="" data-content="{{ product_form.title.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+			                            {% endif %}
+			                        </label>
+			                        <div class="checkbox m-b-5">
+			                            <label>
+			                                {{ product_form.is_tax_included }}
+			                                <i class="input-helper"></i>
+			                                Is tax included
+			                            </label>
+			                        </div>                                
+			                        {% if product_form.is_tax_included.errors %}
+			                            <label class="error">{{ product_form.is_tax_included.errors.as_text }}</label>
+			                        {% endif %}
+			                    </div>
+			                </div>
+			                <div class="col-sm-6">
+			                    <div class="form-group fg-line">
+			                        <label for="{{ product_form.is_expired.id_for_label }}">
+			                            
+			                            {% if product_form.is_expired.field.required %}
+			                                <small class="star">*</small>
+			                            {% endif %}
+			                            
+			                            {% if product_form.is_expired.help_text %}
+			                                <span data-original-title="Field Info" title="" data-content="{{ product_form.title.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+			                            {% endif %}
+			                        </label>
+			                        <div class="checkbox m-b-5">
+			                            <label>
+			                                {{ product_form.is_expired }}
+			                                <i class="input-helper"></i>
+			                                Is Expired
+			                            </label>
+			                        </div>                                
+			                        {% if product_form.is_expired.errors %}
+			                            <label class="error">{{ product_form.is_expired.errors.as_text }}</label>
+			                        {% endif %}
+			                    </div>
+			                </div>
+			            </div>
+			            
+			            <div class="form-group fg-line">
+			                <label for="{{ product_form.discount.id_for_label }}">
+			                	{{ product_form.discount.label }}
+			                	{% if product_form.discount.field.required %}
+					        		<small class="star">*</small>
+					        	{% endif %}
+					        	
+					        	{% if product_form.discount.help_text %}
+					        		<span data-original-title="Field Info" title="" data-content="{{ product_form.discount.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+			                    {% endif %}
+			                </label>
+			                {{ product_form.discount }}
+			                
+			                {% if product_form.discount.errors %}
+			                	<label class="error">{{ product_form.discount.errors.as_text }}</label>
+			                {% endif %}
+			            </div>
+			            <div class="form-group fg-line product_expiry">
+			                <label for="{{ product_form.product_expiry_before.id_for_label }}">
+			                    {{ product_form.product_expiry_before.label }}
+			                    {% if product_form.product_expiry_before.field.required %}
+			                        <small class="star">*</small>
+			                    {% endif %}
+			                    
+			                    {% if product_form.product_expiry_before.help_text %}
+			                        <span data-original-title="Field Info" title="" data-content="{{ product_form.product_expiry_before.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+			                    {% endif %}
+			                </label>
+			                {{ product_form.product_expiry_before }}
+			                
+			                {% if product_form.product_expiry_before.errors %}
+			                    <label class="error">{{ product_form.product_expiry_before.errors.as_text }}</label>
+			                {% endif %}
+			            </div>
+					</div> 
+					<div class="col-md-6 col-lg-4 padding-15">
+			            <h6 class="f-700 m-l-20 m-t-15 f-15">Alternate Unit Price</h6>
+			            <div class="table-responsive add_item_container alternative_unit_formset">
+			                <table id="data-table-basic" class="table table-striped table-vmiddle">
+			                    <thead>
+			                        <tr>
+			                            
+			                            <th data-column-id="unit">Unit</th>
+			                            <th data-column-id="cost">Cost</th>
+			                            <th data-column-id="price">Price</th>                                                                   
+			                            <th class="one"></th>
+			                        </tr>
+			                    </thead>
+			                    <tbody>
+			                        {% for item in alternative_unit_formset.forms %}               
+			                        <tr class="form_set_row">
+			                            
+			                            <td>
+			                                {{ item.id }}
+			                                <span class="product_unit p-relative">
+			                                    {{ item.unit }}
+			                                </span>
+			                            </td>
+			                            <td>
+			                                <span class="product_cost p-relative check_empty">
+			                                    {{ item.cost }}
+			                                </span>
+			                            </td>                                    
+			                            <td>
+			                                <span class="product_price p-relative">
+			                                    {{ item.price }}
+			                                </span>
+			                            </td>
+			                            
+			                            <td class="one">{% if item.instance.pk %}{{ item.DELETE }}{% endif %}</td>
+			                        </tr>
+			                        {% endfor %}
+			                    </tbody>
+			                </table>
+			                {{ alternative_unit_formset.management_form }}
+			            </div>  
+			        </div>
+			    </div>
+			 	<div class="m-b-20 text-right">
+				    <button type="submit" class="btn btn-info waves-effect">Submit</button>
+				</div>
+			 </form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+	.modal.product_new .modal-dialog {
+		width: 90% !important;
+	}
+
+</style>
+<script>
+	$(".product_expiry").hide();
+	$('#id_is_expired').change(function() {
+       if($(this).is(":checked")) {
+            $(".product_expiry").show();
+          return;
+       }
+       $(".product_expiry").hide();
+    });
+    $('.new_product_button').click(function(){
+	    var rowIndex = $(this).parents('tr.form_set_row').index();
+	    var inputrowCounter = '<input type="hidden" class="input_row_counter" name="input_row_counter" value="' + rowIndex + '" />';
+	    $('.input_row_counter').remove();
+	    $('#modalNewProduct').find('form').append(inputrowCounter);
+	});
+</script>

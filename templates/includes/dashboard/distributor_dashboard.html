@@ -1,0 +1,95 @@
+<div class="card card-padding">
+    <div class="card-body card-padding">
+        <div class="row m-b-10">
+
+            <div class="col-sm-3">
+                <h1 id="id_total_sales_amount_top" class="m-b-xs c-bluegray">0.00</h1>
+                <h4 class='c-bluegray'>Total Sales</h4>
+                <div id="sparkline1" class="m-b-sm"></div>
+                <div class="row">
+                    <div class="col-xs-4 p-l-10 p-r-10">
+                        <small class="stats-label c-brown">Sale Count</small>
+                        <h4 id="id_total_sales_created" class ='c-brown'>0.00</h4>
+                    </div>
+
+                    <div class="col-xs-4 p-l-10 p-r-10">
+                        <small class="stats-label c-brown">Sale Amount</small>
+                        <h4 id="id_total_sales_amount" class ='c-brown'>0.00</h4>
+                    </div>
+                    <div class="col-xs-4 p-l-10 p-r-10">
+                        <small class="stats-label c-brown">Collected Amount</small>
+                        <h4 id="id_total_other_income" class ='c-brown'>0.00</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <h1 id="id_total_sale_return_amount" class="m-b-xs c-bluegray">0.00</h1>
+                <h4 class='c-bluegray'>Sale Return</h4>
+                <div id="sparkline2" class="m-b-sm"></div>
+                <div class="row">
+                    <div class="col-xs-4 p-l-10 p-r-10">
+                        <small class="stats-label c-brown">Return Count</small>
+                        <h4 id="id_return_count" class ='c-brown'>0.00</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <h1 id="id_this_period_total_expense_amount_total" class="m-b-xs c-bluegray">0.00</h1>
+                <h4 class='c-bluegray'>Other Expense</h4>
+                <div id="sparkline2" class="m-b-sm"></div>
+                <div class="row">
+                    <div class="col-xs-4 p-l-10 p-r-10">
+                        <small class="stats-label c-brown">Other Expense</small>
+                        <h4 id="id_this_period_total_expense_amount" class ='c-brown'>0.00</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+
+                <div class="row m-t-xs">
+                    <div class="col-xs-6">
+                        <h1 id="id_current_balance" class="no-margins c-bluegray f-19">0.00</h1>
+                         <h4 class="m-b-xs c-bluegray f-12">Current Balance</h4>
+                    </div>
+                    <div class="col-xs-6">
+                        <h1 class="no-margins c-bluegray f-19">{{total_commission_amount|default:"0.00"}}</h1>
+                        <h4 class="m-b-xs c-bluegray f-12">Commission</h4>
+                    </div>
+                    <div class="col-xs-6">
+                        <h1 id="id_this_period_total_transfer_amount" class="no-margins c-bluegray f-19">0.00</h1>
+                        <h4 class="m-b-xs c-bluegray f-12">Cash Transfer</h4>
+                    </div>
+                    <div class="col-xs-6">
+                        <h1 id="id_sale_total_balance" class="no-margins c-bluegray f-19">0.00</h1>
+                        <h4 class="m-b-xs c-bluegray f-12">Credit</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+       <!--  <div class="row">
+            <div class="col-md-8">
+                <div>
+                    <canvas id="lineChart" height="114"></canvas>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <ul class="stat-list m-t-lg list-unstyled">
+                    <li>
+                        <h2 id="id_total_income" class="no-margins">0.00</h2>
+                        <small>Total Income in period</small>
+                        <div class="progress progress-mini">
+                            <div class="progress-bar" id="id_income_progress_bar"></div>
+                        </div>
+                    </li>
+                    <li>
+                        <h2 id="id_total_expense" class="no-margins ">0.00</h2>
+                        <small>Total Expense in period</small>
+                        <div class="progress progress-mini">
+                            <div class="progress-bar" id="id_expense_progress_bar"></div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div> -->
+    </div>
+</div>

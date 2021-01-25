@@ -1,0 +1,167 @@
+{% extends "invoice_base.html" %}
+{% load i18n %}
+{% load static %}
+{% load users_template_tags %}
+{% block content %}
+{% load main_template_tags %}
+
+    <section id="content">
+        <div class="container ">            
+            <div class="card">                
+                <div class="card-body card-padding">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="text-center">
+                                {% if current_shop.logo %}
+                                    <img class="i-logo" src="{{current_shop.logo.url}}" alt="{{current_shop.name}}">
+                                {% else %}
+                                    <img src="{% static 'img/logo-print.png' %}" alt="{{current_shop.name}}" />
+                                {% endif %}
+                                
+                                <h4>{{current_shop.name|upper}}</h4>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="clearfix"></div>
+                    
+                    <h3>{{title}}-{{date}}</h3>
+                    {% if instances %}                    
+                    <div class="sale_box">
+                        <table>
+                            <tr>
+                                <th>Product</th>
+                                <th>Qty</th>
+                            </tr>
+                            {% for key, values in instances.items %}
+                                <tr>
+                                    <td>{{values.name}}</td>
+                                    <th>{{values.qty}}</th>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                    {% endif %} 
+
+                    <style>
+                            .sale_box {
+                                display: block;
+                                width: 100%;
+                                margin-bottom: 20px;
+                            }
+                            .sale_box table{
+                                width: 100%;
+                            }
+                            .sale_box table td,.sale_box table th{
+                                padding: 6px;
+
+                            }
+                            .sale_box .top-section table tr:nth-child(2) td{
+                                border-bottom: none !important;
+                            }
+                    </style>                     
+                        
+                    <table class="table m-t-25 m-b-25 description">                        
+                        <tbody>
+                            <thead>                                
+                                <tr>
+                                    <td class="text-uppercase f-400 b-black" colspan="4">Total Return</td>
+                                    <td class="f-700">{{total_return_amount|default:0.00|to_fixed_two}}</td>
+                                </tr>                                                                 
+                            </thead> 
+                        </tbody>
+                    </table> 
+                    
+                    <div class="clearfix"></div>
+                </div>
+                
+                <footer class="m-t-15 p-20">
+                    <ul class="list-inline text-center list-unstyled">
+                        <li class="m-l-5 m-r-5"><small>{{current_shop.email}}</small></li>
+                        <li class="m-l-5 m-r-5"><small>{{current_shop.phone}}</small></li>
+                        <li class="m-l-5 m-r-5"><small>{{current_shop.website}}</small></li>
+                    </ul>
+                </footer>
+            </div>
+            
+        </div>
+        <button class="btn btn-float bgm-red print-button m-btn" data-action="print"><i class="zmdi zmdi-print"></i></button> 
+    </section>
+    <style>
+        .container{
+            width: 210mm;
+            margin: 0 auto;
+            background: #fff;
+            min-height: 100%
+        }
+        table tr td, table tr th {
+            border: 1px solid #ccc;
+            border-top: 1px solid #ccc ;
+            border-bottom: 1px solid #ccc ;
+            padding: 0px;
+        }
+        table tr:last-child td, table tr:last-child th {
+            border-bottom: 1px solid #555;
+        }
+        table tr:first-child td, table tr:first-child th {
+            border-top: 1px solid #555;
+        }
+        table tr td:first-child, table tr th:first-child {
+            border-left: 1px solid #555;
+        }
+        table tr td:last-child, table tr th:last-child {
+            border-right: 1px solid #555;
+        }
+        .top-section table tr:last-child td{
+            border-bottom: 1px solid #ccc ;
+        }
+        .bottom-section table tr:first-child td, table tr:first-child th {
+            border-top: 1px solid #ccc ;
+        }
+        table { 
+            page-break-inside:always
+        }
+        tr { 
+            page-break-inside:always; page-break-after:always
+        }
+        table.tax-inner {
+            width:100%;
+        }
+        table td.p-0 {
+            padding: 0 !important;
+        }
+        table td table {
+            width: 100%;
+            height: 100%;
+        }
+        table td table td{
+            padding: 3px;
+            text-align: center;
+        }
+        table td table tr:first-child td{
+            border-top:none;
+        }
+        table td table tr:last-child td{
+            border-bottom:none;
+        }
+        table td table tr td:first-child{
+            border-left:none;
+        }
+        table td table tr td:last-child{
+            border-right:none;
+            border-top:none;
+        }
+        .description tr td{
+            padding: 8px 10px !important;
+        }
+        .description tr td.tax-inner {
+            padding: 0 !important;
+        }
+    </style>
+{% endblock %}
+
+{% block static %}
+    {% load static %}  
+    
+{% endblock %}

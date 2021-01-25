@@ -1,0 +1,387 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% load users_template_tags %}
+{% load main_template_tags %}
+
+{% load tz %}
+{% block content %}
+	<section id="content">
+        <div class="container">
+            <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>
+
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{instance.customer}} - {{instance.total}}</div>
+
+
+                <ul class="ah-actions actions a-alt">
+                    {% if "is_superuser" or 'can_create_sale' in user_instance.permissionlist %}
+                    <li>
+                        <a title="Create Sale" target="_blank" href="{% url 'sales:create' %}">
+                            <i class="zmdi zmdi-plus"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if not instance.is_deleted %}
+                        {% if is_superuser or 'can_modify_sale' in user_instance.permissionlist %}
+                        <li>
+                            <a title="Edit Sale" target="_blank" href="{% url 'sales:edit' pk=instance.pk %}">
+                                <i class="zmdi zmdi-edit"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                        <li>
+                            <a title="Email Sale" href="{% url 'sales:email_sale' pk=instance.pk %}">
+                                <i class="zmdi zmdi-email"></i>
+                            </a>
+                        </li>
+                        {% if is_superuser or 'can_delete_sale' in user_instance.permissionlist %}
+                        <li>
+                            <a title="Delete Sale" data-id="{{instance.pk}}" data-text="{{confirm_delete_message}}" data-title="Are you sure?" href="{% url 'sales:delete' pk=instance.pk %}" class="action-button redirect">
+                                <i class="zmdi zmdi-delete"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                    {% endif %}
+                    <li>
+                        <a title="Print Sale" target="_blank" href="{% url 'sales:print' pk=instance.pk %}">
+                            <i class="zmdi zmdi-print"></i>
+                        </a>
+                    </li>
+                    
+                </ul>
+            </div>
+
+            {% if sale_items %}
+            <div class="card">
+            	<div class="card-header">
+                    <h2>Items <small></small></h2>
+                </div>
+                <div class="card-body">
+	                <div class="table-responsive">
+	                    <table id="data-table-basic" class="table table-striped table-vmiddle">
+	                        <thead>
+	                            <tr>
+	                                <th>Product</th>
+                                    <th>Code</th>
+	                                <th>Qty</th>
+                                    <th>Unit</th>
+	                                <th>Cost</th>
+	                                <th>Price</th>
+	                                <th>Tax (%)</th>
+	                                <th>Discount (%)</th>
+                                    <th>Tax Amount</th>
+                                    <th>Discount Amount</th>
+	                                <th>Subtotal</th>
+                                    <th>Return Item</th>
+                                    <th>Returned</th>
+	                            </tr>
+	                        </thead>
+	                        <tbody>
+	                        	{% for i in sale_items %}
+	                            <tr>
+	                                <td>{{i.product}}</td>
+                                    <td>{{i.product.code}}</td>
+	                                <td>{{i.qty}}</td>
+                                    <td>{{i.unit}}</td>
+	                                <td>{{i.cost}}</td>
+	                                <td>{{i.discount_amount|div:i.qty|rev_sub:i.tax_added_price}}</td>
+	                                <td>{{i.tax}}</td>
+	                                <td>{{i.discount}}</td>
+                                    <td>{{i.tax_amount}}</td>
+                                    <td>{{i.discount_amount}}</td>
+	                                <td>{{i.subtotal}}</td>
+                                    <td>{{i.return_item|yesno:"Yes,No"}}</td>
+                                    <td>{{i.return_qty}}</td>
+	                            </tr>
+	                            {% endfor %}
+	                        </tbody>
+	                    </table>
+	                </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div id="c-grid" class="clearfix" data-columns="2">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Basic Info <small></small></h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="list-group lg-alt c-overflow">
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">ID</div>
+                                    <small class="lgi-text">{{instance.a_id}}</small>
+                                </div>
+                            </div>
+
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">GST Type</div>
+                                    <small class="lgi-text">{{instance.get_gst_type_display}}</small>
+                                </div>
+                            </div>
+
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Sale Type</div>
+                                    <small class="lgi-text">{{instance.get_sale_type_display}}</small>
+                                </div>
+                            </div>
+
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Customer</div>
+                                    <small class="lgi-text"><a href="{% url 'customers:customer' pk=instance.customer.pk %}">{{instance.customer}}</a></small>
+                                </div>
+                            </div>
+
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Time</div>
+                                    <small class="lgi-text">{{instance.time}}</small>
+                                </div>
+                            </div>
+
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Payment reminder date </div>
+                                    <small class="lgi-text">{{instance.payment_remainder_date|default:"____/____/________"}}</small>
+                                </div>
+                            </div>
+
+							<div class="list-group-item media">
+
+ 							   <div class="media-body">
+ 								   <div class="lgi-heading">Commission Amount </div>
+ 								   <small class="lgi-text">{{instance.commission_amount|default:"0.00"}}</small>
+ 							   </div>
+ 						   </div>
+
+                           <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">No of boxes</div>
+                                    <small class="lgi-text">{{instance.no_of_boxes}}</small>
+                                </div>
+                            </div>
+
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Return boxes</div>
+                                    <small class="lgi-text">{{instance.return_boxes}}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+				</div>
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Payment Details <small></small></h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="list-group lg-alt c-overflow">
+                             <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Subtotal</div>
+                                    <small class="lgi-text">{{instance.subtotal}}</small>
+                                </div>
+                            </div>
+
+                            {% if is_superuser %}
+
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Profit</div>
+                                    <small class="lgi-text">{{instance.pk|get_profit}}</small>
+                                </div>
+                            </div>
+
+                            {% endif %}
+ 
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Special Discount</div>
+                                    <small class="lgi-text">{{instance.special_discount}}</small>
+                                </div>
+                            </div>
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Total</div>
+                                    <small class="lgi-text">{{instance.total}}</small>
+                                </div>
+                            </div>
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Total Tax Amount</div>
+                                    <small class="lgi-text">{{instance.total_tax_amount}}</small>
+                                </div>
+                            </div>
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Total Discount Amount</div>
+                                    <small class="lgi-text">{{instance.total_discount_amount}}</small>
+                                </div>
+                            </div>
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Round Off</div>
+                                    <small class="lgi-text">{{instance.round_off}}</small>
+                                </div>
+                            </div>
+
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Collected Amount</div>
+                                    <small class="lgi-text">{{instance.collected_amount}}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Amount From Debit</div>
+                                    <small class="lgi-text">{{instance.amount_from_debit|default:"0.00"}}</small>
+                                </div>
+                            </div>
+
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Returned Amount</div>
+                                    <small class="lgi-text">{{instance.return_amount|default:"0.00"}}</small>
+                                </div>
+                            </div>
+
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Payment Received</div>
+                                    <small class="lgi-text">{{instance.payment_received}}</small>
+                                </div>
+                            </div>
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Balance</div>
+                                    <small class="lgi-text">{{instance.balance}}</small>
+                                </div>
+                            </div>
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Collected Amount</div>
+                                    <small class="lgi-text">{{instance.collected_amount}}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Created &amp; Updated <small></small></h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="list-group lg-alt c-overflow">
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Date Added</div>
+                                    <small class="lgi-text">{{instance.date_added|timezone:user_time_zone}}</small>
+                                </div>
+                            </div>
+
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Date Updated</div>
+                                    <small class="lgi-text">{{instance.date_updated|timezone:user_time_zone}}</small>
+                                </div>
+                            </div>
+
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Created User</div>
+                                    <small class="lgi-text"><a href="{% url 'users:view' pk=instance.creator.username %}">{{instance.creator.username|get_user_name}}</a></small>
+                                </div>
+                            </div>
+
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Last Updated User</div>
+                                    <small class="lgi-text"><a href="{% url 'users:view' pk=instance.updator.username %}">{{instance.updator.username|get_user_name}}</a></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+             </div>
+
+             {% if transactions %}
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Transactions <small></small></h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="data-table-basic" class="table table-striped table-vmiddle">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Mode</th>
+                                        <th>Customer</th>
+                                        <th>Sale</th>
+                                        <th>Description</th>
+                                        <th>First Transaction</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for transaction in transactions %}
+                                    <tr>
+                                        <td>{{transaction.date|default:"-"}}</td>
+                                        <td>{{transaction.get_transaction_type_display|default:"-"}}</td>
+                                        <td>{{transaction.get_transaction_mode_display|default:"-"}}</td>
+                                        <td>{{transaction.customer|default:"-"}}</td>
+                                        <td>{{transaction.sale|default:"-"}}</td>
+                                        <td>{{transaction.description|default:"-"}}</td>
+                                        <td>{{transaction.first_transaction|yesno:"Yes,No"}}</td>
+                                        <td>{{transaction.amount|default:"-"}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+{% endblock %}

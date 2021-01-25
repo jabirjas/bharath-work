@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+
+{% load main_template_tags %}
+	<section id="content">
+        <div class="container">
+            <div class="c-header">
+            	<h2>{% trans title %}</h2>
+            </div>
+            
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+	            <div class="ah-label hidden-xs palette-White text">{% trans title %}</div>
+	
+	            <div class="ah-search">
+	            	<form method="get" action="{% url 'products:products' %}">
+	                    <input name="q" type="text" placeholder="{% trans 'Total Product' %}Start typing..." class="ahs-input">
+	
+	                    <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+	                    <input type="submit" class="hidden" />
+	                </form>
+	            </div>
+	
+	            <ul class="ah-actions actions a-alt">                    
+                    {% if is_superuser or 'can_view_inventory' in user_instance.permissionlist %}
+                    <li>
+                        <a title="{% trans 'Print Inventory' %}" href="{% url 'products:inventory' %}?print=True&category={{category|default:''}}&subcategory={{subcategory|default:''}}&radio={{radio|default:''}}">
+                            <i class="zmdi zmdi-print"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+	            
+	        </div>  
+            <div class="card">
+				
+				{% if instances %}
+				
+                <div class="table-responsive">
+                    <table id="data-table-basic" class="table table-striped table-vmiddle">
+                        <thead>
+                <tr>
+                    <th>ID</th>
+                    <th style='width:50%'>Product</th>
+                    <th>Stock</th>
+                    {% if radio == 'cost'%}
+                    <th>Cost</th>
+                    {% elif radio == 'price' %}
+                    <th>Price</th>
+                    {% elif radio == 'cash_price' %}
+                    <th>Cash Price</th>
+                    {% elif radio == 'wholesale' %}
+                    <th>Wholesale Price</th>
+                    {% endif %}
+                    <th>Sub Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% load el_pagination_tags %}
+                {% paginate 21 instances %}
+                {% for instance in instances %}
+                <tr>
+                    <td>{{instance.a_id}}</td>
+                    <td style='width:50%'>{{instance.name}}</td>                                    
+                    <td>{{instance.stock}}</td>
+                    {% if radio == 'cost'%}
+                        <td>{{instance.cost}}</td>
+                        <td>{{instance.stock|mul:instance.cost|to_fixed_two}}</td>    
+                    {% elif radio == 'price' %}  
+                        <td>{{instance.price}}</td>
+                        <td>{{instance.stock|mul:instance.price|to_fixed_two}}</td> 
+                    {% elif radio == 'cash_price' %}
+                        <td>{{instance.cash_price}}</td>
+                        <td>{{instance.stock|mul:instance.cash_price|to_fixed_two}}</td>  
+                    {% elif radio == 'wholesale' %}
+                        <td>{{instance.wholesale_price}}</td>
+                        <td>{{instance.stock|mul:instance.wholesale_price|to_fixed_two}}</td> 
+                    {% endif %}                           
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td></td>
+                    <td>Total</td>
+                    <td></td>
+                    <td></td>
+                    <td>{{total|to_fixed_two}}</td>
+                </tr>
+            </tbody>   
+                    </table>
+                </div>
+                
+                <!--pagination -->
+                <div class="bootgrid-footer container-fluid" id="data-table-selection-footer">
+                	{% get_pages %}
+                	<div class="row">
+                		<div class="col-sm-6">
+                			<div class="pagination">
+                				{% show_pages %}
+                			</div>
+                		</div>
+                		<div class="col-sm-6 infoBar">
+                			<div class="infos">
+                				Showing {{title}} <span class="current_page_index">{{ pages.current_start_index }}</span> - <span class="current_end_status">{{ pages.current_end_index }}</span> of <span class="total_count">{{ pages.total_count }}</span>
+                			</div>
+                		</div>
+                	</div>
+                </div>   
+                <!--pagination-->
+                
+                {% else %}
+                	{% include 'includes/not_found.html' %}
+                {% endif %}            
+            </div>
+            
+        </div>
+    </section>
+{% endblock %}
+
+{% block filter_box %}
+<div class="filter-box">
+	 <form method="get" action="{% url 'products:products' %}">
+	 	<div class="card">
+			<div class="card-header">
+		        <h2>Filter <small></small></h2>
+		        <span class="back-button-poupup palette-Cyan bg white btn btn-default btn-icon-text waves-effect"><i class="zmdi zmdi-arrow-back"></i> Back</span>
+		    </div>
+		    
+			<div class="card-body card-padding">
+			 	<div class="form-group fg-line">
+		            <label>Query</label>
+		            <input name="q" type="text" class="form-control" placeholder="Enter your query..."/>
+		        </div>
+		        <div class="form-group fg-line">
+		            <label>Category</label>
+		            <select name="category" class="chosen" data-placeholder="Choose a Category...">
+                        <option></option>
+                        {% for category in categories %}
+                        <option value="{{category.pk}}">{{category.name}}</option>
+                       	{% endfor %}
+                    </select>
+		        </div>
+                <div class="form-group fg-line">
+                    <label>Sub Category</label>
+                    <select name="subcategory" class="chosen" data-placeholder="Choose a SubCategory...">
+                        <option></option>
+                        {% for subcategory in subcategories %}
+                        <option value="{{subcategory.pk}}">{{subcategory.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                 <div class="form-group fg-line">
+                    <label>Brands</label>
+                    <select name="brand" class="chosen" data-placeholder="Choose a brand...">
+                        <option></option>
+                        {% for brand in brands %}
+                        <option value="{{brand.pk}}">{{brand.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+		        <div class="m-t-20">
+                    <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                </div>
+		    </div>
+		 </div>
+	 </form>
+</div>
+{% endblock %}
+
+{% block static %}
+	{% load static %}	
+	<script src="{% static 'vendors/bower_components/chosen/chosen.jquery.min.js' %}"></script>
+    <script>
+        $(document).ready(function(){
+            $(".export_to_excel").click(function(){
+                excelExport();
+            });
+            function excelExport() {
+                var url = "{% url 'products:export_products' %}";
+                $.ajax({
+                    type : "GET",
+                    url : url,
+                    dataType : 'json',
+                    data : {
+                    },
+                    success : function(data) {
+                        var status = data['status'];
+                        var file_url = data['file_url'];
+
+                        if (status == "true"){
+                            window.location.href = file_url;
+                        }
+                    },
+                    error : function(data){
+                    }
+                });
+            }
+        });
+    </script>
+{% endblock %}

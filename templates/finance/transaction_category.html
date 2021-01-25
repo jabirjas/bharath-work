@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% load users_template_tags %}
+{% block content %}
+	<section id="content">
+        <div class="container">
+            <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{instance.name}}</div>
+    
+                <div class="ah-search">
+                    <form method="get" action="{% url 'finance:transaction_categories' %}">
+                        <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+    
+                        <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+                        <input type="submit" class="hidden" />
+                    </form>
+                </div>
+    
+                <ul class="ah-actions actions a-alt">
+                    <li>
+                        <a title="Create Package" href="{% url 'finance:create_transaction_category' %}">
+                        <i class="zmdi zmdi-plus"></i>
+                        </a>
+                    </li>
+                   <li>
+                        <a href="{% url 'finance:edit_transaction_category' pk=instance.pk %}"><i class="zmdi zmdi-edit"></i></a>
+                    </li>
+                    <li>
+                        <a data-id="{{instance.pk}}" data-text="{{confirm_delete_message}}" data-title="Are you sure?" href="{% url 'finance:delete_transaction_category' pk=instance.pk %}" class="action-button redirect"><i class="zmdi zmdi-delete"></i></a>
+                    </li>      
+                </ul>
+             </div>
+
+            <div id="c-grid" class="clearfix" data-columns="2">
+                <div class="card bs-item z-depth-5-top">
+                    <div class="card-header">
+                        <h2>Basic Info <small></small></h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="list-group lg-alt c-overflow">
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Name</div>
+                                    <small class="lgi-text">{{instance.name}}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Transaction Category</div>
+                                    <small class="lgi-text">{{instance.category_type}}</small>
+                                </div>
+                            </div>
+                       
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card bs-item z-depth-5-top">
+                    <div class="card-header">
+                        <h2>Created &amp; Updated <small></small></h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="list-group lg-alt c-overflow">
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Date Added</div>
+                                    <small class="lgi-text">{{instance.date_added}}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Date Updated</div>
+                                    <small class="lgi-text">{{instance.date_updated}}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Created User</div>
+                                    <small class="lgi-text"><a href="{% url 'users:view' pk=instance.creator.username %}">{{instance.creator.username|get_user_name}}</a></small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Last Updated User</div>
+                                    <small class="lgi-text"><a href="{% url 'users:view' pk=instance.updator.username %}">{{instance.updator.username|get_user_name}}</a></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+             </div>                
+        </div>
+    </section>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+{% endblock %}

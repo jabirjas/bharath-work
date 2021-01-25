@@ -1,0 +1,123 @@
+{% load static %}
+
+<ul class="pull-right h-menu">
+            	
+	<li class="hm-search-trigger">
+	    <a href="" data-ma-action="search-open">
+	        <i class="hm-icon zmdi zmdi-search"></i>
+	    </a>
+	</li>
+	
+	<li class="dropdown hidden-xs hidden-sm h-apps">
+	    <a data-toggle="dropdown" href="">
+	        <i class="hm-icon zmdi zmdi-apps"></i>
+	    </a>
+	    
+	    <ul class="dropdown-menu pull-right">
+	    	{% if current_role == "distributor" %}
+			    <li>
+			        <a href="{% url 'sales:sales' %}">
+			            <i class="palette-Blue bg zmdi zmdi-view-list"></i>
+			            <small>Sales</small>
+			        </a>
+			    </li>
+			    
+			    <li>
+			        <a href="{% url 'customers:customers' %}">
+			            <i class="palette-Cyan bg zmdi zmdi-accounts-alt"></i>
+			            <small>Customers</small>
+			        </a>
+			    </li>
+			     <li>
+			        <a href="{% url 'distributors:distributor_stocks' %}">
+			            <i class="palette-Teal bg zmdi zmdi-view-comfy"></i>
+			            <small>Products</small>
+			        </a>
+			    </li>
+			  {% else %}
+			  <li>
+			        <a href="{% url 'sales:sales' %}">
+			            <i class="palette-Blue bg zmdi zmdi-view-list"></i>
+			            <small>Sales</small>
+			        </a>
+			    </li>
+			    
+			    <li>
+			        <a href="{% url 'customers:customers' %}">
+			            <i class="palette-Cyan bg zmdi zmdi-accounts-alt"></i>
+			            <small>Customers</small>
+			        </a>
+			    </li>
+			     <li>
+			        <a href="{% url 'distributors:distributor_stocks' %}">
+			            <i class="palette-Teal bg zmdi zmdi-view-comfy"></i>
+			            <small>Products</small>
+			        </a>
+			    </li>
+			    <li>
+			        <a href="{% url 'products:products' %}">
+			            <i class="palette-Teal bg zmdi zmdi-view-comfy"></i>
+			            <small>Products</small>
+			        </a>
+			    </li>
+			     <li>
+			        <a href="{% url 'purchases:purchases' %}">
+			            <i class="palette-Red bg zmdi zmdi-shopping-cart"></i>
+			            <small>Purchases</small>
+			        </a>
+			    </li>
+			     <li>
+			        <a href="{% url 'staffs:staffs' %}">
+			            <i class="palette-Cyan bg zmdi zmdi-account-o"></i>
+			            <small>Staffs</small>
+			        </a>
+			    </li>
+			    <li>
+			        <a href="{% url 'create_shop_request' %}">
+			            <i class="palette-Cyan bg zmdi zmdi-balance"></i>
+			            <small>Create shop</small>
+			        </a>
+			    </li>
+			   {% endif %}
+		    
+		</ul>
+	    
+	</li>
+	<li class="dropdown hidden-xs">
+	    <a data-toggle="dropdown" href=""><i class="hm-icon zmdi zmdi-more-vert"></i></a>
+	    <ul class="dropdown-menu dm-icon pull-right">
+	        <li class="hidden-xs">
+	            <a data-action="fullscreen" href=""><i class="zmdi zmdi-fullscreen"></i> Toggle Fullscreen</a>
+	        </li>
+	        <li>
+	            <a href="{% url 'users:settings' %}"><i class="zmdi zmdi-settings"></i> Settings</a>
+	        </li>
+	    </ul>
+	</li>
+	<li class="hm-alerts p-relative" data-user-alert="sua-messages" data-ma-action="sidebar-open" data-ma-target="user-alerts">
+	    <a href=""><i class="hm-icon zmdi zmdi-notifications"></i><span class="notification-count palette-Red-500 bg">0</span></a>
+	</li>
+	<li class="dropdown hm-profile">
+	    <a data-toggle="dropdown" href="">
+	    	{% if current_shop.logo %}
+	        <img src="{{current_shop.logo.url}}" alt="{{current_shop.name}}">
+	        {% else %}
+	        	<img src="{% static 'img/profile-pics/1.jpg' %}" alt="">
+	    	{% endif %}
+	    </a>
+	    
+	    <ul class="dropdown-menu pull-right dm-icon">
+	    	<li> 
+	    		<a href=""><i class="zmdi zmdi-account"></i>{{logged_username}}</a>
+	    	</li>
+	    	{% if is_superuser %}
+	        <li>
+	            <a target="_blank" href="{% url 'auth_password_change' %}"><i class="zmdi zmdi-key"></i>Change Password</a>
+	        </li>
+	        {% endif %}
+	        <li>
+	            <a href="{% url 'auth_logout' %}"><i class="zmdi zmdi-time-restore"></i> Logout</a>
+	        </li>
+	    </ul>
+	</li>
+	</ul>

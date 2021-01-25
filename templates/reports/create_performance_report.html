@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load tz %}
+
+{% block content %}
+    <section id="content">
+        <div class="container">
+            <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>
+            
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+
+                <ul class="ah-actions actions a-alt">
+                    <li>
+                        <a title="Search" data-ma-action="ah-search-open" class="ah-search-trigger" href="">
+                            <i class="zmdi zmdi-search"></i>
+                        </a>
+                    </li>                              
+                </ul>
+            </div>
+            <form target='_blank' action="{% url 'reports:print_performance_report' %}" method="get">
+                
+                <div id="c-grid" class="clearfix" data-columns="2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Basic Info <small></small></h2>
+                        </div>
+                        <div class="card-body card-padding">
+                            <div class="form-group fg-line">
+                                <label for="{{ form.date.id_for_label }}">
+                                    {{ form.date.label }}
+                                    {% if form.date.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    {% if form.date.help_text %}                                        
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.date.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+                                    {% endif %}
+                                    </span>
+                                </label>
+                                {% timezone user_time_zone %}
+                                    <input id="{{ form.date.id_for_label }}" type="text" class="required form-control date-picker"  name="{{form.date.html_name}}" placeholder="Enter Date" value="">
+                                {% endtimezone %}
+                                
+                                {% if form.date.errors %}
+                                    <label class="error">{{ form.date.errors.as_text }}</label>
+                                {% endif %}
+                            </div> 
+                            <div class="form-group fg-line">
+                                <label for="{{ form.month.id_for_label }}">
+                                    {{ form.month.label }}
+                                    {% if form.month.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.month.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.month.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+                                    {% endif %}
+                                    </span>
+                                </label>
+                                {{ form.month }}
+                                
+                                {% if form.month.errors %}
+                                    <label class="error">{{ form.month.errors.as_text }}</label>
+                                {% endif %}
+                            </div> 
+                            <div class="form-group fg-line">
+                                <label for="{{ form.year.id_for_label }}">
+                                    {{ form.year.label }}
+                                    {% if form.year.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.year.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.year.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+                                    {% endif %}
+                                    </span>
+                                </label>
+                                {{ form.year }}
+                                
+                                {% if form.year.errors %}
+                                    <label class="error">{{ form.year.errors.as_text }}</label>
+                                {% endif %}
+                            </div> 
+                            <div class="form-group fg-line">
+                                <label for="{{ form.sale_type.id_for_label }}">
+                                    {{ form.sale_type.label }}
+                                    {% if form.sale_type.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.sale_type.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.sale_type.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+                                    {% endif %}
+                                    </span>
+                                </label>
+                                {{ form.sale_type }}
+                                
+                                {% if form.sale_type.errors %}
+                                    <label class="error">{{ form.sale_type.errors.as_text }}</label>
+                                {% endif %}
+                            </div> 
+                            <div class="form-group fg-line">
+                                <label for="{{ form.distributor.id_for_label }}">
+                                    {{ form.distributor.label }}
+                                    {% if form.distributor.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.distributor.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.distributor.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+                                    {% endif %}
+                                    </span>
+                                </label>
+                                {{ form.distributor }}
+                                
+                                {% if form.distributor.errors %}
+                                    <label class="error">{{ form.distributor.errors.as_text }}</label>
+                                {% endif %}
+                            </div>                                                     
+                        </div> 
+                    </div>     
+                   
+               </div>
+                    <div>
+                        <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                    </div>
+                
+                </div>
+            </form>  
+         </div> 
+    </section>
+{% endblock %}
+
+{% block static %}
+    {% load static %}
+    <script>
+       $(document).ready(function(){
+
+            $('input[type=text]').focus(function () { 
+                $(this).select();
+            });
+            $('input[type=text]').mouseup(function (e) { // fix for chrome and safari
+                e.preventDefault();
+            });
+            $('input[type=text]').select(function () {
+                $('.log').append(' Handler for .select() called. ');
+            });
+        });
+    </script>
+    {{form.media}}
+{% endblock %}

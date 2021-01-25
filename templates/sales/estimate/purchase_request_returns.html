@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+{% block content %}
+    <section id="content">
+        <div class="container">
+             <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>
+            
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+    
+                <div class="ah-search">
+                    <form method="get" action="{% url 'sales:purchase_request_returns' %}">
+                        <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+    
+                        <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+                        <input type="submit" class="hidden" />
+                    </form>
+                </div> 
+            </div>
+
+            <div class="card">
+                {% if message %}
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>{{message}}
+                </div>
+                {% endif %}
+                {% if instances %}
+                
+                <div class="table-responsive">
+                    <table id="data-table-basic" class="table table-striped table-vmiddle">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>User</th>
+                                <th>Customer</th>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Subtotal</th>
+                                <th data-column-id="action" class="one">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% load el_pagination_tags %}
+                            {% paginate 21 instances %}
+                            {% for instance in instances %}
+                            <tr class="check_items_row">
+                                <td>{{instance.purchase_request.time}}</td>
+                                <td>{{instance.purchase_request.creator}}</td>
+                                <td><a href="{% url 'sales:purchase_request' pk=instance.purchase_request.pk %}">{{instance.purchase_request}}</a></td>
+                                <td><a href="{% url 'products:product' pk=instance.product.pk %}">{{instance.product}}</a></td>
+                                <td>{{instance.qty}}</td> 
+                                <td>{{instance.price}}</td>
+                                <td>{{instance.subtotal}}</td>  
+                                <td class="one">
+                                    {% if "is_superuser" or 'can_view_purchase_request' in user_instance.permissionlist %}
+                                    <a href="{% url 'sales:purchase_request' pk=instance.purchase_request.pk %}" class="btn btn-default btn-icon waves-effect waves-circle waves-float"><i class="zmdi zmdi-eye"></i></a>
+                                    {% endif %}
+                                </td>                            
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!--pagination -->
+                <div class="bootgrid-footer container-fluid" id="data-table-selection-footer">
+                    {% get_pages %}
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="pagination">
+                                {% show_pages %}
+                            </div>
+                        </div>
+                        <div class="col-sm-6 infoBar">
+                            <div class="infos">
+                                Showing {{title}} <span class="current_page_index">{{ pages.current_start_index }}</span> - <span class="current_end_status">{{ pages.current_end_index }}</span> of <span class="total_count">{{ pages.total_count }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>   
+                <!--pagination-->
+                {% else %}
+                    {% include 'includes/not_found.html' %}
+                {% endif %}            
+            </div>
+            
+        </div>
+    </section>
+{% endblock %}
+
+{% block filter_box %}
+<div class="filter-box">
+     <form method="get" action="{% url 'sales:sales' %}">
+        <div class="card">
+            <div class="card-header">
+                <h2>Filter <small></small></h2>
+                <span class="back-button-poupup palette-Cyan bg white btn btn-default btn-icon-text waves-effect"><i class="zmdi zmdi-arrow-back"></i> Back</span>
+            </div>
+            
+            <div class="card-body card-padding">
+                <div class="form-group fg-line">
+                    <label>Query</label>
+                    <input name="q" type="text" class="form-control" placeholder="Enter your query..." />
+                </div>
+                <div class="form-group fg-line">
+                    <label>Year</label>
+                    <input name="year" type="text" class="form-control" placeholder="yyyy" />
+                </div>
+                <div class="form-group fg-line">
+                    <label>Month</label>
+                    <select name="month" id="id_month" class="selectpicker">
+                        <option value="">All</option>
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+
+                    </select>
+                </div>
+                <div class="form-group fg-line">
+                    <label>Period</label>
+                    <select name="period" id="id_period" class="selectpicker">
+                        <option value="">All</option>
+                        <option value="today">Today</option>
+                        <option value="month">Month</option>
+                        <option value="year">Year</option>
+                    </select>
+                </div>
+                <div class="form-group fg-line">
+                    <label>Payment Status</label>
+                    <select name="payment" id="id_payment" class="selectpicker">
+                        <option value="">All</option>
+                        <option value="full">Full</option>
+                        <option value="partial">Partial</option>
+                        <option value="no">Nothing</option>
+                        <option value="extra">Extra</option>
+                    </select>
+                </div>
+                <div class="form-group fg-line">
+                    <label>Customer</label>
+                    <select name="customer" id="id_period" class="selectpicker">
+                        <option value="">All</option>
+                        {% for customer in customers %}
+                            <option value="{{customer.pk}}">{{customer}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group fg-line">
+                    <label>Date</label>
+                    <input name="date" type="text" class="form-control date-picker" placeholder="Date" />
+                </div>
+                <div class="form-group fg-line">
+                    <label>Date Period</label>
+                    <div class="row">
+                        <div class="col-md-6 m-b-20">
+                            <input name="from_date" type="text" class="form-control date-picker" placeholder="From Date" />
+                        </div>
+                        <div class="col-md-6">
+                            <input name="to_date" type="text" class="form-control date-picker" placeholder=" To Date" />
+                        </div>
+                    </div>    
+                </div>
+                
+                <div class="m-t-20">
+                    <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                </div>
+            </div>
+         </div>
+     </form>
+</div>
+{% endblock %}
+
+{% block static %}
+    {% load static %}
+    <script src="{% static 'vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% load users_template_tags %}
+{% block content %}
+	<section id="content">
+        <div class="container">
+            <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+    
+                <div class="ah-search">
+                    <form method="get" action="{% url 'finance:transactions' %}">
+                        <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+    
+                        <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+                        <input type="submit" class="hidden" />
+                    </form>
+                </div>
+    
+                <ul class="ah-actions actions a-alt">
+                    <li>
+                        <a data-id="{{instance.pk}}" data-text="{{confirm_delete_message}}" data-title="Are you sure?" href="{% url 'finance:delete_transaction' pk=instance.pk %}" class="action-button redirect"><i class="zmdi zmdi-delete"></i></a>
+                    </li> 
+                    <li>
+                    {% if instance.transaction_type == "income" %}
+                        {% if instance.collect_amount != NULL%}
+                            <a href="{% url 'sales:edit_collect_amount' pk=instance.collect_amount.pk %}" ><i class="zmdi zmdi-edit"></i></a>
+                        {% elif instance.sale != NULL and instance.collect_amount == NULL%}
+                            <a href="{% url 'sales:edit' pk=instance.sale.pk %}" ><i class="zmdi zmdi-edit"></i></a>
+                        {% else %}
+                            <a href="{% url 'finance:edit_income' pk=instance.pk %}" ><i class="zmdi zmdi-edit"></i></a>
+                        {% endif %}
+                    {% endif %}
+                    {% if instance.transaction_type == "expense" %}
+                        {% if instance.paid != NULL%}
+                            <a href="{% url 'purchases:edit_paid' pk=instance.paid.pk %}" ><i class="zmdi zmdi-edit"></i></a>
+                        {% elif instance.purchase != NULL and instance.paid == NULL%}
+                            <a href="{% url 'purchases:edit_purchase' pk=instance.purchase.pk %}" ><i class="zmdi zmdi-edit"></i></a>
+                        {% elif instance.staff != NULL %}
+                            <a href="{% url 'finance:edit_salary_payment'  pk=instance.pk %}"><i class="zmdi zmdi-edit"></i></a>
+                        {% else %}
+                            <a href="{% url 'finance:edit_expense' pk=instance.pk %}" ><i class="zmdi zmdi-edit"></i></a>
+                        {% endif %}
+                    {% endif %} 
+                    </li>  
+                </ul>
+             </div>
+
+            <div id="c-grid" class="clearfix" data-columns="2">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Basic Info <small></small></h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="list-group lg-alt c-overflow">
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Name</div>
+                                    {% if instance.staff != NULL %}
+                                        <small class="lgi-text">{{instance.staff.first_name|default:"-"}}</small>
+                                    {% elif instance.shop != NULL %}
+                                        <small class="lgi-text">{{instance.shop.name|default:"-"}}</small>
+                                    {% else %}
+                                        <small class="lgi-text">{{instance.transaction_category.name|default:"-"}}</small>
+                                    {% endif %}
+
+
+                                </div>
+                            </div>
+                        	
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Type</div>
+                                    <small class="lgi-text">{{instance.get_transaction_type_display|default:"-"}}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Date</div>
+                                    <small class="lgi-text">{{instance.date|default:"-"}}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Amount</div>
+                                    <small class="lgi-text">{{instance.amount|default:"-"}}</small>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Transaction Details<small></small></h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="list-group lg-alt c-overflow">
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Transaction Mode</div>
+                                    <small class="lgi-text">{{instance.get_transaction_mode_display|default:"-"}}</small>
+                                </div>
+                            </div>
+                            {% if instance.payment_mode %}
+                            
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Payment Mode</div>
+                                    <small class="lgi-text">{{instance.get_payment_mode_display|default:"-"}}</small>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if instance.cheque_details %}
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Cheque Details</div>
+                                    <small class="lgi-text">{{instance.cheque_details|default:"-"}}</small>
+                                </div>
+                            </div>
+
+                            {% endif %}
+                            {% if instance.cheque_details %}
+                             <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Is Cheque Withdrawed</div>
+                                    <small class="lgi-text">{{instance.is_cheque_withdrawed|yesno:"Yes,No"}}</small>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if instance.card_details %}
+                             <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Card Details</div>
+                                    <small class="lgi-text">{{instance.card_details|default:"-"}}</small>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if instance.payment_to and instance.transaction_mode == "bank" %}
+                             <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Payment to</div>
+                                    <small class="lgi-text">{{instance.get_payment_to_display|default:"-"}}</small>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if instance.bank_account %}
+                             <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Bank Account</div>
+                                    {% if request.user.is_superuser or 'can_view_bank_account' in user_instance.permissionlist %}
+                                        <b class="info"><a href="{% url 'finance:bank_account' pk=instance.bank_account.pk %}">{{instance.bank_account.name|default:"-"}}</a></b>
+                                    {% else %}
+                                    <small class="lgi-text">{{instance.bank_account.name|default:"-"}}</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if instance.cash_account %}
+                             <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Cash Account</div>
+                                    {% if request.user.is_superuser or 'can_view_cash_account' in user_instance.permissionlist %}
+                                        <b class="info"><a href="{% url 'finance:cash_account' pk=instance.cash_account.pk %}">{{instance.cash_account.name|default:"-"}}</a></b>
+                                    {% else %}
+                                    <small class="lgi-text">{{instance.cash_account.name|default:"-"}}</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Created &amp; Updated <small></small></h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="list-group lg-alt c-overflow">
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Date Added</div>
+                                    <small class="lgi-text">{{instance.date_added}}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Date Updated</div>
+                                    <small class="lgi-text">{{instance.date_updated}}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Created User</div>
+                                    <small class="lgi-text"><a href="{% url 'users:view' pk=instance.creator.username %}">{{instance.creator.username|get_user_name}}</a></small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Last Updated User</div>
+                                    <small class="lgi-text"><a href="{% url 'users:view' pk=instance.updator.username %}">{{instance.updator.username|get_user_name}}</a></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+             </div>                    
+        </div>
+    </section>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+{% endblock %}

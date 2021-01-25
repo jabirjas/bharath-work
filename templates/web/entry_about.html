@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+{% block content %}
+	<section id="content">
+        <div class="container">
+        	 <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+
+                <div class="ah-search">
+	            	<form method="get" action="">
+	                    <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+	
+	                    <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+	                    <input type="submit" class="hidden" />
+	                </form>
+	            </div>
+
+                <ul class="ah-actions actions a-alt">
+                    <li>
+                        <a title="Search" data-ma-action="ah-search-open" class="ah-search-trigger" href="">
+                            <i class="zmdi zmdi-search"></i>
+                        </a>
+                    </li>
+                    {% if instance %}
+	                    {% if user in super_users or 'can_create_about' in user_instance.permissionlist %}
+		                    <li>
+		                        <a title="Create About" href="{% url 'web:create_about' %}">
+		                            <i class="zmdi zmdi-plus"></i>
+		                        </a>
+		                    </li>
+	                    {% endif %} 
+	                    {% if user in super_users or 'can_view_about' in user_instance.permissionlist %}
+		                    <li>
+		                        <a title="View About" href="">
+		                            <i class="zmdi zmdi-eye"></i>
+		                        </a>
+		                    </li>
+	                    {% endif %} 
+	                    {% if user in super_users or 'can_delete_about' in user_instance.permissionlist %}
+		                    <li>
+		                        <a title="Delete about" data-id="{{instance.pk}}" data-text="{{confirm_delete_message}}" data-title="Are you sure?" href="{% url 'web:delete_about' pk=instance.pk %}" class="action-button redirect">
+		                            <i class="zmdi zmdi-delete"></i>
+		                        </a>
+		                    </li>
+	                    {% endif %} 
+                    {% endif %}                               
+                </ul>
+            </div>
+
+            <div class="card">
+               <form class="" enctype="multipart/form-data" method="post" action="{{url}}">
+                	{% csrf_token %}
+                    <div class="card-body card-padding">
+                        <div class="row">
+                            <div class="col-sm-6">
+	                            
+	                            <div class="form-group fg-line">
+	                                <label for="{{ form.address.id_for_label }}">
+	                                	{{ form.address.label }}
+	                                	{% if form.address.field.required %}
+							        		<small class="star">*</small>
+							        	{% endif %}
+							        	
+							        	{% if form.address.help_text %}
+							        		<span data-original-title="Field Info" title="" data-content="{{ form.address.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+	                                    {% endif %}
+	                                </label>
+	                                {{ form.address }}
+	                                
+	                                {% if form.address.errors %}
+	                                	<label class="error">{{ form.address.errors.as_text }}</label>
+	                                {% endif %}
+	                            </div>
+	                            
+	                            <div class="form-group fg-line">
+	                                <label for="{{ form.description.id_for_label }}">
+	                                	{{ form.description.label }}
+	                                	{% if form.description.field.required %}
+							        		<small class="star">*</small>
+							        	{% endif %}
+							        	
+							        	{% if form.description.help_text %}
+							        		<span data-original-title="Field Info" title="" data-content="{{ form.description.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+	                                    {% endif %}
+	                                </label>
+	                                {{ form.description }}
+	                                
+	                                {% if form.description.errors %}
+	                                	<label class="error">{{ form.description.errors.as_text }}</label>
+	                                {% endif %}
+	                            </div>
+
+	                            <div class="form-group fg-line">
+	                                <label for="{{ form.email.id_for_label }}">
+	                                	{{ form.email.label }}
+	                                	{% if form.email.field.required %}
+							        		<small class="star">*</small>
+							        	{% endif %}
+							        	
+							        	{% if form.email.help_text %}
+							        		<span data-original-title="Field Info" title="" data-content="{{ form.email.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+	                                    {% endif %}
+	                                </label>
+	                                {{ form.email }}
+	                                
+	                                {% if form.email.errors %}
+	                                	<label class="error">{{ form.email.errors.as_text }}</label>
+	                                {% endif %}
+	                            </div>
+
+	                            <div class="form-group fg-line">
+	                                <label for="{{ form.phone.id_for_label }}">
+	                                	{{ form.phone.label }}
+	                                	{% if form.phone.field.required %}
+							        		<small class="star">*</small>
+							        	{% endif %}
+							        	
+							        	{% if form.phone.help_text %}
+							        		<span data-original-title="Field Info" title="" data-content="{{ form.phone.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+	                                    {% endif %}
+	                                </label>
+	                                {{ form.phone }}
+	                                
+	                                {% if form.phone.errors %}
+	                                	<label class="error">{{ form.phone.errors.as_text }}</label>
+	                                {% endif %}
+	                            </div>
+
+	                            <div class="form-group fg-line">
+	                                <label for="{{ form.facebook_link.id_for_label }}">
+	                                	{{ form.facebook_link.label }}
+	                                	{% if form.facebook_link.field.required %}
+							        		<small class="star">*</small>
+							        	{% endif %}
+							        	
+							        	{% if form.facebook_link.help_text %}
+							        		<span data-original-title="Field Info" title="" data-content="{{ form.facebook_link.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+	                                    {% endif %}
+	                                </label>
+	                                {{ form.facebook_link }}
+	                                
+	                                {% if form.facebook_link.errors %}
+	                                	<label class="error">{{ form.facebook_link.errors.as_text }}</label>
+	                                {% endif %}
+	                            </div>
+
+	                            <div class="form-group fg-line">
+	                                <label for="{{ form.twitter_link.id_for_label }}">
+	                                	{{ form.twitter_link.label }}
+	                                	{% if form.twitter_link.field.required %}
+							        		<small class="star">*</small>
+							        	{% endif %}
+							        	
+							        	{% if form.twitter_link.help_text %}
+							        		<span data-original-title="Field Info" title="" data-content="{{ form.twitter_link.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+	                                    {% endif %}
+	                                </label>
+	                                {{ form.twitter_link }}
+	                                
+	                                {% if form.twitter_link.errors %}
+	                                	<label class="error">{{ form.twitter_link.errors.as_text }}</label>
+	                                {% endif %}
+	                            </div>
+
+	                           	<div class="form-group fg-line">
+	                                <label for="{{ form.gplus_link.id_for_label }}">
+	                                	{{ form.gplus_link.label }}
+	                                	{% if form.gplus_link.field.required %}
+							        		<small class="star">*</small>
+							        	{% endif %}
+							        	
+							        	{% if form.gplus_link.help_text %}
+							        		<span data-original-title="Field Info" title="" data-content="{{ form.gplus_link.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+	                                    {% endif %}
+	                                </label>
+	                                {{ form.gplus_link }}
+	                                
+	                                {% if form.gplus_link.errors %}
+	                                	<label class="error">{{ form.gplus_link.errors.as_text }}</label>
+	                                {% endif %}
+	                            </div>
+	                            <div class="form-group fg-line m-b-0">
+		                            <label for="{{ form.image.id_for_label }}">
+		                                {{ form.image.label }}
+		                                {% if form.image.field.required %}
+		                                    <small class="star">*</small>
+		                                {% endif %}
+		                                
+		                                {% if form.image.help_text %}
+		                                    <span data-original-title="Field Info" title="" data-content="{{ form.image.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+		                                {% endif %}
+		                            </label>
+		                            <br />
+		                            <div class="fileinput fileinput-new" data-provides="fileinput">
+		                                <span class="btn btn-primary btn-file m-r-10">
+		                                    <span class="fileinput-new">Select file</span>
+		                                    <span class="fileinput-exists">Change</span>
+		                                    <input type="file" name="image">
+		                                </span>
+		                                <span class="fileinput-filename"></span>
+		                                <a href="#" class="close fileinput-exists" data-dismiss="fileinput">&times;</a>
+		                            </div>
+		                            
+		                            {% if form.image.errors %}
+		                                <label class="error">{{ form.image.errors.as_text }}</label>
+		                            {% endif %}
+                        		</div>
+                           
+                            </div>
+                         </div>
+                         
+                         <div class="m-t-20">
+                            <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                        </div>
+                     </div>  
+                 </form>                    
+            </div>
+            
+        </div>
+    </section>
+
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+	<script src="{% static 'vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js' %}"></script>
+	{{ form.media }}
+{% endblock %}

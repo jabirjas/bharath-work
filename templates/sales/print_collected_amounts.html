@@ -1,0 +1,70 @@
+{% extends "invoice_base.html" %}
+{% load i18n %}
+{% load static %}
+{% load users_template_tags %}
+{% block content %}
+
+    <section id="content">
+        <div class="container invoice">
+            <div class="c-header">
+                <h2 class="m-t-20">{{title}}</h2>
+            </div>
+            
+            <div class="card">
+            	
+                <div class="card-header ch-alt text-center">
+                	{% if current_shop.logo %}
+                    <img class="i-logo" src="{{current_shop.logo.url}}" alt="{{current_shop.name}}">
+                    {% else %}
+                    <img src="{% static 'img/logo.png' %}" alt="{{current_shop.name}}" />
+                    {% endif %}
+                </div>
+                
+                <div class="card-body card-padding">
+                    
+                    <table class="table i-table m-t-25 m-b-25">
+                        <thead class="text-uppercase">
+                            <th class="c-gray">CUSTOMER</th>
+                            <th class="c-gray">TIME</th>
+                            <th class="highlight">BALANCE AMOUNT</th>
+                            <th class="c-gray">CASH RECEIVED</th>
+                            <th class="highlight">REMAINING BALANCE</th>
+                        </thead>
+                        
+                        <tbody>
+                            <thead>
+                                {% for instance in instances %}
+                                    <tr>
+                                        <td>
+                                            <h5 class="text-uppercase f-400">{{instance.customer.name}}</h5>
+                                        </td>
+                                        <td>{{instance.date}}</td>
+                                        <td>{{instance.balance}}</td>
+                                        <td>{{instance.collect_amount}}</td>
+                                        <td class="highlight">{{instance.remaining_balance}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </thead> 
+                        </tbody>
+                    </table>
+                    
+                    <div class="clearfix"></div>
+                </div>
+                
+                <footer class="m-t-15 p-20">
+                    <ul class="list-inline text-center list-unstyled">
+                        <li class="m-l-5 m-r-5"><small>{{current_shop.email}}</small></li>
+                        <li class="m-l-5 m-r-5"><small>{{current_shop.phone}}</small></li>
+                        <li class="m-l-5 m-r-5"><small>{{current_shop.website}}</small></li>
+                    </ul>
+                </footer>
+            </div>
+        </div>
+        
+        <button class="btn btn-float bgm-red m-btn" data-action="print"><i class="zmdi zmdi-print"></i></button>
+    </section>
+{% endblock %}
+
+{% block static %}
+    {% load static %}
+{% endblock %}

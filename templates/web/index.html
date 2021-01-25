@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    	{% load main_template_tags %}
+    	{% load static %}
+		<meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+        <title>{{current_shop.name}}</title>
+        <link rel="shortcut icon" type="image/x-icon" href="{% static 'web/images/favicon.png' %}" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+        <meta name="description" content="" />
+        <meta name="keywords" content="" />
+        <link rel="stylesheet" type="text/css" href="{% static 'web/css/style.css' %}"/>
+        <script type="text/javascript" src="{% static 'web/js/jquery.min.js' %}"></script>
+		<script type="text/javascript" src="{% static 'web/js/script.js' %}"></script>
+    </head>
+    <body>
+    	<section id="home">
+    		<span class="mask">&nbsp;</span>
+    		<header>
+				<section class="wrapper">
+					<h1><a href="{% url 'web:index' %}" title="Basim Rexin World"><img src="{% static 'web/images/logo.png' %}" alt="image" title="Basim Rexin World"/></a></h1>
+					<span id="menu_icon" class="hidden"><img src="{% static 'web/images/menu.png' %}" alt="image" title="menu" /></span>
+					<section id="menu">
+						<nav>
+							<ul>
+								<li class="active"><a href="{% url 'web:index' %}" title="Home">Home</a></li>
+								<li><a href="#about" title="About">About</a></li>
+								<li><a href="#products" title="products">Products</a></li>
+								<li><a href="#offer" title="Offer">Offer</a></li>{% for category in categories %}
+									<li><a href="#{{category.name|underscore_smallletter}}" title="{{category.name}}">{{category.name}}</a></li>
+								{% endfor %}
+								<li><a href="#contact" title="Contact">Contact</a></li>
+								<li><a href="{% url 'auth_login' %}?next=/app/" class="login">Login</a></li>
+							</ul>
+							<br class="clear" />
+						</nav>
+						<a href="{% url 'auth_login' %}?next=/app/" class="login hidden">Login</a>
+					</section><!--(#home < wrapper < #menu)-->
+				</section><!--(#home > .wrapper)-->
+				<div id="mySidenav" class="sidenav hidden">
+					<a title="" href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+					<a href="{% url 'web:index' %}" title="Home">Home</a>
+					<a href="#about" title="About">About</a>
+					<a href="#products" title="products">Products</a>
+					<a href="#offer" title="Offer">Offer</a>
+					{% for category in categories %}
+					<a href="#{{category.name|underscore_smallletter}}" title="{{category.name}}">{{category.name}}</a>
+					{% endfor %}
+					<a href="#contact" title="Contact">Contact</a>
+				</div>
+				<span class="openmenu hidden" onclick="openNav()">&nbsp;</span>
+				<br class="clear">
+			</header>
+			<section id="spotlight">
+				<section class="wrapper">
+					<div class="spotlight">
+						<h1>Basim Rexin World</h1>
+						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Numquam dicta asperiores cum accusamus dolorem sunt alias ipsum repudiandae nemo, velit soluta amet, debitis, a minus non tempore. Laborum assumenda, iure.</p>
+						<a href="#" class="button">Explore</a>
+					</div>
+				</section>
+			</section>
+		</section>
+		{% if about %}
+		<section id="about">
+			<section class="wrapper">
+				<section class="left">
+					<img src="{{about.image.url}}" alt="Basim Rexin World" title="Basim Rexin World" />
+				</section><!--(#about > .wrapper > .left)-->
+				<section class="right">
+					<div class="head">
+						<h2>About <b>Us</b></h2>
+						<p>{{about.description}}</p>
+					</div>
+				</section><!--(#about > .wrapper > .right)-->
+				<br class="clear" />
+			</section><!--(#about > .wrapper)-->
+		</section><!--(#about)-->
+		{% endif %}
+		{% if categories %}
+
+			{% for category in categories %}
+			<section id="{{category.name|underscore_smallletter}}" class="products" class="{% if forloop.counter|divisibleby:2 %}product-right{% endif %}">
+				<section class="wrapper">
+					<div class="head">
+						<h2><b>{{category.name}}</b></h2>
+						<p>{{category.description}}</p>
+					</div>
+					<ul>
+						{% for product in category.get_products %}
+						<li>
+							<img src="{{product.image.url}}" alt="Image" title="Image" />
+							<div class="content">
+								<h4>{{product.product}}</h4>
+								<h5><b class="left"></b>₹ {{product.price}}<small class="right"></small></h5>
+								<br class="clear">
+							</div>
+						</li>
+						{% endfor %}
+					</ul>
+					<br class="clear">
+				</section><!--(#products > .wrapper)-->
+			</section><!--(#products)-->
+			{% endfor %}
+		{% endif %}	
+		
+		{% if offers %}
+		<section id="offer">
+			<section class="wrapper">
+				<div class="head">
+					<h2>Special <br><b>Offers</b></h2>
+					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam ipsa cumque, in ratione, similique aliquid voluptatum adipisci. Eos, unde dolor at adipisci magni deserunt neque ea porro. Tempora, omnis veritatis.</p>
+				</div>
+				<ul>
+					{% for offer in offers %}
+					<li>
+						<div class="content">
+							<h4>{{offer.product.product}}</h4>
+							<h5>{{offer.offer_price}}</h5>
+						</div>
+						<div class="img" style="background: url({{offer.product.image.url}}) no-repeat scroll center;">
+							<div class="bg">
+								<h4>{{offer.offer_percentage}}% <b>Off</b></h4>
+							</div>
+						</div>
+					</li>
+					{% endfor %}
+					
+				</ul>
+				<br class="clear">
+			</section>
+		</section>
+		{% endif %}
+		<section id="contact">
+			<div class="map" id="map_canvas">&nbsp;</div>
+			<script type="text/javascript" src="https://maps.google.com/maps/api/js?v=3&key=AIzaSyAzdh7lxduLdiOgSXoJ15X2HMKI4pHpJoA&sensor=false"></script>
+			<script type="text/javascript">			
+				$(document).ready(function(){
+					var map;
+					var lat_id = 8.625565; 
+						var long_id = 76.848118;
+				    function initialize(){
+				        var myLatlng = new google.maps.LatLng(lat_id,long_id);
+				        var myOptions = {
+							zoom: 12,
+							center: myLatlng,
+							mapTypeId: google.maps.MapTypeId.ROADMAP
+				        };
+				        map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+				        
+				        google.maps.event.addListener(map, 'zoom_changed', function(){
+				            setTimeout(moveToDarwin, 1500);
+				        });
+				        
+				        var marker = new google.maps.Marker({
+				            position: myLatlng,
+				            map: map,
+				            title: "Basim rexin World"
+				        });
+				        google.maps.event.addListener(marker, 'click', function(){
+				            map.setZoom(18);
+				        });
+				    }
+				    
+				    function moveToDarwin(){
+				        var darwin = new google.maps.LatLng(lat_id,long_id);
+				        map.setCenter(darwin);
+				    }
+				    
+					initialize();
+				});
+				
+			</script>
+		</section><!--(#contact)-->
+		<footer>
+			<section class="top">
+				<section class="wrapper">
+					<div class="address">
+						<h6>Address</h6>
+						<small class="address">&nbsp;</small>
+						<div class="content">
+							<p>{{about.address}}</p>
+						</div>
+						<br class="clear">
+					</div>
+					<div class="logo">
+						<h1><a href="{% url 'web:index' %}" title="Basim Rexin World"><img src="{% static 'web/images/logo.png' %}" alt="image" title="Basim Rexin World"/></a></h1>
+					</div>
+					<div class="contact">
+						<h6>Contact</h6>
+						<p><a href="tell:{{about.phone}}">{{about.phone}}</a> <small class="phone">&nbsp;</small></p>
+					<p><a href=""></a><small class="mail">&nbsp;</small >{{about.email}}</p>
+					</div>
+					<br class="clear">
+				</section><!--(.top > .wrapper)-->
+			</section><!--(.top)-->
+			<section class="bottom">
+				<section class="wrapper">
+					<p><p>&copy; {% now 'Y' %} Basim Rexin World. All rights reserved. | Developed by <a href="http://www.webiwo.com"  title="Webiwo">Webiwo.</a></p></p>
+				</section><!--(.bottom > .wrapper)-->
+			</section><!--(.bottom)-->
+		</footer>
+	</body>
+</html>

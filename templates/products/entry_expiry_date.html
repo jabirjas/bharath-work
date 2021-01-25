@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+{% block content %}
+	<section id="content">
+        <div class="container">
+            <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>
+			
+			<div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+
+                <div class="ah-search">
+	            	<form method="get" action="{% url 'products:products' %}">
+	                    <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+	
+	                    <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+	                    <input type="submit" class="hidden" />
+	                </form>
+	            </div>
+            </div>
+            
+            <form class="ajax reset {% if redirect %}redirect{% endif %}" method="post" action="{{url}}" method="get">
+            	{% csrf_token %}
+            	
+            	<div id="c-grid" class="clearfix" data-columns="2">
+					<div class="card">
+						<div class="card-header">
+					        <h2>Basic Info <small></small></h2>
+					    </div>
+						<div class="card-body card-padding">
+                             {{ form.shop }}
+                            <div class="form-group fg-line">
+                                <label for="{{ form.manufacture_date.id_for_label }}">
+                                    {{ form.manufacture_date.label }}
+                                    {% if form.manufacture_date.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.manufacture_date.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.manufacture_date.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                    {% endif %}
+                                    </span>
+                                </label>
+                                {{ form.manufacture_date }}
+                                
+                                {% if form.manufacture_date.errors %}
+                                    <label class="error">{{ form.manufacture_date.errors.as_text }}</label>
+                                {% endif %}
+                            </div> 
+
+                            <div class="form-group fg-line">
+                                <label for="{{ form.best_before.id_for_label }}">
+                                    {{ form.best_before.label }}
+                                    {% if form.best_before.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.best_before.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.best_before.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                    {% endif %}
+                                    </span>
+                                </label>
+                                {{ form.best_before }}
+                                
+                                {% if form.best_before.errors %}
+                                    <label class="error">{{ form.best_before.errors.as_text }}</label>
+                                {% endif %}
+                            </div> 
+
+                            <div class="form-group fg-line">
+                                <label for="{{ form.period.id_for_label }}">
+                                    {{ form.period.label }}
+                                    {% if form.period.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.period.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.period.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                    {% endif %}
+                                    </span>
+                                </label>
+                                {{ form.period }}
+                                
+                                {% if form.period.errors %}
+                                    <label class="error">{{ form.period.errors.as_text }}</label>
+                                {% endif %}
+                            </div> 
+
+                            <div class="form-group fg-line">
+                                <label for="{{ form.period.id_for_label }}">
+                                    {{ form.period.label }}
+                                    {% if form.period.field.required %}
+                                        <small class="star">*</small>
+                                    {% endif %}
+                                    
+                                    {% if form.period.help_text %}
+                                        <span data-original-title="Field Info" title="" data-content="{{ form.period.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline">
+                                    {% endif %}
+                                    </span>
+                                </label>
+                                <input id="id_expiry_date" type="text" disabled="disabled" placeholder="Date" class="form-control">
+                                
+                                {% if form.period.errors %}
+                                    <label class="error">{{ form.period.errors.as_text }}</label>
+                                {% endif %}
+                            </div> 
+                                           
+                        </div> 
+					</div> 
+                </div>
+				<div>
+				    <button type="submit" class="btn btn-info waves-effect">Submit</button>
+				</div>
+             	
+         	</form>  
+         </div> 
+    </section>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+	{{form.media}}
+    <script>
+        function pad(d) {
+            return (d < 10) ? '0' + d.toString() : d.toString();
+        }
+
+        var manufacture_date = $('#id_manufacture_date').val();
+        if(!manufacture_date){
+            manufacture_date = "";
+        }
+        if (!manufacture_date == ""){
+            var date = new Date(manufacture_date)
+            year = pad(date.getFullYear());
+            month = pad(date.getMonth() + 1);
+            day = date.getDate();
+            var time_string = month + "/" + day + "/"+ year;
+             $('#id_manufacture_date').val(time_string);
+        }
+
+        var period = $('#id_period').val();
+        var best_before = $('#id_best_before').val();
+        var manufacture_date = $('#id_manufacture_date').val();
+        if (period && manufacture_date && best_before){
+            showExpiryDate(manufacture_date,period,best_before);
+        }
+
+        $(document).on('change keyup','#id_manufacture_date, #id_period, #id_best_before',function(){
+            var period = $('#id_period').val();
+            var best_before = $('#id_best_before').val();
+            var manufacture_date = $('#id_manufacture_date').val();
+            if (period && manufacture_date && best_before){
+                showExpiryDate(manufacture_date,period,best_before);
+            }
+            
+        });
+
+        function showExpiryDate(manufacture_date,period,best_before){
+            var url = "{% url 'products:get_expiry' %}";
+            
+            $.ajax({
+                type : "GET",
+                url : url,
+                dataType : 'json',
+                data : {
+                    manufacture_date : manufacture_date,
+                    period : period,
+                    best_before : best_before,
+                },
+                success : function(data) {
+                    var status = data['status'];
+                    var expiry_date = data['expiry_date'];
+                    if(status == "true"){
+                        $('#id_expiry_date').val(expiry_date);
+                    } 
+                },
+                error : function(data){
+                }
+            });
+        }
+            
+    </script>
+{% endblock %}

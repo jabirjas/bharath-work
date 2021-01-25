@@ -1,0 +1,49 @@
+<div class="card">
+   
+    <div class="card-body">
+
+        <div class="list-group lg-alt lg-even-white">
+            <div class="list-group-item media">
+                <div class="media-body">
+                    <h3>Today Report</h3>
+                    <h4>Sale:{{total_sale_amount | default:"0.00"}}</h4>
+                    <h4>Purchase:{{total_purchase_amount | default:"0.00"}}</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-5"></div>
+    </div>
+</div>
+<div class="card">
+   
+    <div class="card-body">
+
+        <div class="list-group lg-alt lg-even-white">
+            <div class="list-group-item media">
+                <div class="media-body">
+                    <small>Total Purchase</small>
+                    <h3>{{total_purchase_amount | default:"0.00"}}</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-5"></div>
+    </div>
+</div>
+<div class="card">
+   
+    <div class="card-body">
+
+        <div class="list-group lg-alt lg-even-white">
+            <div class="list-group-item media">
+                <div class="media-body">
+                    <small>Total Sale</small>
+                    <h3>{{total_sale_amount | default:"0.00"}}</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-5"></div>
+    </div>
+</div>

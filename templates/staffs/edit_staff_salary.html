@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+{% block content %}
+	<section id="content">
+        <div class="container">
+            
+			<div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+
+                <div class="ah-search">
+	            	<form method="get" action="{% url 'staffs:staff_salaries' %}">
+	                    <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+	
+	                    <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+	                    <input type="submit" class="hidden" />
+	                </form>
+	            </div>
+
+                <ul class="ah-actions actions a-alt">
+                    <li>
+                        <a title="Search" data-ma-action="ah-search-open" class="ah-search-trigger" href="{% url 'staffs:staff_salaries' %}">
+                            <i class="zmdi zmdi-search"></i>
+                        </a>
+                    </li>
+                    {% if instance %}
+                        {% if is_superuser or 'can_create_staff_salary' in user_instance.permissionlist or 'can_create_staff_salary' in staff_instance.designation.permissionlist %}
+                            <li>
+                                <a title="Create Staff Salary" href="{% url 'staffs:create_staff_salary' %}">
+                                    <i class="zmdi zmdi-plus"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+                        {% if is_superuser or 'can_view_staff_salary' in user_instance.permissionlist or 'can_view_staff_salary' in staff_instance.designation.permissionlist %}
+                            <li>
+                                <a title="View Staff Salary" href="{% url 'staffs:staff_salary' pk=instance.pk %}">
+                                    <i class="zmdi zmdi-eye"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+                        {% if is_superuser or 'can_delete_staff_salary' in user_instance.permissionlist or 'can_delete_staff_salary' in staff_instance.designation.permissionlist %}
+                            <li>
+                                <a title="Delete Staff Salary" data-id="{{instance.pk}}" data-text="{{confirm_delete_message}}" data-title="Are you sure?" href="{% url 'staffs:delete_staff_salary' pk=instance.pk %}" class="action-button redirect">
+                                    <i class="zmdi zmdi-delete"></i>
+                                </a>
+                            </li> 
+                        {% endif %} 
+                    {% endif %}                               
+                </ul>
+            </div>
+            
+                <form class="ajax reset {% if redirect %}redirect{% endif %}" method="post" action="{{url}}">
+                    {% csrf_token %}
+                    <div id="c-grid" class="clearfix" data-columns="2">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Basic Details <small></small></h2>
+                            </div>
+
+                            <div class="card-body card-padding">
+                                {{ form.school }}
+                                <div class="form-group fg-line">
+                                    <label for="{{ form.staff.id_for_label }}">
+                                        {{ form.staff.label }}
+                                        {% if form.staff.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+                                        
+                                        {% if form.staff.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.staff.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+                                        {% endif %}
+                                    </label>
+                                    {{ form.staff }}
+                                    
+                                    {% if form.staff.errors %}
+                                        <label class="error">{{ form.staff.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="form-group fg-line">
+                                    <label for="{{ form.month.id_for_label }}">
+                                        {{ form.month.label }}
+                                        {% if form.month.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+                                        
+                                        {% if form.month.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.month.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+                                        {% endif %}
+                                    </label>
+                                    {{ form.month }}
+                                    
+                                    {% if form.month.errors %}
+                                        <label class="error">{{ form.month.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+                                <div class="form-group fg-line">
+                                    <label for="{{ form.year.id_for_label }}">
+                                        {{ form.year.label }}
+                                        {% if form.year.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+                                        
+                                        {% if form.year.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.year.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+                                        {% endif %}
+                                    </label>
+                                    {{ form.year }}
+                                    
+                                    {% if form.year.errors %}
+                                        <label class="error">{{ form.year.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="form-group fg-line m-b-0">
+                                    <label for="{{ form.allowance.id_for_label }}">
+                                        {{ form.allowance.label }}
+                                        {% if form.allowance.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+                                        
+                                        {% if form.allowance.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.allowance.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+                                        {% endif %}
+                                    </label>
+                                    {{ form.allowance }}
+                                    
+                                    {% if form.allowance.errors %}
+                                        <label class="error">{{ form.allowance.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+                                 <div class="form-group fg-line m-b-0">
+                                    <label for="{{ form.deduction.id_for_label }}">
+                                        {{ form.deduction.label }}
+                                        {% if form.deduction.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+                                        
+                                        {% if form.deduction.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.deduction.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+                                        {% endif %}
+                                    </label>
+                                    {{ form.deduction }}
+                                    
+                                    {% if form.deduction.errors %}
+                                        <label class="error">{{ form.deduction.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>
+                            </div>  
+                         </div>
+                    </div>
+                     
+                     <div class="m-t-20">
+                        <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                    </div>
+                 </div>  
+             </form>    
+        </div>
+    </section>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+	<script>
+        $(document).ready(function(){
+            $('input[type=text]').focus(function () { 
+                $(this).select();
+            });
+            $('input[type=text]').mouseup(function (e) { // fix for chrome and safari
+                e.preventDefault();
+            });
+            $('input[type=text]').select(function () {
+                $('.log').append(' Handler for .select() called. ');
+            });
+        });
+    </script>
+    {{form.media}}
+{% endblock %}

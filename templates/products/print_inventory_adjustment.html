@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <title>Stock adjustment | Arkboss</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}" />
+    
+</head>
+<body>
+    {% load i18n %}
+    {% load static %}
+    {% load users_template_tags %}
+    {% load main_template_tags %}
+    <div class="print_container">        
+        <table class="address" style="font-weight:bold;">
+            <tr class='head'>
+                <td style='width:35%'>
+                    <h2>{{current_shop.name|upper}}</h2>
+                    <p>{{current_shop.address}}</p>
+                    <h2>{{title}}{{instance.distributor|default:""}}</h2>
+                    <h2>{{instance.date_added}}</h2>
+                </td>  
+            </tr>
+        </table>       
+        <table class='amount'>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>New Qty</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for instance in adjustment_items %}
+                <tr>
+                    <td style='text-align: center;'>{{forloop.counter}}</td>
+                    <td>{{instance.product}}</td>                                
+                    <td>{{instance.qty}}</td>
+                    <td>{{instance.new_qty}}</td>                                   
+                </tr>
+                {% endfor %}                
+            </tbody>                                 
+        </table>
+        
+    <button class="btn btn-float bgm-red m-btn print-button" onclick = "clicktoPrint()"<i class="zmdi zmdi-print">PRINT</i></button>
+  
+    <input type="hidden" value="{{auto_redirect|yesno:'yes,no'}}" id="auto_redirect"/>
+    
+    <style>
+        body {
+            margin: 0;
+            font-family:Arial, Helvetica, sans-serif;
+            background: #fff;
+            margin-top: 15px;
+        }
+        .print_container {
+            width: 285mm;
+            margin: 0 auto;
+            background: #fff;
+            min-height: 100%;
+        }
+        table {  
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+        }
+        table {
+            width: 100%;
+            box-sizing: border-box;
+        }
+        h5, h6, h4 {
+            margin: 0;
+        }      
+        .address
+        {
+            text-align: center;
+        }        
+        .address h2 {
+            font-size: 13pt;
+            margin: 0;
+            margin-bottom: 10px;
+            margin-top: 20px;
+        }
+        .address h3 {
+            font-size: 12pt;
+            color: #049343;
+            font-weight: bold;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+        
+        .address p {
+            font-size: 11pt;
+            margin: 5px 0;
+        }
+        .address td:nth-child(2) {
+            width: 300px;
+        }
+        
+        .btn-float {
+            bottom: 30px;
+            right: 30px;
+            box-shadow: 2px 2px 2px 0px rgba(5, 40, 70, 0.34);
+            outline: none;
+            border: none;
+            color: #fff;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            line-height: 45px !important;
+            cursor: pointer;
+            right: 25px;
+            bottom: -23px;
+            z-index: 1;
+        }
+
+        .btn-float:not(.m-btn) {
+          position: absolute !important;
+        }
+
+        .m-btn {
+            bottom: 20px;
+            position: fixed !important;
+            right: 85px;
+            z-index: 1;
+            background: red;
+        }
+        .bgm-#D92621 {
+          background-color: #f44336 !important;
+        }
+        .back{
+            top: 0;
+            position: fixed !important;
+            right: 85px;
+            z-index: 1;
+            padding:10px 20px;
+            background-color: #03A9F4;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #fff;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .details td{
+            border: none;
+            vertical-align: middle !important;
+            padding: 0 5px;
+        }
+        .details tr{
+            border-bottom: 1px solid #555;
+            height: 20px;
+        }
+        
+        table.amount tr{
+            height: 20px;
+        }
+        table.amount th{
+            border: 1px solid #000;
+            vertical-align: middle;
+            background-color: #D3D3D3;
+            padding-bottom: 20px;
+        }
+        table.amount td{
+            border: 1px solid #000;
+            vertical-align: middle;
+            padding-right: 5px;
+            padding-left: 5px;
+        }
+        table.amount tr td table tr td.parent {
+            border:none;
+        }
+        table.measurement tr td {
+            border:none;
+        }
+        table.measurement tr{
+            border:none;
+        }
+        .note {
+            margin-left:70px;
+            margin-top: 15px;
+        }
+        .company {
+            margin-left:70px;
+            margin-top: 20px;
+        }
+        .note-subject{
+            margin-left:150px;
+        }
+        .thank {
+            margin-left:150px;
+        }
+        .receiver {
+            margin-left:425px;
+            margin-top:25px;
+        }
+        tr.delivery td,tr.delivery td div{
+            text-align: left;
+        }
+        .bg{
+            position: absolute;
+            bottom: 250px;
+            opacity: 0.1;
+            filter: alpha(opacity=10);
+            left: 548px;
+            width: 17%;
+            display: block;
+        }
+        .return_data {
+            border : 1px solid #000;
+        }
+
+        @media print {
+          .btn,.btn-float, .bgm-#D92621,.back-button,.back,.m-btn.print-button * {
+            visibility: hidden;
+          }
+        }
+    </style>
+    <script type="text/javascript">
+        function clicktoPrint() {
+            window.print();
+        }
+        window.onload = function(){
+            var button = document.querySelector('.print-button');
+            button.click();
+        }
+        
+    </script>
+</body>
+</html>

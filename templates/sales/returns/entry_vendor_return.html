@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load tz %}
+
+{% block content %}
+    <section id="content">
+        <div class="container">
+            <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>
+            
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+
+                <div class="ah-search">
+                    <form method="get" action="">
+                        <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+    
+                        <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+                        <input type="submit" class="hidden" />
+                    </form>
+                </div>
+
+                <ul class="ah-actions actions a-alt">
+                    <li>
+                        <a title="Search" data-ma-action="ah-search-open" class="ah-search-trigger" href="">
+                            <i class="zmdi zmdi-search"></i>
+                        </a>
+                    </li>
+                    {% if instance %}
+                        {% if "is_superuser" or 'can_create_product_return' in user_instance.permissionlist %}
+                        <li>
+                            <a title="Create Return" href="{% url 'sales:create_sale_return' %}">
+                                <i class="zmdi zmdi-plus"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% if "is_superuser" or 'can_view_product_return' in user_instance.permissionlist %}
+                        <li>
+                            <a title="View return" href="{% url 'sales:sale_return' pk=instance.pk %}">
+                                <i class="zmdi zmdi-eye"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% if "is_superuser" or 'can_delete_product_return' in user_instance.permissionlist %}
+                        <li>
+                            <a title="Delete Return" data-id="{{instance.pk}}" data-text="{{confirm_delete_message}}" data-title="Are you sure?" href="{% url 'sales:delete_sale_return' pk=instance.pk %}" class="action-button redirect">
+                                <i class="zmdi zmdi-delete"></i>
+                            </a>
+                        </li> 
+                        {% endif %} 
+                    {% endif %}                              
+                </ul>
+            </div>
+            
+            <form class="ajax reset {% if redirect %}redirect{% endif %}" method="post" action="{{url}}">
+                {% csrf_token %}
+
+                <div class="row">
+                    <div class="col-md-4 col-lg-4 col-sm-6 p-l-5 p-r-5">
+                        <div class="card m-b-5">
+                            <div class="card-body p-10">
+                                <div class="form-group m-b-10 fg-line">
+                                    <label for="{{ form.vendor.id_for_label }}">
+                                        {{ form.vendor.label }}
+                                        {% if form.vendor.field.required %}
+                                            <small class="star">*</small>
+                                        {% endif %}
+                                        
+                                        {% if form.vendor.help_text %}
+                                            <span data-original-title="Field Info" title="" data-content="{{ form.vendor.help_text }}" data-placement="left" data-toggle="popover" data-trigger="hover" class="help-text-icon zmdi zmdi-info-outline"></span>
+                                        {% endif %}
+                                    </label>
+                                    {{ form.vendor }}
+                                    
+                                    {% if form.vendor.errors %}
+                                        <label class="error">{{ form.vendor.errors.as_text }}</label>
+                                    {% endif %}
+                                </div>                        
+                            </div> 
+                        </div> 
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="table-responsive  product_list_container">
+                        <p class="text-center p-30">No Products found</p>
+                    </div>
+                </div>
+                
+                </div>
+                <div class="m-t-20">
+                    <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                </div>
+            </form>  
+         </div> 
+    </section>
+{% endblock %}
+
+{% block static %}
+    {% load static %}
+    <style>
+        .row {
+             margin-left: -5px !important;
+             margin-right: -5px !important;
+        }
+        .return_product_check input {
+            width: 150px;
+        }
+        .sale_return_item_qty_td{
+            width: 120px !important;
+        }
+    </style>
+
+    <script>
+
+        $(document).on('change','#id_vendor',function(){
+            var $this = $(this);
+            getReturnItems($this);
+        });
+
+        function getReturnItems($selector){
+
+            var id = $selector.val();
+            var url = "{% url 'sales:get_vendor_return_items' %}";
+            if(id != '' && id != null){
+                $.ajax({
+                    type : "GET",
+                    url : url,
+                    dataType : 'json',
+                    data : {
+                        id : id
+                    },
+                    success : function(data) {
+                        var status = data['status'];
+                        var template = data['template'];
+                        console.log(template);
+                        if(status == "true"){
+                            $('.product_list_container').html(template);
+                        } else {
+                            $('.product_list_container').html(template);
+                        }
+                    },
+                    error : function(data){
+                        remove_popup_box();
+                    }
+                });
+            }
+        }
+
+
+        $(document).on('change','.return_product_check', function() {
+            var $this = $(this);
+            var $parent = $this.parents('tr');
+            var qty = $this.attr('data-qty');
+            var unit = $this.attr('data-unit');
+            if($this.is(":checked")) {
+                
+                var input_el = '<input type="text" class="form-control" name="returned_qty" value="'+ qty+ '" />';
+                var unit_el = '<input type="hidden" name="returned_product_unit" value="'+unit+'">';
+                $parent.find('.sale_return_item_qty').html(input_el);
+                $parent.find('.product_datail').append(unit_el);
+            } else {
+                $parent.find('.sale_return_item_qty').html(qty);
+                $parent.find('.product_datail input').remove();
+            }       
+        });
+    </script>
+    {{form.media}}
+{% endblock %}

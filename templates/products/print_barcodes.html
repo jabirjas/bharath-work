@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {% load static %} 
+    {% load main_template_tags %}
+    <title>{{title}} | {{app_title}}</title>
+    <link rel="stylesheet" href="{% static 'css/print.css' %}" type="text/css"/>
+    <script src="{% static 'vendors/bower_components/jquery/dist/jquery.min.js' %}"></script>
+    <script src="{% static 'js/jsbarcode.min.js' %}"></script>
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+    <style type="text/css">
+      body { 
+        width:107mm; 
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        font-family: 'Ubuntu', sans-serif;
+      }
+      ul{
+        float: left;
+      }
+      ul li{
+        float: left;
+        width:50mm;
+        height:25mm;
+        margin-top:2mm;
+        text-align: center;
+      }
+      ul li{
+        padding-left: 3mm;
+      }
+      ul li img{
+        width:90%;
+        height:28px;
+      }
+      ul li:nth-child(2n+1){
+        clear:both;
+      }
+      p.code {
+        line-height:1em;
+        font-size: 7pt;
+        font-weight: bold;
+        text-align: center;
+      }
+      div.details {
+        text-align: center;
+      }
+      div.details h6 {
+        font-size: 8pt;
+        font-weight: bold;
+      }
+      div.details p.shop_address {
+        font-size: 6pt;
+        font-weight: bold;
+        line-height: 1em;
+      }
+      div.details p.product_code {
+        font-size: 9pt;
+        font-weight: bold;
+        text-transform: capitalize;
+        line-height: 1em;
+      }
+      div.details p.shop_phone {
+        font-size: 7pt;
+        font-weight: bold;
+        line-height: 1em;
+      }
+      div.details p.product_name {
+        font-size: 9pt;
+        font-weight: bold;
+        line-height: 1em;
+      }
+      div.details p.product_price {
+        font-size: 12pt;
+        font-weight: bold;
+        line-height: 1em;
+      }
+      div.details p.product_mrp {
+        font-size: 9pt;
+        font-weight: bold;
+        line-height: 1em;
+      }
+      h5.title {
+        font-weight: bold;
+        font-size: 10pt;
+      }
+      h6.price ,h6.price b{
+        font-weight: bold;
+        font-size: 11pt;
+      }
+      h6.mrp ,h6.mrp b{
+        font-size: 10pt;
+        font-weight: bold;
+      }
+      h6.product{
+        font-size: 9pt;
+      }
+      li svg {
+        width: 100%;
+        margin: 0 auto;
+        height: 28px !important;
+      }
+    </style>
+  </head>
+  <body>
+    <ul>
+      {% for key, values in barcode_items.items %}
+        {% for n in values.n_range %}
+          <li>
+            <h5 class="main_head title">BHARATH EXPO</h6>
+            <h6 class="center product">{{values.product_instance.name}}</h6>
+            <svg id="{{values.product_instance.pk}}{{n}}"></svg>
+            <!-- {% if not values.check_hide %}
+            <h6 class="center mrp">MRP : <b>{{values.product_instance.mrp}}</b></h6>            
+            {% endif %} -->
+            <h6 class="price">Price : <b>{{values.product_instance.price}}</b></h6>
+            <h6 class="mrp">MRP : <b>{% if values.product_instance.mrp %}{{values.product_instance.mrp}}{% else %}{{values.product_instance.price}}{% endif %}</b></h6>
+          </li>
+        {% endfor %}
+      {% endfor %}
+    </ul>
+    <br class="clear" />  
+
+    <script>
+      $(document).ready(function(){
+        {% for key, values in barcode_items.items %}
+          {% for n in values.n_range %}
+            $("#{{values.product_instance.pk}}{{n}}").JsBarcode(
+              "{{values.product_instance.code}}",
+              {
+                format: "CODE128",
+                lineColor: "#000",
+                width: 2,
+                height: 40,
+                margin:0,
+                marginLeft: 10,
+                marginRight: 10,
+                marginTop: 0,
+                marginBottom:0,
+                displayValue : true,
+                font: "Ubuntu"
+              }
+            );
+          {% endfor %}
+        {% endfor %}
+
+      });
+      window.print();
+      
+    </script>  
+  </body>
+</html>
+

@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+{% block content %}
+	<section id="content">
+        <div class="container">
+             <div class="c-header">
+            	<h2>{{title}}</h2>
+            </div>
+            
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+	            <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+	        </div>
+
+            <div class="card">
+				
+				{% if sale_items %}
+				
+                <div class="table-responsive">
+                    <table id="data-table-basic" class="table table-striped table-vmiddle">
+                        <thead>
+                            <tr>
+                                <th data-column-id="id" data-type="numeric">Sale ID</th>
+                                <th>Product</th>
+                                <th>Customer</th>
+                                <th>Sub Total</th>
+                                <th>Tax Amount</th>
+                                <th>Qty</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        	{% load el_pagination_tags %}
+							{% paginate 21 sale_items %}
+                        	{% for sale_item in sale_items %}
+                            <tr class="check_items_row">
+                                <td>{{sale_item.sale.a_id}}</td>
+                                <td>{{sale_item.product}}</td>
+                                <td>{{sale_item.sale.customer}}</td>
+                                <td>{{sale_item.subtotal}}</td>
+                                <td>{{sale_item.tax_amount}}</td>
+                                <td>{{sale_item.qty}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!--pagination -->
+                <div class="bootgrid-footer container-fluid" id="data-table-selection-footer">
+                	{% get_pages %}
+                	<div class="row">
+                		<div class="col-sm-6">
+                			<div class="pagination">
+                				{% show_pages %}
+                			</div>
+                		</div>
+                		<div class="col-sm-6 infoBar">
+                			<div class="infos">
+                				Showing {{title}} <span class="current_page_index">{{ pages.current_start_index }}</span> - <span class="current_end_status">{{ pages.current_end_index }}</span> of <span class="total_count">{{ pages.total_count }}</span>
+                			</div>
+                		</div>
+                	</div>
+                </div>   
+                <!--pagination-->
+                {% else %}
+                	{% include 'includes/not_found.html' %}
+                {% endif %}            
+            </div>
+            
+        </div>
+    </section>
+{% endblock %}
+
+
+{% block static %}
+	{% load static %}
+{% endblock %}

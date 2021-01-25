@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% load users_template_tags %}
+{% load tz %}
+{% block content %}
+	<section id="content">
+        <div class="container">
+            <div class="c-header">
+                <h2>{{title}}</h2>
+            </div>
+            
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+                <div class="ah-label hidden-xs palette-White text">{{instance.customer}} - {{instance.total}}</div>
+
+
+                <ul class="ah-actions actions a-alt">
+                    <li>
+                        <a title="Print Estimate" target="_blank" href="{% url 'products:inventory_adjustment' pk=instance.pk %}?print=True">
+                            <i class="zmdi zmdi-print"></i>
+                        </a>
+                    </li>                      
+                </ul>
+            </div>
+            
+            {% if adjustment_items %}
+            <div class="card">
+            	<div class="card-header">
+                    <h2>Items <small></small></h2>
+                </div>
+                <div class="card-body">
+	                <div class="table-responsive">
+	                    <table id="data-table-basic" class="table table-striped table-vmiddle">
+	                        <thead>
+	                            <tr>
+                                    <th>Sl No</th>
+	                                <th>Product</th>
+	                                <th>Qty</th>
+                                    <th>new Qty</th>
+	                            </tr>
+	                        </thead>
+	                        <tbody>
+	                        	{% for i in adjustment_items %}
+	                            <tr>
+                                    <td>{{forloop.counter}}</td>
+	                                <td>{{i.product}}</td>
+	                                <td>{{i.qty}}</td>
+                                    <td>{{i.new_qty}}</td>
+	                            </tr>
+	                            {% endfor %}
+	                        </tbody>
+	                    </table>
+	                </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div id="c-grid" class="clearfix" data-columns="2">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Basic Info <small></small></h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="list-group lg-alt c-overflow">
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">ID</div>
+                                    <small class="lgi-text">{{instance.a_id}}</small>
+                                </div>
+                            </div>
+
+                            <div class="list-group-item media">
+
+                                <div class="media-body">
+                                    <div class="lgi-heading">Distributor</div>
+                                    <small class="lgi-text">{{instance.distributor}}</small>
+                                </div>
+                            </div>                          
+                            
+                        </div>
+                    </div>
+                </div>                
+                              
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Created &amp; Updated <small></small></h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="list-group lg-alt c-overflow">
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Date Added</div>
+                                    <small class="lgi-text">{{instance.date_added|timezone:user_time_zone}}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Date Updated</div>
+                                    <small class="lgi-text">{{instance.date_updated|timezone:user_time_zone}}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Created User</div>
+                                    <small class="lgi-text"><a href="{% url 'users:view' pk=instance.creator.username %}">{{instance.creator.username|get_user_name}}</a></small>
+                                </div>
+                            </div>
+                            
+                            <div class="list-group-item media">
+                                <div class="media-body">
+                                    <div class="lgi-heading">Last Updated User</div>
+                                    <small class="lgi-text"><a href="{% url 'users:view' pk=instance.updator.username %}">{{instance.updator.username|get_user_name}}</a></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+             </div>                    
+        </div>
+    </section>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+{% endblock %}

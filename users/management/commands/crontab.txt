@@ -1,0 +1,8 @@
+type "crontab -e" on terminal
+
+#change path and copy below command  to opened terminal
+
+00 01 * * * /srv/django/arkboss/dailee_foods_kallara/venv/bin/python /srv/django/arkboss/dailee_foods_kallara/src/dailee_foods_kallar/manage.py delete_notifications
+
+after that press "ctrl+x"
+type "y" & enter

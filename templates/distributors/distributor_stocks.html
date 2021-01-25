@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load main_template_tags %}
+
+
+{% block content %}
+	<section id="content">
+        <div class="container">
+             <div class="c-header">
+            	<h2>{{title}}</h2>
+            </div>
+
+            <div class="action-header palette-theme {{current_theme}} bg clearfix">
+	            <div class="ah-label hidden-xs palette-White text">{{title}}</div>
+
+	            <div class="ah-search">
+	            	<form method="get" action="{% url 'distributors:distributor_stocks' %}" class="ahs-input">
+	                    <input name="q" type="text" placeholder="Start typing..." class="ahs-input">
+
+	                    <i class="ah-search-close zmdi zmdi-long-arrow-left" data-ma-action="ah-search-close"></i>
+	                    <input type="submit" class="hidden" />
+	                </form>
+	            </div>
+
+	            <ul class="ah-actions actions a-alt">
+	                <li>
+	                    <a href="" class="ah-search-trigger" data-ma-action="ah-search-open">
+	                        <i class="zmdi zmdi-search"></i>
+	                    </a>
+	                </li>
+
+	                <li>
+	                    <a title="Filter" class="filter_button" href="">
+	                        <i class="zmdi zmdi-filter-list"></i>
+	                    </a>
+	                </li>
+	            </ul>
+
+	        </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header p-b-0">
+                            <h2 class="f-14">Total Stock <small></small></h2>
+                        </div>
+
+                        <div class="card-body card-padding">
+                            <h3>{{total_stock|default:0.00|to_fixed_two}}</h3>
+                        </div>
+                    </div>
+                </div>
+                {% if not is_superuser %}
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header p-b-0">
+                            <h2 class="f-14">Total MRP <small></small></h2>
+                        </div>
+
+                        <div class="card-body card-padding">
+                            <h3>{{total_mrp|default:0.00|to_fixed_two}}</h3>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header p-b-0">
+                            <h2 class="f-14">Total Price <small></small></h2>
+                        </div>
+
+                        <div class="card-body card-padding">
+                            <h3>{{total_price|default:0.00|to_fixed_two}}</h3>
+                        </div>
+                    </div>
+                </div>
+                {% if is_superuser %}
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header p-b-0">
+                            <h2 class="f-14">Total Cost <small></small></h2>
+                        </div>
+
+                        <div class="card-body card-padding">
+                            <h3>{{total_cost|default:0.00|to_fixed_two}}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header p-b-0">
+                            <h2 class="f-14">Total Profit <small></small></h2>
+                        </div>
+
+                        <div class="card-body card-padding">
+                            <h3>{{total_profit|default:0.00|to_fixed_two}}</h3>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+            </div>
+
+            <div class="card">
+
+				{% if instances %}
+
+                <div class="table-responsive">
+                    <table id="data-table-basic" class="table table-striped table-vmiddle">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Stock</th>
+                                <th>Price</th>
+                                <th>MRP</th>
+                                {% if is_superuser or 'can_view_distributor' in user_instance.permissionlist %}
+                                <th>Distributor</th>
+                                {% endif %}                                
+                                <th>Total Amount</th>
+                                <th data-column-id="action">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        	{% load el_pagination_tags %}
+							{% paginate 21 instances %}
+                        	{% for instance in instances %}
+                            <tr class="check_items_row">
+                                <td>{{instance.product}}</td>
+                                <td>{{instance.stock}}</td>
+                                <td>{{instance.product.price}}</td>
+                                <td>{{instance.product.mrp}}</td>
+                                {% if is_superuser or 'can_view_distributor' in user_instance.permissionlist %}
+                                <td>{{instance.distributor}}</td>
+                                {% endif %}                                
+                                <td>{{instance.total_amount|to_fixed_two}}</td>
+                                <td>
+                                	<a href="{% url 'distributors:distributor_stock' pk=instance.pk %}" class="btn btn-default btn-icon waves-effect waves-circle waves-float"><i class="zmdi zmdi-eye"></i></a>
+                                    <a title="Delete Stock" data-id="{{instance.pk}}" href="{% url 'distributors:delete_distributor_stock' pk=instance.pk %}" data-text="{{confirm_delete_message}}" data-title="Are you sure?" class="action-button remove btn btn-default btn-icon waves-effect waves-circle waves-float"><i class="zmdi zmdi-delete"></i></a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!--pagination -->
+                <div class="bootgrid-footer container-fluid" id="data-table-selection-footer">
+                	{% get_pages %}
+                	<div class="row">
+                		<div class="col-sm-6">
+                			<div class="pagination">
+                				{% show_pages %}
+                			</div>
+                		</div>
+                		<div class="col-sm-6 infoBar">
+                			<div class="infos">
+                				Showing {{title}} <span class="current_page_index">{{ pages.current_start_index }}</span> - <span class="current_end_status">{{ pages.current_end_index }}</span> of <span class="total_count">{{ pages.total_count }}</span>
+                			</div>
+                		</div>
+                	</div>
+                </div>
+                <!--pagination-->
+                {% else %}
+                	{% include 'includes/not_found.html' %}
+                {% endif %}
+            </div>
+
+        </div>
+    </section>
+{% endblock %}
+
+{% block filter_box %}
+<div class="filter-box">
+	 <form method="get" action="{% url 'distributors:distributor_stocks' %}">
+	 	<div class="card">
+			<div class="card-header">
+		        <h2>Filter <small></small></h2>
+		        <span class="back-button-poupup palette-Cyan bg white btn btn-default btn-icon-text waves-effect"><i class="zmdi zmdi-arrow-back"></i> Back</span>
+		    </div>
+
+			<div class="card-body card-padding">
+			 	<div class="form-group fg-line">
+		            <label>Query</label>
+		            <input name="q" type="text" class="form-control" placeholder="Enter your query..." />
+		        </div>
+
+		         <div class="m-t-20">
+                    <button type="submit" class="btn btn-info waves-effect">Submit</button>
+                </div>
+		    </div>
+		 </div>
+	 </form>
+</div>
+{% endblock %}
+
+{% block static %}
+	{% load static %}
+{% endblock %}
